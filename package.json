@@ -1,0 +1,20 @@
+{
+  "name": "hackaton_frontend",
+  "version": "0.0.0",
+  "description": "",
+  "homepage": "https://github.com/GitCoffee-hackathon2025/hackathon-frontend#readme",
+  "bugs": {
+    "url": "https://github.com/GitCoffee-hackathon2025/hackathon-frontend/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/GitCoffee-hackathon2025/hackathon-frontend.git"
+  },
+  "license": "ISC",
+  "author": "",
+  "type": "module",
+  "main": "",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  }
+}
