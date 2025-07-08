@@ -1,66 +1,80 @@
 <script setup lang="ts">
-import {ref} from 'vue'
- const isExpanse = ref<boolean>(false)
- function toggleBar() {
+import { ref } from 'vue'
+const isExpanse = ref<boolean>(false)
+function toggleBar() {
   isExpanse.value = !isExpanse.value
- }
+}
 </script>
 
 <template>
- <nav :class="['container-nav', {isExpanse}]">
-  <div class="icons">
-    <span class="fa-solid fa-bars" @click="toggleBar"></span>
-    <span class="fa-solid fa-user"></span>
-    <span class="fa-solid fa-gear"></span>
-  </div>
- </nav>
+  <nav :class="['container-nav', { isExpanse }]">
+    <ul class="icons">
+      <li>
+        <span class="fa-solid fa-bars" @click="toggleBar"></span>
+        <p :class="{ visible: isExpanse }">Bars</p>
+      </li>
+      <li>
+        <span class="fa-solid fa-user"></span>
+        <p :class="{ visible: isExpanse }">User</p>
+      </li>
+      <li>
+        <span class="fa-solid fa-gear"></span>
+        <p :class="{ visible: isExpanse }">Settings</p>
+      </li>
+    </ul>
+  </nav>
 </template>
 
 <style scoped>
-.container-nav{
-   background-color: black;
+.container-nav {
+  background-color: black;
   display: flex;
   flex-direction: column;
-  align-items: center;       
+  align-items: center;
   height: 100vh;
-  width: 4.6vw;
-  .icons{
-    display: flex;
-    align-items: center;
-    flex-direction: column;
-    gap: 6rem;
-    margin-top: 2vw;
-  }
-  span{
-    font-size: 2rem;
-    
-  }
+  width: 4.6rem;
+  transition: width 0.3s ease-in-out;
+  overflow: hidden;
 }
-.container-nav.isExpanse{
-  width:  20vw;
-  align-items: left;
-  transition: .5s ease-in-out;
+
+.container-nav.isExpanse {
+  width: 16rem;
 }
-h1 {
-  font-weight: 500;
-  font-size: 2.6rem;
+
+.icons {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  padding-left: 1.2rem;
+  width: 100%;
+  gap: 3rem;
+  margin-top: 2rem;
+}
+
+.icons li {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  color: white;
   position: relative;
-  top: -10px;
 }
 
-h3 {
-  font-size: 1.2rem;
+.icons p {
+  color: white;
+  opacity: 0;
+  transform: translateX(-20px);
+  transition: opacity 0.3s ease, transform 0.3s ease;
+  white-space: nowrap;
 }
 
-.greetings h1,
-.greetings h3 {
-  text-align: center;
+.icons p.visible {
+  opacity: 1;
+  transform: translateX(2rem);
 }
-
-@media (min-width: 1024px) {
-  .greetings h1,
-  .greetings h3 {
-    text-align: left;
-  }
+  
+span {
+  font-size: 2rem;
+  color: white;
+  cursor: pointer;
 }
 </style>
