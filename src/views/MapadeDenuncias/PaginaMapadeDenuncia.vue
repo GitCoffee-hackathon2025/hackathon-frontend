@@ -1,8 +1,12 @@
+
+<script setup lang="ts">
+import NavBarra from '@/components/NavBarra.vue';
+
+</script>
 <template>
-  <div class="about">
-    <h1>This is an about page</h1>
-  </div>
+    <NavBarra/>
 </template>
+
 
 <style>
 @media (min-width: 1024px) {
