@@ -1,5 +1,9 @@
 import { createRouter, createWebHistory } from 'vue-router'
-import MapaCrime from '@/views/MapaCrime.vue'
+import MapadeDenuncia from '@/views/MapadeDenuncias/PaginaMapadeDenuncia.vue'
+import Configuracoes from '@/views/Configuracoes/PaginaConfiguracoes.vue'
+import Usuario from '@/views/Usuario/PaginaUsuario.vue'
+import SobreSite from '@/views/SobreSite/PaginaSobreSite.vue'
+import NaoEncontrada from '@/views/PaginaNaoEncontrada.vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -10,9 +14,33 @@ const router = createRouter({
     },
     {
       path: '/mapa-de-crime',
-      component: MapaCrime,
+      component: MapadeDenuncia,
+      children: [],
+    },
+    {
+      path: '/configuracoes',
+      component: Configuracoes,
+      redirect: {},
+      children: [],
+    },
+    {
+      path: '/usuario',
+      component: Usuario,
+      redirect: {},
+      children: [],
+    },
+    {
+      path: '/sobre-o-site',
+      component: SobreSite,
+      redirect: {},
+      children: [],
+    },
+    {
+      path: '/:pathMatch(.*)*',
+      component: NaoEncontrada,
     },
   ],
 })
+
 
 export default router
