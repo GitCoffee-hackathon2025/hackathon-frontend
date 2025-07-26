@@ -27,7 +27,16 @@ const router = createRouter({
       path: '/usuario',
       component: Usuario,
       redirect: {},
-      children: [],
+      children: [
+        {
+          path: 'cadastro',
+          component:  () => import("@/views/Usuario/cadastro-login/CadastroRota.vue")
+        },
+        {
+          path: 'login',
+          component:  () => import("@/views/Usuario/cadastro-login/LoginRota.vue")
+        }
+      ],
     },
     {
       path: '/sobre-o-site',
