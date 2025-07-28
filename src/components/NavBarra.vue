@@ -31,7 +31,10 @@ function openBar() {
 
 <style scoped lang="scss">
 .container-nav {
-  background-color: black;
+  position: fixed;
+  top: 0;
+  left: 0;
+  background-color: var(--preto);
   display: flex;
   flex-direction: column;
   align-items: center;
