@@ -30,12 +30,16 @@ const router = createRouter({
       children: [
         {
           path: 'cadastro',
-          component:  () => import("@/views/Usuario/cadastro-login/RotaCadastro.vue")
+          component: () => import('@/views/Usuario/cadastro-login/RotaCadastro.vue'),
         },
         {
           path: 'entrar',
-          component:  () => import("@/views/Usuario/cadastro-login/RotaLogin.vue")
-        }
+          component: () => import('@/views/Usuario/cadastro-login/RotaLogin.vue'),
+        },
+        {
+          path: 'recuperar-conta',
+          component: () => import('@/views/Usuario/cadastro-login/RecuperarSenha.vue'),
+        },
       ],
     },
     {
@@ -50,6 +54,5 @@ const router = createRouter({
     },
   ],
 })
-
 
 export default router

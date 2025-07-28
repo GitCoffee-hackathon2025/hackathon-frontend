@@ -1,73 +1,94 @@
 form {
-  width: 40rem;
+  width: 42rem;
   height: 40rem;
-  border-radius: 1.25rem;
+  border-radius: 1.3rem;
   background: #1d1e1c;
-  padding-top: calc(40rem - 30rem);
+  padding-top: calc(42rem - 34rem);
+  z-index: 2;
+  transform: translateY(0);
+  transition: transform 0.3s ease-in-out;
+
+  &.formSobe {
+    transform: translateY(-30px);
+    transition: transform 0.3s ease-in-out;
+  }
 
   div.parte-escura {
     position: relative;
 
-    img.montanha {
+    img {
       position: absolute;
-      z-index: 1;
-      top: -90px;
-      width: 330px;
-      right: 0;
-    }
-    img.ponto {
-      position: absolute;
-      z-index: 1;
-      top: -110px;
-      width: 150px;
-      left: 0;
+      top: -80px;
+      &.montanha {
+        width: 340px;
+        right: 0;
+      }
+      &.ponto {
+        width: 130px;
+        left: 0;
+      }
     }
   }
 
   div.parte-branca {
     position: relative;
-    width: 40rem;
-    height: 30rem;
-    border-radius: 9.375rem 0 1.25rem 1.25rem;
-    background: #f8f6f2;
+    width: 42rem;
+    height: 32rem;
+    border-radius: 8rem 0 1.3rem 1.3rem;
+    background: var(--branco);
     display: grid;
-    grid-template-columns: 1fr 1fr 1fr 1fr 1fr 1fr;
-    grid-template-rows: 1fr 1fr 1fr 1fr 1fr 1fr;
-    z-index: 2;
+    grid-template-columns: 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr;
+    grid-template-rows: 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr;
+    z-index: 3;
+
     h2 {
+      font-size: var(--texto-grande);
       color: var(--cinza);
-      grid-column: 2 / 6;
-      grid-row: 1 / 3;
+      grid-column: 2 / 10;
+      grid-row: 2 / 4;
       justify-self: center;
-      align-self: center;
+      align-self: baseline;
     }
 
     .acoes-form {
       width: 100%;
       height: 100%;
-      grid-row: 5 / 7;
-      grid-column: 2 / 6;
+      grid-row: 8 / 9;
+      grid-column: 2 / 10;
       display: flex;
       justify-content: center;
       align-items: center;
+      gap: 1.3rem;
 
-      button {
+      a {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        text-align: center;
+        text-decoration: none;
+        color: var(--branco);
+      }
+
+      button,
+      a {
+        font-size: var(--texto-medio);
         border: none;
         background-color: var(--cinza);
         background-color: var(--cinza);
-        border-radius: 2rem;
-        width: 12rem;
-        height: 3.5rem;
+        border-radius: 0.8rem;
+        width: 13rem;
+        height: 3.4rem;
         position: relative;
+
         &::after {
-          border-radius: 2rem;
+          border-radius: 0.8rem;
           content: '';
           position: absolute;
           inset: 0;
-          background: rgba(255, 255, 255, 0.3); /* camada branca leve */
+          background: rgba(255, 255, 255, 0.3);
           opacity: 0;
           transition: opacity 0.3s ease;
-          pointer-events: none; /* não impede clique */
+          pointer-events: none;
           z-index: 3;
         }
 
