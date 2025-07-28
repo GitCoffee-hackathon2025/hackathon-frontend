@@ -30,11 +30,11 @@ const router = createRouter({
       children: [
         {
           path: 'cadastro',
-          component:  () => import("@/views/Usuario/cadastro-login/CadastroRota.vue")
+          component:  () => import("@/views/Usuario/cadastro-login/RotaCadastro.vue")
         },
         {
-          path: 'login',
-          component:  () => import("@/views/Usuario/cadastro-login/LoginRota.vue")
+          path: 'entrar',
+          component:  () => import("@/views/Usuario/cadastro-login/RotaLogin.vue")
         }
       ],
     },
