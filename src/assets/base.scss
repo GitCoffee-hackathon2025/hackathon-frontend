@@ -1,0 +1,20 @@
+@import './cores.scss';
+
+:root {
+  color-scheme: light dark;
+  background-color: var(--cinza);
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html{
+  width: 100vw;
+  height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
