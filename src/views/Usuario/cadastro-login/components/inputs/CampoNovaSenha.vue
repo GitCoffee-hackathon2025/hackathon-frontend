@@ -1,5 +1,5 @@
 <template>
-  <div class="campo senha">
+  <div class="campo nova-senha">
     <img src="../../assets/iconesenha.svg" /> <input type="password" placeholder="Senha..." />
     <img class="vizualisar" src="../../assets/iconenaovizualisar.svg" alt="" />
   </div>

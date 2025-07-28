@@ -1,6 +1,6 @@
 <template>
   <div class="campo">
-    <img src="./assets/iconeemail.sv" /> <input type="text" placeholder="Nome completo..." />
+    <img src="./assets/iconeficha.sv" /> <input type="text" placeholder="Nome completo..." />
   </div>
 </template>
 
