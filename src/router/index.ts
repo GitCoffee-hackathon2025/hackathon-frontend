@@ -27,7 +27,20 @@ const router = createRouter({
       path: '/usuario',
       component: Usuario,
       redirect: {},
-      children: [],
+      children: [
+        {
+          path: 'cadastro',
+          component: () => import('@/views/Usuario/cadastro-login/RotaCadastro.vue'),
+        },
+        {
+          path: 'entrar',
+          component: () => import('@/views/Usuario/cadastro-login/RotaLogin.vue'),
+        },
+        {
+          path: 'recuperar-conta',
+          component: () => import('@/views/Usuario/cadastro-login/RecuperarSenha.vue'),
+        },
+      ],
     },
     {
       path: '/sobre-o-site',
@@ -41,6 +54,5 @@ const router = createRouter({
     },
   ],
 })
-
 
 export default router
