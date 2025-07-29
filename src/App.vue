@@ -3,16 +3,13 @@ import BarraNav from '@/components/NavBarra.vue'
 </script>
 
 <template>
-  <header><BarraNav /></header>
+  <BarraNav/>
   <main>
     <router-view></router-view>
   </main>
 </template>
 
 <style scoped lang="scss">
-header {
-  width: auto;
-}
 main {
   width: 100%;
 }
