@@ -1,95 +1,122 @@
 <script setup lang="ts">
 import { ref } from 'vue'
-const isExpanse = ref<boolean>(false)
+const navExpandida = ref<boolean>(false)
 function openBar() {
-  isExpanse.value = !isExpanse.value
+  navExpandida.value = !navExpandida.value
 }
 </script>
 
 <template>
-  <nav @mouseover="openBar" @mouseout="openBar" :class="['container-nav', { isExpanse }]">
-    <ul class="icons">
-      <li>
-        <img src="../assets/iconeconfiguracao.svg" alt="" />
-        <p :class="{ visible: isExpanse }">Configurações</p>
-      </li>
-      <li>
-        <img src="../assets/iconeusuario.svg" alt="" />
-        <p :class="{ visible: isExpanse }">Usuário</p>
-      </li>
-      <li>
-        <img src="../assets/iconemapa.svg" alt="" />
-        <p :class="{ visible: isExpanse }">Mapa de denúncias</p>
-      </li>
-      <li class="icone-informacao">
-        <img src="../assets/iconeinformacao.svg" alt="" />
-        <p :class="{ visible: isExpanse }">Sobre o site</p>
-      </li>
-    </ul>
-  </nav>
+  <header>
+    <nav @mouseover="openBar" @mouseout="openBar" :class="[{ navExpandida: navExpandida }]">
+      <ul>
+        <li>
+          <router-link to="/configuracoes">
+            <img src="../assets/iconeconfiguracao.svg" alt="" />
+            <p :class="{ linkVisivel: navExpandida }">Configurações</p></router-link
+          >
+        </li>
+        <li>
+          <router-link to="/usuario">
+            <img src="../assets/iconeusuario.svg" alt="" />
+            <p :class="{ linkVisivel: navExpandida }">Usuário</p></router-link
+          >
+        </li>
+        <li>
+          <router-link to="/mapa-de-crime">
+            <img src="../assets/iconemapa.svg" alt="" />
+            <p :class="{ linkVisivel: navExpandida }">Mapa de denúncias</p></router-link
+          >
+        </li>
+        <li class="icone-informacao">
+          <router-link to="/sobre-o-site">
+            <img src="../assets/iconeinformacao.svg" alt="" />
+            <p :class="{ linkVisivel: navExpandida }">Sobre o site</p></router-link
+          >
+        </li>
+      </ul>
+    </nav>
+  </header>
 </template>
 
 <style scoped lang="scss">
-.container-nav {
-  position: fixed;
-  top: 0;
-  left: 0;
-  background-color: var(--preto);
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  height: 100vh;
-  width: 4.6rem;
-  transition: width 0.3s ease;
-  overflow: hidden;
-
-  &.isExpanse {
-    width: 16rem;
-  }
-
-  .icons {
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  padding-left: 1.2rem;
-  width: 100%;
-  height: 100%;
-  gap: 3rem;
-  padding-top: 2rem;
-  padding-bottom: 2rem;
-
-  li {
+header {
+  nav {
+    position: fixed;
+    top: 2.5vh;
+    left: 2.5vh;
+    height: 95vh;
+    width: 5.4rem;
+    border-radius: 1.25rem;
+    background: rgba(29, 30, 28, 0.54);
+    box-shadow: 0 0 20px 0 rgba(255, 255, 255, 0.25);
     display: flex;
+    flex-direction: column;
     align-items: center;
-    gap: 1rem;
-    color: white;
-    position: relative;
-    width: 100%;
+    transition: width 0.3s ease;
+    overflow: hidden;
 
-    img {
-      width: 2rem;
-      color: white;
-      cursor: pointer;
+    &.navExpandida {
+      width: 16rem;
     }
 
-    p {
-      color: white;
-      opacity: 0;
-      transform: translateX(1vw);
-      transition: opacity 0.3s ease, transform 0.3s ease;
-      white-space: nowrap;
+    ul {
+      box-sizing: border-box;
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-start;
+      align-items: flex-start;
+      padding-left: calc(
+        2.7rem - 1.125rem
+      ); // Cálculo do tamanho da nav e da metade do tamanho da imagem de cada link
+      width: 100%;
+      height: 100%;
+      padding-top: 2rem;
+      padding-bottom: 2rem;
+      gap: 3rem;
 
-      &.visible {
-        opacity: 1;
-        transform: translateX(1vw);
+      li {
+        a {
+          text-decoration: none;
+          display: flex;
+          align-items: center;
+          color: var(--branco);
+          position: relative;
+          gap: 1.3rem;
+
+          img {
+            width: 2.25rem;
+            cursor: pointer;
+          }
+
+          p {
+            font-size: var(--texto-medio);
+          }
+
+          h1 {
+            font-size: var(--texto-grande);
+          }
+
+          p,
+          h1 {
+            opacity: 0;
+            transition:
+              opacity 0.3s ease,
+              transform 0.3s ease;
+            white-space: nowrap;
+
+            &.linkVisivel {
+              opacity: 1;
+            }
+          }
+        }
+
+        &.icone-informacao {
+          margin-top: auto; //Empurra pra baixo
+          margin-bottom: 0;
+        }
       }
     }
-
-    &.icone-informacao {
-      margin-top: auto;
-    }
   }
-}
-
 }
 </style>
