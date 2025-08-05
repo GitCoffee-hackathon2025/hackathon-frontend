@@ -153,6 +153,7 @@ header {
     z-index: 2;
     border-radius: 8px;
     overflow: hidden;
+    z-index: 100000000000000;
 
     ul {
       overflow: hidden;
