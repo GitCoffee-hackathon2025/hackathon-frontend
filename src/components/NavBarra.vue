@@ -55,6 +55,7 @@ header {
     align-items: center;
     transition: width 0.3s ease;
     overflow: hidden;
+    z-index: 100000000000000;
 
     &.navExpandida {
       width: 16rem;

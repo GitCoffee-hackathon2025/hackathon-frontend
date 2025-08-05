@@ -1,12 +1,15 @@
 <script setup lang="ts">
 import BarraNav from '@/components/NavBarra.vue'
+import PaginaMapadeDenuncia from './views/MapadeDenuncias/PaginaMapadeDenuncia.vue';
 </script>
 
 <template>
-  <BarraNav/>
-  <main>
-    <router-view></router-view>
-  </main>
+  <div>
+    <BarraNav/>
+    <main>
+      <PaginaMapadeDenuncia/>
+    </main>
+  </div>
 </template>
 
 <style scoped lang="scss">
