@@ -40,13 +40,13 @@ onMounted(() => {
        style: {
           color: '#f2f2f2',        
           weight: 1,
-          opacity: 0.15,
+          opacity: 0.1,
           fillOpacity: 0.02,
           fillColor: '#5c8ef2'       
         },
 
         onEachFeature: (feature, layer) => {
-          layer.bindPopup(feature.properties?.nome || 'Sem nome')
+          layer.bindPopup(feature.properties?.nome_bairr || 'Sem nome')
         }
       }).addTo(map!)
     })
