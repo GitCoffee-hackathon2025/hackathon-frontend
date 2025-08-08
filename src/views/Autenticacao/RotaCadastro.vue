@@ -23,7 +23,8 @@ import CampoDigitos from './components/inputs/CampoDigitos.vue'
           Avançar
         </button>
       </div>
-      <!-- Onde as mensagens de erro aparecem ->  <p></p>-->
+      <!-- Onde as mensagens de erro aparecem -->
+      <p class="aviso">Digite seu email</p>
     </div>
   </form>
 </template>
@@ -32,31 +33,35 @@ import CampoDigitos from './components/inputs/CampoDigitos.vue'
 @import url('./assets/logincadastro.scss');
 
 .datanascimento {
-  grid-column: 2 / 10;
-  grid-row: 3 / 4;
+  grid-column: 1 / 31;
+  grid-row: 7 / 9;
 }
 .email {
-  grid-column: 2 / 10;
-  grid-row: 3 / 7;
+  grid-column: 1 / 31;
+  grid-row: 11 / 13;
 }
 
 .telefone {
-  grid-column: 2 / 10;
-  grid-row: 5 / 8;
+  grid-column: 1 / 31;
+  grid-row: 8 / 10;
 }
 
 p {
   margin: 0.3rem;
   color: var(--cinza);
   font-size: var(--texto-medio);
-  grid-column: 2 / 10;
-  grid-row: 5 / 6;
+  grid-column: 1 / 31;
+  grid-row: 10 / 11;
   justify-self: center;
-  align-self: end;
+  align-self: center;
 }
 
 .otp-container {
-  grid-column: 2 / 10;
-  grid-row: 3 / 7;
+  grid-column: 1 / 31;
+  grid-row: 16 / 17;
+}
+
+.aviso {
+  grid-row: 14 / 15;
 }
 </style>

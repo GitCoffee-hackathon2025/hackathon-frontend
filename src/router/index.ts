@@ -26,21 +26,20 @@ const router = createRouter({
     {
       path: '/usuario',
       component: Usuario,
-      redirect: '/usuario/pagina-inicial',
-      children: [
-        {
-          path: 'cadastro',
-          component: () => import('@/views/Usuario/cadastro-login/RotaCadastro.vue'),
-        },
-        {
-          path: 'entrar',
-          component: () => import('@/views/Usuario/cadastro-login/RotaLogin.vue'),
-        },
-        {
-          path: 'recuperar-conta',
-          component: () => import('@/views/Usuario/cadastro-login/RecuperarSenha.vue'),
-        },
-      ],
+      redirect: {},
+      children: [],
+    },
+    {
+      path: '/cadastro',
+      component: () => import('@/views/Autenticacao/RotaCadastro.vue'),
+    },
+    {
+      path: '/entrar',
+      component: () => import('@/views/Autenticacao/RotaLogin.vue'),
+    },
+    {
+      path: '/recuperar-conta',
+      component: () => import('@/views/Autenticacao/RecuperarSenha.vue'),
     },
     {
       path: '/sobre-o-site',

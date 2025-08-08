@@ -8,6 +8,8 @@
   --texto-medio: 1.2rem;
   --texto-grande: 1.5rem;
   --texto-extragrande: calc(var(--texto-grande) * 1.2);
+
+  --texto-pequeno: 1rem;
 }
 
 * {
@@ -17,8 +19,6 @@
 }
 
 html {
-  width: 100vw;
-  height: 100vh;
   display: flex;
   justify-content: center;
   align-items: center;
