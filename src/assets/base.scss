@@ -3,11 +3,11 @@
 :root {
   color-scheme: light dark;
   background-color: var(--cinza);
+  font-size: 16px;
+  font-family: inter, sans-serif;
 
-  --texto-pequeno: 1.1rem;
-  --texto-medio: 1.3rem;
-  --texto-grande: 2.1rem;
-  --texto-extragrande: 3.4rem;
+  --texto-medio: 14px;
+  --texto-grande: 22px;
 }
 
 * {
