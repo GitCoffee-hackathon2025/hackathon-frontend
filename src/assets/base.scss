@@ -1,13 +1,13 @@
 @import './cores.scss';
 
 :root {
-  color-scheme: light dark;
   background-color: var(--cinza);
-  font-size: 16px;
-  font-family: inter, sans-serif;
+  font-size: 12px;
+  font-family: Arial, Helvetica, sans-serif;
 
-  --texto-medio: 14px;
-  --texto-grande: 22px;
+  --texto-medio: 1.2rem;
+  --texto-grande: 1.5rem;
+  --texto-extragrande: calc(var(--texto-grande) * 1.2);
 }
 
 * {
