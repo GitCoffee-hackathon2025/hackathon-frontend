@@ -1,27 +1,27 @@
 <script setup lang="ts">
 import CampoSenha from './components/inputs/CampoSenha.vue'
 import CampoEmail from './components/inputs/CampoEmail.vue'
+import LinkForm from './components/LinkForm.vue'
+import TextoAviso from './components/TextoAviso.vue'
+import ParteCima from './components/ParteCima.vue'
 </script>
 
 <template>
   <form>
-    <div class="parte-escura">
-      <img class="montanha" src="./assets/mountain.svg" alt="" />
-      <img class="ponto" src="./assets/point.svg" alt="" />
-    </div>
-    <div class="parte-branca">
+    <ParteCima :rota="'/mapa-de-denuncias'" :ativo="true" />
+    <div class="parte-baixa">
       <h2>Entre com sua conta</h2>
-      <CampoEmail />
-      <CampoSenha />
-      <router-link to="/usuario/recuperar-conta" class="esquecisenha"
-        >Esqueceu a senha?</router-link
-      >
+      <CampoEmail class="entrar" />
+      <CampoSenha class="entrar" />
+      <TextoAviso :posicao="'entrar'" :erro="false" :texto="'Entre'" />
       <label class="lembre checkbox-wrapper">
         <input type="checkbox" />
         <span class="checkmark"></span>
         <span class="texto">Lembre de mim</span>
       </label>
       <div class="acoes-form"><button>Entrar</button></div>
+      <LinkForm :rota="'/recuperar-conta'" :texto="'Esqueceu a senha?'" />
+      <LinkForm :rota="'/cadastro'" :texto="'Não tem uma conta?'" />
     </div>
   </form>
 </template>
@@ -29,25 +29,15 @@ import CampoEmail from './components/inputs/CampoEmail.vue'
 <style scoped lang="scss">
 @import url('./assets/logincadastro.scss');
 
-.esquecisenha {
-  grid-row: 6 / 7;
-  grid-column: 2 / 5;
-  justify-self: center;
-  align-self: end;
-
-  color: var(--cinza);
-  text-decoration: underline;
-  font-size: var(--texto-pequeno);
-}
-
 .lembre {
+  width: var(--largura-componentes);
   font-size: var(--texto-pequeno);
-  grid-column: 7 / 10;
-  grid-row: 6 / 7;
+  grid-column: 1 / 31;
+  grid-row: 17 / 19;
   justify-self: center;
-  align-self: end;
+  align-self: left;
   display: flex;
-  justify-content: center;
+  justify-content: left;
   align-items: center;
   user-select: none;
   color: var(--cinza);
@@ -63,9 +53,10 @@ import CampoEmail from './components/inputs/CampoEmail.vue'
   }
 
   .checkmark {
-    width: 1.6rem;
-    height: 1.6rem;
+    width: 1.2rem;
+    height: 1.2rem;
     border: 2px solid var(--cinza);
+    border-radius: 3px;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -93,7 +84,7 @@ import CampoEmail from './components/inputs/CampoEmail.vue'
   }
 
   input[type='checkbox']:checked + .checkmark::after {
-    transform: rotate(45deg) scale(1) translateY(-1px) translateX(-1px);
+    transform: rotate(45deg) scale(0.7) translateY(-1px) translateX(-1px);
     opacity: 1;
   }
 
@@ -101,15 +92,5 @@ import CampoEmail from './components/inputs/CampoEmail.vue'
     font-size: var(--texto-pequeno);
     color: var(--cinza);
   }
-}
-
-.email {
-  grid-column: 2 / 10;
-  grid-row: 3 / 5;
-}
-
-.senha {
-  grid-column: 2 / 10;
-  grid-row: 5 / 6;
 }
 </style>
