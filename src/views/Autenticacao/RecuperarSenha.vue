@@ -1,52 +1,22 @@
 <script setup lang="ts">
-import { onMounted, onUnmounted, ref } from 'vue'
-import { useRouter } from 'vue-router'
-const router = useRouter()
 import CampoEmail from './components/inputs/CampoEmail.vue'
 import CampoTelefone from './components/inputs/CampoTelefone.vue'
-import CampoDigitos from './components/inputs/CampoDigitos.vue'
-import CampoSenha from './components/inputs/CampoSenha.vue'
-import CampoNovaSenha from './components/inputs/CampoNovaSenha.vue'
-const animar = ref(false)
-
-onMounted(() => {
-  setTimeout(() => {
-    animar.value = true
-  }, 50)
-})
-
-onUnmounted(() => {
-  setTimeout(() => {
-    animar.value = false
-  }, 50)
-})
-
-function mudarRota() {
-  animar.value = false
-  setTimeout(() => {
-    router.push('/usuario/entrar')
-  }, 300)
-}
+import ParteCima from './components/ParteCima.vue'
 </script>
 <template>
-  <form :class="{ formSobe: animar }">
-    <div class="parte-escura">
-      <img class="montanha" src="./assets/mountain.svg" alt="" />
-      <img class="ponto" src="./assets/point.svg" alt="" />
-    </div>
-    <div class="parte-branca">
+  <form>
+    <ParteCima :rota="'/mapa-de-denuncias'" :ativo="true"/>
+    <div class="parte-baixa">
       <h2>Recupere sua conta</h2>
-      <h3>Digite seu telefone ou email</h3>
-      <CampoEmail />
-      <p>ou</p>
-      <CampoTelefone />
+      <CampoTelefone class="recuperar-senha" />
+      <p class="recuperar-senha">ou</p>
+      <CampoEmail class="recuperar-senha" />
       <!-- Campo aparecerá quando usuário avança na recuperação
       <CampoDigitos />
       <CampoSenha />
       <CampoNovaSenha/> -->
       <div class="acoes-form">
-        <button type="button" @click="mudarRota">Cancelar</button
-        ><button type="button">Avançar</button>
+        <router-link to="/entrar">Cancelar</router-link><button type="button">Avançar</button>
       </div>
     </div>
   </form>
