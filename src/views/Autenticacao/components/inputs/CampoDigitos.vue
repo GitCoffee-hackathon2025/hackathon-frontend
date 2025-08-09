@@ -61,6 +61,8 @@ watch(otp, () => {
 
 <style scoped lang="scss">
 .otp-container {
+  grid-column: 1 / 31;
+  grid-row: 1 / 31;
   display: flex;
   gap: 2.1rem;
   justify-content: center;

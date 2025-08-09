@@ -2,16 +2,18 @@
   justify-self: center;
   align-self: center;
   display: flex;
-  width: 300px;
-  height: 45px;
+  width: var(--largura-componentes);
+  height: var(--altura-componentes);
   align-items: center;
   justify-content: baseline;
   position: relative;
 
-  img {
+  svg {
     position: absolute;
     left: 1.3rem;
-    width: 1.5rem;
+    width: var(--tamanho-icones);
+    height: var(--tamanho-icones);
+    fill: var(--cinza);
 
     &.vizualisar {
       left: auto;
@@ -22,7 +24,7 @@
   input {
     width: 100%;
     height: 100%;
-    border-radius: 0.8rem;
+    border-radius: 8px;
     background: var(--cinza-claro);
     border: none;
     outline: none;
@@ -30,6 +32,7 @@
     padding-left: 4rem;
     padding-right: 3.4rem;
     font-size: var(--texto-pequeno);
+
 
     &::placeholder {
       color: var(--cinza);
