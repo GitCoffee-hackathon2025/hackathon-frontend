@@ -68,13 +68,14 @@ const diasNoMes = computed(() => {
 
 <style scoped lang="scss">
 .datanascimento {
+  grid-column: 1 / 31;
+  grid-row: 6 / 10;
   justify-self: center;
   align-self: center;
-  width: 300px;
-  height: 45px;
+  width: var(--largura-componentes);
+  height: var(--altura-componentes);
   display: flex;
   justify-content: space-between;
-  
 
   select {
     width: 30%;
