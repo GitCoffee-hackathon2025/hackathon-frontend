@@ -10,23 +10,23 @@ const router = createRouter({
   routes: [
     {
       path: '/',
-      redirect: '/mapa-de-crime',
+      redirect: '/mapa-de-denuncias',
     },
     {
-      path: '/mapa-de-crime',
+      path: '/mapa-de-denuncias',
       component: MapadeDenuncia,
       children: [],
     },
     {
       path: '/configuracoes',
       component: Configuracoes,
-      redirect: {},
+      redirect: '/configuracoes/pagina-inicial',
       children: [],
     },
     {
       path: '/usuario',
       component: Usuario,
-      redirect: {},
+      redirect: '/usuario/pagina-inicial',
       children: [
         {
           path: 'cadastro',
@@ -45,7 +45,7 @@ const router = createRouter({
     {
       path: '/sobre-o-site',
       component: SobreSite,
-      redirect: {},
+      redirect: '/sobre-o-site/pagina-inicial',
       children: [],
     },
     {
