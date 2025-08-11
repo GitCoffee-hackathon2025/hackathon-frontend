@@ -46,7 +46,8 @@ onMounted(() => {
         },
 
         onEachFeature: (feature, layer) => {
-          layer.bindPopup(feature.properties?.nome_bairr || 'Sem nome')
+            console.log(feature.properties)
+            layer.bindPopup(String(feature.properties?.id_bairro ?? "sem id"))
         }
       }).addTo(map!)
     })
