@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import BarraNav from '@/components/NavBarra.vue'
+import DadosBairros from './components/DadosBairros.vue';
 import PaginaMapadeDenuncia from './views/MapadeDenuncias/PaginaMapadeDenuncia.vue';
 </script>
 
@@ -7,6 +8,7 @@ import PaginaMapadeDenuncia from './views/MapadeDenuncias/PaginaMapadeDenuncia.v
   <div>
     <BarraNav/>
     <main>
+      <DadosBairros />
       <PaginaMapadeDenuncia/>
     </main>
   </div>

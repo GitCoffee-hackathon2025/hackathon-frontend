@@ -1,15 +1,20 @@
 <template>
   <div class="map-container">
     <div id="map"></div>
+    <DadosBairro />
   </div>
 </template>
 
 <script setup lang="ts">
+import { useBairroStore } from '../../store/Bairro'
 import { onMounted } from 'vue'
+import DadosBairro from '../../components/DadosBairros.vue'
 import L from 'leaflet'
 import 'leaflet/dist/leaflet.css'
 
 let map: L.Map | null = null
+
+const bairroStore = useBairroStore()
 
 const bounds: L.LatLngBoundsExpression = [
   [-26.400, -49.000],
@@ -46,8 +51,9 @@ onMounted(() => {
         },
 
         onEachFeature: (feature, layer) => {
-            console.log(feature.properties)
-            layer.bindPopup(String(feature.properties?.id_bairro ?? "sem id"))
+          layer.on('click', () => {
+            bairroStore.selectBairro(String(feature.properties?.id_bairro ?? 'sem id'))
+          })
         }
       }).addTo(map!)
     })
