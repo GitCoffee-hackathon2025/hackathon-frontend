@@ -1,5 +1,3 @@
 <template>
-  <main>
-oi
-  </main>
+  <div></div>
 </template>

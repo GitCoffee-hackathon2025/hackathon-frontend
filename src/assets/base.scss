@@ -1,0 +1,25 @@
+@import './cores.scss';
+
+:root {
+  background-color: var(--cinza);
+  font-size: 12px;
+  font-family: Arial, Helvetica, sans-serif;
+
+  --texto-medio: 1.2rem;
+  --texto-grande: 1.5rem;
+  --texto-extragrande: calc(var(--texto-grande) * 1.2);
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+html {
+  width: 100vw;
+  height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
