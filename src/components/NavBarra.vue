@@ -146,7 +146,7 @@ header {
     width: 90vw;
     max-width: 400px;
     background: var(--cinza);
-    box-shadow: 0 0 20px 0 rgba(255, 255, 255, 0.25);
+    box-shadow: 0 0 7px 0 rgba(255, 255, 255, 0.25);
     display: flex;
     align-items: center;
     justify-content: center;

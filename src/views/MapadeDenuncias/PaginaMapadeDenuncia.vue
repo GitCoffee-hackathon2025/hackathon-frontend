@@ -7,7 +7,7 @@
 
 <script setup lang="ts">
 import { useBairroStore } from '../../store/Bairro'
-import { onMounted } from 'vue'
+import { onMounted, nextTick } from 'vue'
 import DadosBairro from '../../components/DadosBairros.vue'
 import L from 'leaflet'
 import 'leaflet/dist/leaflet.css'
@@ -47,12 +47,33 @@ onMounted(() => {
           weight: 1,
           opacity: 0.1,
           fillOpacity: 0.02,
-          fillColor: '#5c8ef2'       
+          fillColor: '#5c8ef2'  
+               
         },
 
         onEachFeature: (feature, layer) => {
-          layer.on('click', () => {
-            bairroStore.selectBairro(String(feature.properties?.id_bairro ?? 'sem id'))
+
+          layer.on('mouseover', function() {
+            this.setStyle({
+              fillOpacity: 0.05, 
+              weight: 1,          
+              opacity: 0.5      
+            });
+          })
+
+             layer.on('mouseout', function() {
+              this.setStyle({
+                fillOpacity: 0.02,
+                weight: 1,
+                color: '#f2f2f2',
+                opacity: 0.1
+              });
+            });
+
+          layer.on('click', async () => {
+              await nextTick()
+              bairroStore.selectBairro(feature.properties || {})
+
           })
         }
       }).addTo(map!)
