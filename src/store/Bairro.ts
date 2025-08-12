@@ -2,15 +2,15 @@ import { defineStore } from 'pinia'
 import { ref } from 'vue'
 
 export const useBairroStore = defineStore('bairro', () => {
-  const selectedId = ref<string | null>(null)
+  const selectedData = ref<Record<string, any> | null>(null)
 
-  function selectBairro(id: string) {
-    selectedId.value = id
+  function selectBairro(data: Record<string, any>) {
+    selectedData.value = data
   }
 
   function clearBairro() {
-    selectedId.value = null
+    selectedData.value = null
   }
 
-  return { selectedId, selectBairro, clearBairro }
+  return { selectedData, selectBairro, clearBairro }
 })
