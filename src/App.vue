@@ -2,6 +2,7 @@
 import BarraNav from '@/components/NavBarra.vue'
 import DadosBairros from './components/DadosBairros.vue';
 import PaginaMapadeDenuncia from './views/MapadeDenuncias/PaginaMapadeDenuncia.vue';
+import BarraPesquisa from './components/BarraPesquisa.vue';
 </script>
 
 <template>
@@ -10,6 +11,7 @@ import PaginaMapadeDenuncia from './views/MapadeDenuncias/PaginaMapadeDenuncia.v
     <main>
       <DadosBairros />
       <PaginaMapadeDenuncia/>
+      <BarraPesquisa />
     </main>
   </div>
 </template>
