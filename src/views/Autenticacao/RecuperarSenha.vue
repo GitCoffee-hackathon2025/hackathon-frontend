@@ -6,8 +6,8 @@ import ParteCima from './components/ParteCima.vue'
 <template>
   <form>
     <ParteCima :rota="'/mapa-de-denuncias'" :ativo="true"/>
-    <div class="parte-baixa">
-      <h2>Recupere sua conta</h2>
+    <div class="entradas">
+      <h1>Recupere sua conta</h1>
       <CampoTelefone class="recuperar-senha" />
       <p class="recuperar-senha">ou</p>
       <CampoEmail class="recuperar-senha" />
@@ -25,14 +25,6 @@ import ParteCima from './components/ParteCima.vue'
 <style scoped lang="scss">
 @import url('./assets/logincadastro.scss');
 
-h3 {
-  grid-column: 2 / 10;
-  grid-row: 3 / 6;
-  text-align: center;
-  color: var(--cinza);
-  font-size: var(--texto-medio);
-}
-
 .email {
   grid-column: 2 / 10;
   grid-row: 3 / 7;
@@ -46,7 +38,7 @@ h3 {
 p {
   margin: 0.3rem;
   color: var(--cinza);
-  font-size: var(--texto-medio);
+font-size: var(--texto-m2);
   grid-column: 2 / 10;
   grid-row: 5 / 6;
   justify-self: center;

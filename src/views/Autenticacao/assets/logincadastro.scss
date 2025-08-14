@@ -1,29 +1,24 @@
-:root {
-  --largura-componentes: clamp(10px, calc(180px + 30vw), 400px);
-  --altura-componentes: clamp(10px, calc(30px + 3vh), 60px);
-  --tamanho-icones: 1.5rem;
-}
-
 form {
   width: 100vw;
   height: 100vh;
   display: grid;
   grid-template-columns: repeat(30, 1fr);
-  grid-template-rows: repeat(30, 1fr);
+  grid-template-rows: repeat(30, clamp(15px, 20%, 25px));
+  background-color: var(--branco);
 
-  .parte-baixa {
-    min-height: 545px;
+  div.entradas {
+    min-height: 600px;
     background-color: var(--branco);
     z-index: 2;
-    border-top-left-radius: clamp(10px, 20vw, 200px);
+    border-top-left-radius: clamp(10px, 20vw, 120px);
     grid-column: 1 / 31;
     grid-row: 8 / 31;
     display: grid;
     grid-template-columns: repeat(30, 1fr);
     grid-template-rows: repeat(30, 1fr);
 
-    h2 {
-      font-size: var(--texto-grande);
+    h1 {
+      font-size: var(--texto-gg);
       color: var(--cinza);
       justify-self: center;
       align-self: center;
@@ -34,15 +29,15 @@ form {
     }
 
     p {
+      font-size: var(--texto-m2);
       color: var(--cinza);
-      font-size: var(--texto-medio);
       grid-column: 1 / 31;
       grid-row: 13 / 15;
       justify-self: center;
       align-self: center;
 
-      &.recuperar-senha{
-         grid-row: 12 / 14;
+      &.recuperar-senha {
+        grid-row: 12 / 14;
       }
     }
 
@@ -57,7 +52,9 @@ form {
       justify-content: space-evenly;
       gap: 15px;
 
-      button, a {
+      button,
+      a {
+        font-size: var(--texto-m2);
         text-decoration: none;
         display: flex;
         align-items: center;
@@ -69,6 +66,69 @@ form {
         background-color: var(--cinza);
         color: var(--branco);
         border: none;
+      }
+    }
+  }
+}
+
+@media (min-width: 576px) {
+  form {
+    div.entradas {
+      h1 {
+        font-size: var(--texto-xxg);
+      }
+
+      p {
+        font-size: var(--texto-g1);
+        &.recuperar-senha {
+        }
+      }
+
+      .acoes-form {
+        button,
+        a {
+          font-size: var(--texto-g1);
+        }
+      }
+    }
+  }
+}
+
+@media (min-width: 768px) {
+  form {
+    div.entradas {
+      h1 {
+      }
+
+      p {
+        &.recuperar-senha {
+        }
+      }
+
+      .acoes-form {
+        button,
+        a {
+        }
+      }
+    }
+  }
+}
+
+@media (min-width: 992px) {
+  form {
+    .parte-baixa {
+      h2 {
+      }
+
+      p {
+        &.recuperar-senha {
+        }
+      }
+
+      .acoes-form {
+        button,
+        a {
+        }
       }
     }
   }

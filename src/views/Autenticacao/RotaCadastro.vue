@@ -10,8 +10,8 @@ import ParteCima from './components/ParteCima.vue'
 <template>
   <form>
     <ParteCima :rota="'/mapa-de-denuncias'" :ativo="true"/>
-    <div class="parte-baixa">
-      <h2>Crie sua conta</h2>
+    <div class="entradas">
+      <h1>Crie sua conta</h1>
       <CampoDataNascimento />
       <CampoEmail class="cadastro" />
       <!-- Campo aparecerá quando usuário avança no cadastro <CampoDigitos /> -->

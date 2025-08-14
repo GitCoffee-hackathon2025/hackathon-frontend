@@ -9,8 +9,8 @@ import ParteCima from './components/ParteCima.vue'
 <template>
   <form>
     <ParteCima :rota="'/mapa-de-denuncias'" :ativo="true" />
-    <div class="parte-baixa">
-      <h2>Entre com sua conta</h2>
+    <div class="entradas">
+      <h1>Entre com sua conta</h1>
       <CampoEmail class="entrar" />
       <CampoSenha class="entrar" />
       <TextoAviso :posicao="'entrar'" :erro="false" :texto="'Entre'" />
@@ -31,7 +31,7 @@ import ParteCima from './components/ParteCima.vue'
 
 .lembre {
   width: var(--largura-componentes);
-  font-size: var(--texto-pequeno);
+  font-size: var(--texto-m2);
   grid-column: 1 / 31;
   grid-row: 17 / 19;
   justify-self: center;
@@ -89,8 +89,42 @@ import ParteCima from './components/ParteCima.vue'
   }
 
   .texto {
-    font-size: var(--texto-pequeno);
+    font-size: var(--texto-m2);
     color: var(--cinza);
   }
+}
+
+
+@media (min-width: 576px) {
+.lembre {
+
+  input {
+
+  }
+
+  input[type='checkbox'] {
+
+  }
+
+  .checkmark {
+
+  }
+
+  .checkmark::after {
+
+  }
+
+  input[type='checkbox']:checked + .checkmark {
+
+  }
+
+  input[type='checkbox']:checked + .checkmark::after {
+
+  }
+
+  .texto {
+font-size: var(--texto-g2);
+  }
+}
 }
 </style>
