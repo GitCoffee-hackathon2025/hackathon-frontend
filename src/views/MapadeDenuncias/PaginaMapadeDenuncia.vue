@@ -42,18 +42,16 @@ onMounted(() => {
     .then(res => res.json())
     .then(data => {
       L.geoJSON(data, {
-       style: {
+        style: {
           color: '#f2f2f2',        
           weight: 1,
           opacity: 0.1,
           fillOpacity: 0.02,
           fillColor: '#5c8ef2'  
-               
         },
-
         onEachFeature: (feature, layer) => {
-
           layer.on('mouseover', function() {
+            //muda o estilo apos o cara passar o mouse pro cima
             this.setStyle({
               fillOpacity: 0.05, 
               weight: 1,          
@@ -61,26 +59,34 @@ onMounted(() => {
             });
           })
 
-             layer.on('mouseout', function() {
-              this.setStyle({
-                fillOpacity: 0.02,
-                weight: 1,
-                color: '#f2f2f2',
-                opacity: 0.1
-              });
+          layer.on('mouseout', function() {
+            //volta ao estilo padrao apos tirar o mouse
+            this.setStyle({
+              fillOpacity: 0.02,
+              weight: 1,
+              color: '#f2f2f2',
+              opacity: 0.1
             });
+          });
 
-          layer.on('click', async () => {
-              await nextTick()
-              bairroStore.selectBairro(feature.properties || {})
 
+          layer.on('click', async (e) => {
+            // Dar um zoom brisado no bairro clicado
+            map?.flyToBounds(e.target.getBounds(), {
+              padding: [50, 50],
+              maxZoom: 17,
+              duration: 0.4, 
+              easeLinearity: 0.25 
+          });
+            
+            await nextTick()
+            bairroStore.selectBairro(feature.properties || {})
           })
         }
       }).addTo(map!)
     })
     .catch(err => console.error('Erro ao carregar GeoJSON:', err))
 })
-
 </script>
 
 <style scoped lang="scss">
@@ -103,7 +109,6 @@ onMounted(() => {
   .leaflet-control-zoom a {
     font-size: 1.5rem;
     padding: 0.75rem;
-    
   }
 }
 
