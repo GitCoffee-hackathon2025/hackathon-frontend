@@ -41,11 +41,6 @@
 }
 
 @media (min-width: 576px) {
-  :root {
-    --largura-componentes: clamp(320px, 80%, 540px);
-    --altura-componentes: 50px;
-  }
-
   .campo {
     justify-self: center;
     align-self: center;
@@ -90,19 +85,3 @@
 }
 
 /* Breakpoint ≥ 768px */
-@media (min-width: 768px) {
-  :root {
-    --largura-componentes: clamp(360px, 70%, 720px);
-    --altura-componentes: 52px;
-    --tamanho-icones: 1.6rem; // 25.6px
-  }
-}
-
-/* Breakpoint ≥ 992px */
-@media (min-width: 992px) {
-  :root {
-    --largura-componentes: clamp(400px, 60%, 960px);
-    --altura-componentes: 56px;
-    --tamanho-icones: 1.75rem; // 28px
-  }
-}

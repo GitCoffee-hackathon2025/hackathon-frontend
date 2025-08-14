@@ -34,7 +34,7 @@ const props = defineProps({
 
 <style lang="scss" scoped>
 div {
-  min-height: 550px;
+  min-height: 400px;
   background-color: var(--cinza);
   grid-column: 1 / 31;
   grid-row: 1 / 31;
