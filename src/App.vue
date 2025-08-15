@@ -3,7 +3,6 @@ import BarraNav from '@/components/NavBarra.vue'
 </script>
 
 <template>
-  <BarraNav/>
   <main>
     <router-view></router-view>
   </main>

@@ -1,0 +1,110 @@
+form {
+  width: 100vw;
+  height: 100vh;
+  display: grid;
+  grid-template-columns: repeat(30, 1fr);
+  grid-template-rows: repeat(30, clamp(15px, 20%, 28px));
+  background-color: var(--branco);
+  overflow-x: hidden;
+
+  div.entradas {
+    min-height: 580px;
+    background-color: var(--branco);
+    z-index: 2;
+    border-top-left-radius: clamp(10px, 20vw, 120px);
+    grid-column: 1 / 31;
+    grid-row: 6 / 31;
+    display: grid;
+    grid-template-columns: repeat(30, 1fr);
+    grid-template-rows: repeat(30, 1fr);
+
+    h1 {
+      width: var(--largura-componentes);
+      font-size: var(--texto-xxg);
+      color: var(--cinza);
+      justify-self: center;
+      align-self: center;
+      text-align: center;
+      grid-column: 1 / 31;
+      grid-row: 4 / 6;
+    }
+
+    p {
+      font-size: var(--texto-m);
+      color: var(--cinza);
+      grid-column: 1 / 31;
+      grid-row: 14 / 16;
+      margin-bottom: 2vh;
+      justify-self: center;
+      align-self: center;
+
+      &.recuperar-senha {
+        grid-row: 12 / 14;
+      }
+    }
+
+    .acoes-form {
+      justify-self: center;
+      align-self: center;
+      width: var(--largura-componentes);
+      grid-column: 1 / 31;
+      grid-row: 21 / 23;
+      display: flex;
+      align-items: center;
+      justify-content: space-evenly;
+      gap: 15px;
+
+      button,
+      a {
+        font-size: var(--texto-m);
+        text-decoration: none;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        text-align: center;
+        border-radius: 8px;
+        width: var(--largura-componentes);
+        height: var(--altura-componentes);
+        background-color: var(--cinza);
+        color: var(--branco);
+        border: none;
+      }
+    }
+  }
+}
+
+@media (min-width: 576px) {
+  form {
+    grid-template-rows: repeat(30, clamp(15px, 20%, 35px));
+  }
+}
+
+@media (min-width: 992px) {
+  form {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    div.entradas {
+
+      z-index: 0;
+      min-height: 0;
+         width: 50vw;
+         max-height: 720px;
+         height: 100vh;
+         border-radius: 0;
+    }
+  }
+}
+
+
+@media (min-width: 1440px) {
+  form {
+grid-template-rows: repeat(30, clamp(15px, 20%, 50px));
+    div.entradas {
+         width: 50vw;
+         max-height: 900px;
+         height: 100vh;
+         border-radius: 0;
+    }
+  }
+}
