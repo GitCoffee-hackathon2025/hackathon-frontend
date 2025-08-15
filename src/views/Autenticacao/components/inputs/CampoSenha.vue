@@ -12,7 +12,7 @@
     <!-- Ícone de visualização -->
     <svg
       class="vizualisar"
-      v-show="mostrarSenha"
+      v-show="!mostrarSenha"
       @click="toggleSenha"
       xmlns="http://www.w3.org/2000/svg"
       width="16"
@@ -30,7 +30,7 @@
     <svg
       class="vizualisar"
       style="transform: translateY(1.5px)"
-      v-show="!mostrarSenha"
+      v-show="mostrarSenha"
       @click="toggleSenha"
       xmlns="http://www.w3.org/2000/svg"
       width="16"

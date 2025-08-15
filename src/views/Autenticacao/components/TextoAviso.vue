@@ -10,10 +10,10 @@ const props = defineProps({
     type: Boolean,
     required: true,
   },
-  posicao:{
+  posicao: {
     type: String,
     required: false,
-  }
+  },
 })
 </script>
 <template>
@@ -23,18 +23,27 @@ const props = defineProps({
 <style scoped lang="scss">
 p.aviso {
   grid-column: 1 / 31;
-  grid-row: 17 / 19;
+  grid-row: 17 / 20;
   width: var(--largura-componentes);
-  font-size: var(--texto-medio);
+  font-size: var(--texto-m);
   text-align: left;
   justify-content: center;
   align-self: center;
+  margin: 0;
 
-  &.entrar{
-      grid-row: 15 / 17;
+  &.entrar {
+    grid-row: 16 / 20;
   }
   &.erro {
     color: var(--vermelho);
+  }
+}
+
+@media (min-width: 576px) {
+  p.aviso {
+    &.entrar {
+      grid-row: 17 / 19;
+    }
   }
 }
 </style>

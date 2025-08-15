@@ -16,15 +16,15 @@ div {
   grid-column: 1 / 31;
 
   &.cadastro {
-    grid-row: 14 / 18;
+    grid-row: 14 / 19;
   }
 
   &.entrar {
-    grid-row: 8 / 12;
+    grid-row: 9 / 13;
   }
 
   &.recuperar-senha {
-    grid-row: 13 / 17;
+    grid-row: 12 / 17;
   }
 }
 </style>

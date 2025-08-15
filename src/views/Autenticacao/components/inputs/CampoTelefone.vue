@@ -18,7 +18,7 @@ div {
   grid-column: 1 / 31;
 
   &.cadastro {
-    grid-row: 10 / 14;
+    grid-row: 11 / 15;
   }
 
   &.recuperar-senha {
