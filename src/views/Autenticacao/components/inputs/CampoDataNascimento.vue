@@ -68,30 +68,31 @@ const diasNoMes = computed(() => {
 
 <style scoped lang="scss">
 .datanascimento {
+  grid-column: 1 / 31;
+  grid-row: 8 / 12;
   justify-self: center;
   align-self: center;
-  width: 30rem;
-  height: 3.8rem;
+  width: var(--largura-componentes);
+  height: var(--altura-componentes);
   display: flex;
   justify-content: space-between;
-  gap: 0.8rem;
 
   select {
-    width: 100%;
+    width: 30%;
     height: 100%;
     border: none;
     border-radius: 0.6rem;
     background: var(--cinza-claro);
     color: var(--cinza);
     padding: 0 1rem;
-    font-size: var(--texto-pequeno);
+    font-size: var(--texto-m);
     appearance: none;
     -webkit-appearance: none;
     -moz-appearance: none;
     background-image: url('data:image/svg+xml;charset=UTF-8,<svg width="12" height="8" viewBox="0 0 12 8" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M1 1L6 6L11 1" stroke="%23999" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>');
     background-repeat: no-repeat;
     background-position: right 1rem center;
-    background-size: 1rem;
+    background-size: calc(var(--tamanho-icones) - 2.5vw);
 
     transition:
       border 0.2s ease,
