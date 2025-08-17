@@ -7,8 +7,7 @@ const searchNeighborhood = () => {}
 </script>
 
 <template>
-  <div class="map-container">
-    <div id="map"></div>
+
     <div class="search-container">
       <div class="search-bar">
         <input
@@ -36,8 +35,6 @@ const searchNeighborhood = () => {}
         </button>
       </div>
     </div>
-    <DadosBairro />
-  </div>
 </template>
 
 <style scoped lang="scss">

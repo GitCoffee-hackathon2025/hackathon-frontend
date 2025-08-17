@@ -2,13 +2,10 @@
 </script>
 
 <template>
-  <main>
     <router-view></router-view>
-  </main>
-
 </template>
 
-<style scoped lang="scss">
+<style lang="scss">
 main {
   width: 100%;
 }
