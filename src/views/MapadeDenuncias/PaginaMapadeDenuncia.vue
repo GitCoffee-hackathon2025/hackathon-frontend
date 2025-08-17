@@ -44,8 +44,8 @@ onMounted(() => {
         style: {
           color: '#f2f2f2',
           weight: 1,
-          opacity: 0.1,
-          fillOpacity: 0.02,
+          opacity: 0.3,
+          fillOpacity: 0.03,
           fillColor: '#5c8ef2',
         },
         onEachFeature: (feature, layer) => {
@@ -54,7 +54,7 @@ onMounted(() => {
             this.setStyle({
               fillOpacity: 0.05,
               weight: 1,
-              opacity: 0.5,
+              opacity: 1,
             })
           })
 

@@ -6,6 +6,7 @@
 </template>
 
 <style lang="scss">
+@import './assets/base.scss';
 main {
   width: 100%;
 }
