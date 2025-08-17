@@ -42,27 +42,37 @@ function estadoFiltro() {
       />
     </div>
     <div class="filtro">
-      <button type="button" class="botao-filtro" @click="estadoFiltro">
-        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16">
+      <button
+        type="button"
+        :class="['botao-filtro', { 'borda-quadrada': filtroAberto }]"
+        @click="estadoFiltro"
+      >
+        <svg
+          v-if="!filtroAberto"
+          xmlns="http://www.w3.org/2000/svg"
+          width="16"
+          height="16"
+          viewBox="0 0 16 16"
+        >
           <path
             d="M6 1a3 3 0 0 0-2.83 2H0v2h3.17a3.001 3.001 0 0 0 5.66 0H16V3H8.83A3 3 0 0 0 6 1M5 4a1 1 0 1 1 2 0a1 1 0 0 1-2 0m5 5a3 3 0 0 0-2.83 2H0v2h7.17a3.001 3.001 0 0 0 5.66 0H16v-2h-3.17A3 3 0 0 0 10 9m-1 3a1 1 0 1 1 2 0a1 1 0 0 1-2 0"
           />
         </svg>
+        <p v-else>X</p>
       </button>
       <div v-show="filtroAberto" class="filtro-opcoes">
         <label class="checkbox">
-          <input type="checkbox" />
+          <input type="radio" name="filtro" value="1" />
           <span class="checkmark"></span>
           Último dia
         </label>
-
-      <label class="checkbox">
-          <input type="checkbox" />
+        <label class="checkbox">
+          <input type="radio" name="filtro" value="2" />
           <span class="checkmark"></span>
           Última semana
         </label>
         <label class="checkbox">
-          <input type="checkbox" />
+          <input type="radio" name="filtro" value="3" />
           <span class="checkmark"></span>
           Último mês
         </label>
@@ -86,11 +96,12 @@ function estadoFiltro() {
   gap: 10px;
 
   .barra-pesquisa {
+    height: var(--altura-componentes);
     display: flex;
     justify-content: space-between;
     align-items: center;
     background: var(--branco);
-    border-radius: 25px;
+    border-radius: 100px;
     width: 80%;
 
     .entrada-pesquisa {
@@ -100,6 +111,7 @@ function estadoFiltro() {
       font-size: var(--texto-m);
       background: transparent;
       padding: 12px 15px 12px 6px;
+      box-sizing: border-box;
       color: var(--cinza);
       width: 100%;
 
@@ -131,13 +143,11 @@ function estadoFiltro() {
   }
 
   .filtro {
-    display: flex;
-    flex-direction: column;
-    align-items: flex-end;
-    justify-content: flex-start;
     position: relative;
 
     .botao-filtro {
+      z-index: 4;
+      position: relative;
       display: flex;
       align-items: center;
       justify-content: center;
@@ -147,80 +157,100 @@ function estadoFiltro() {
       height: var(--altura-componentes);
       cursor: pointer;
       border-radius: 50%;
-
       svg {
         width: var(--tamanho-icones);
         height: var(--tamanho-icones);
         fill: var(--cinza);
       }
+
+      p {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        text-align: center;
+        color: var(--cinza);
+        font-size: var(--texto-gg);
+      }
+    }
+    .borda-quadrada {
+      border-bottom-left-radius: 0;
+      border-bottom-right-radius: 0;
     }
 
     .filtro-opcoes {
-      padding: 15px;
+      position: absolute;
+      z-index: 3;
+      padding: calc(var(--altura-componentes) / 4) calc(var(--altura-componentes) / 4)
+        calc(var(--altura-componentes) / 4) calc(var(--altura-componentes) / 4);
       background-color: var(--branco);
       position: absolute;
-      top: calc(100% + 20px);
+      top:var(--altura-componentes);
       right: 0;
       display: flex;
       flex-direction: column;
       align-items: flex-start;
-      justify-content: center;
+      justify-content: flex-start;
       gap: 20px;
-      border-radius: 8px;
+      border-radius: 20px;
+      border-top-right-radius: 0px;
 
-      label {
-        color: var(--cinza);
+      .checkbox {
         font-size: var(--texto-m);
         display: flex;
         align-items: center;
         justify-content: flex-start;
         gap: 8px;
+        cursor: pointer;
+        color: var(--cinza);
+
+        .checkmark {
+          width: calc(var(--tamanho-icones) * 0.8);
+          height: calc(var(--tamanho-icones) * 0.8);
+          border: 2px solid var(--cinza);
+          border-radius: 50%;
+          display: inline-block;
+          position: relative;
+        }
 
         input {
+          display: none;
           border: none;
           border-radius: 50%;
           background: transparent;
+
+          &:checked + .checkmark::after {
+            content: '';
+            position: absolute;
+            left: 2px;
+            top: 2px;
+            width: calc(var(--tamanho-icones) * 0.65);
+            height: calc(var(--tamanho-icones) * 0.65);
+            border-radius: 50%;
+            background-color: var(--cinza);
+          }
         }
       }
     }
   }
 }
 
+@media (min-width: 992px) {
+  .container-pesquisa {
+    top: 3vh;
+    left: calc(30px + 70px + 5vw);
+    transform: none;
 
-/* Container */
-.checkbox {
-  display: flex;
-  align-items: center;
-  justify-content: flex-start;
-  gap: 8px;
-  cursor: pointer;
-  user-select: none;
+    .filtro {
+      .filtro-opcoes {
+        right: none;
+        left: 0;
+        width: calc(var(--largura-componentes) / 2);
+        border-top-right-radius: 20px;
+        border-top-left-radius: 0px;
+      }
+    }
+  }
 }
 
-/* Esconde o checkbox nativo */
-.checkbox input {
-  display: none;
-}
 
-/* Quadradinho customizado */
-.checkmark {
-  width: 18px;
-  height: 18px;
-  border: 2px solid var(--cinza);
-  border-radius: 50%;
-  display: inline-block;
-  position: relative;
-}
-
-/* Ícone do check */
-.checkbox input:checked + .checkmark::after {
-  content: '';
-  position: absolute;
-  left: 2px;
-  top: 2px;
-  width: 14px;
-  height: 14px;
-  border-radius: 50%;
-  background-color: var(--cinza);
-}
 </style>
