@@ -40,6 +40,7 @@ const router = createRouter({
     {
       path: '/recuperar-conta',
       component: () => import('@/views/Autenticacao/RecuperarSenha.vue'),
+
     },
     {
       path: '/sobre-o-site',
