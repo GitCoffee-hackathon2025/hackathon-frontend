@@ -1,24 +1,18 @@
-<template>
-  <div class="map-container">
-    <div id="map"></div>
-    <DadosBairro />
-  </div>
-</template>
-
 <script setup lang="ts">
-import { useBairroStore } from '../../store/Bairro'
+import { useBairroStore } from '@/store/Bairro'
 import { onMounted, nextTick } from 'vue'
-import DadosBairro from '../../components/DadosBairros.vue'
 import L from 'leaflet'
 import 'leaflet/dist/leaflet.css'
+import DadosBairro from '@/views/MapadeDenuncias/components/DadosBairros.vue';
+import NavBarra from '@/components/NavBarra.vue';
 
 let map: L.Map | null = null
 
 const bairroStore = useBairroStore()
 
 const bounds: L.LatLngBoundsExpression = [
-  [-26.400, -49.000],
-  [-26.100, -48.700]
+  [-26.4, -49.0],
+  [-26.1, -48.7],
 ]
 
 onMounted(() => {
@@ -27,67 +21,78 @@ onMounted(() => {
     maxBoundsViscosity: 1.0,
     minZoom: 12,
     maxZoom: 20,
-    zoomControl: false
+    zoomControl: false,
   }).setView([-26.3045, -48.8487], 12)
 
   L.control.zoom({ position: 'topright' }).addTo(map)
 
-  L.tileLayer('https://tile.jawg.io/jawg-dark/{z}/{x}/{y}{r}.png?access-token=HlsnsLtJMqieYXmvcLv4imuKCeL2kbOnsAhQZKOI7rH5lqBaXSdme8VeUr9gDuGe', {
-    attribution: '<a href="https://jawg.io" title="Tiles Courtesy of Jawg Maps" target="_blank">&copy; <b>Jawg</b>Maps</a> &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
-    minZoom: 0,
-    maxZoom: 22
-  }).addTo(map)
+  L.tileLayer(
+    'https://tile.jawg.io/jawg-dark/{z}/{x}/{y}{r}.png?access-token=HlsnsLtJMqieYXmvcLv4imuKCeL2kbOnsAhQZKOI7rH5lqBaXSdme8VeUr9gDuGe',
+    {
+      attribution:
+        '<a href="https://jawg.io" title="Tiles Courtesy of Jawg Maps" target="_blank">&copy; <b>Jawg</b>Maps</a> &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
+      minZoom: 0,
+      maxZoom: 22,
+    },
+  ).addTo(map)
 
   fetch('/geo/bairros.json')
-    .then(res => res.json())
-    .then(data => {
+    .then((res) => res.json())
+    .then((data) => {
       L.geoJSON(data, {
         style: {
-          color: '#f2f2f2',        
+          color: '#f2f2f2',
           weight: 1,
           opacity: 0.1,
           fillOpacity: 0.02,
-          fillColor: '#5c8ef2'  
+          fillColor: '#5c8ef2',
         },
         onEachFeature: (feature, layer) => {
-          layer.on('mouseover', function() {
+          layer.on('mouseover', function () {
             //muda o estilo apos o cara passar o mouse pro cima
             this.setStyle({
-              fillOpacity: 0.05, 
-              weight: 1,          
-              opacity: 0.5      
-            });
+              fillOpacity: 0.05,
+              weight: 1,
+              opacity: 0.5,
+            })
           })
 
-          layer.on('mouseout', function() {
+          layer.on('mouseout', function () {
             //volta ao estilo padrao apos tirar o mouse
             this.setStyle({
               fillOpacity: 0.02,
               weight: 1,
               color: '#f2f2f2',
-              opacity: 0.1
-            });
-          });
-
+              opacity: 0.1,
+            })
+          })
 
           layer.on('click', async (e) => {
             // Dar um zoom brisado no bairro clicado
             map?.flyToBounds(e.target.getBounds(), {
               padding: [50, 50],
               maxZoom: 17,
-              duration: 0.4, 
-              easeLinearity: 0.25 
-          });
-            
+              duration: 0.4,
+              easeLinearity: 0.25,
+            })
+
             await nextTick()
             bairroStore.selectBairro(feature.properties || {})
           })
-        }
+        },
       }).addTo(map!)
     })
-    .catch(err => console.error('Erro ao carregar GeoJSON:', err))
+    .catch((err) => console.error('Erro ao carregar GeoJSON:', err))
 })
 </script>
+
+<template>
+  <NavBarra/>
+  <div class="map-container">
+    <div id="map"></div>
+    <DadosBairro />
+  </div>
+</template>
 
 <style scoped lang="scss">
 .map-container {

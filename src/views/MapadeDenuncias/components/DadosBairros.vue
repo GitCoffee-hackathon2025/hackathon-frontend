@@ -1,3 +1,12 @@
+<script setup lang="ts">
+import { useBairroStore } from '@/store/Bairro'
+const bairroStore = useBairroStore()
+
+function fechar() {
+  bairroStore.clearBairro()
+}
+</script>
+
 <template>
   <div v-if="bairroStore.selectedData" class="detalhes-container">
     <div class="detalhes-content">
@@ -9,15 +18,6 @@
     </div>
   </div>
 </template>
-
-<script setup lang="ts">
-import { useBairroStore } from '../store/Bairro'
-const bairroStore = useBairroStore()
-
-function fechar() {
-  bairroStore.clearBairro()
-}
-</script>
 
 <style scoped lang="scss">
 .detalhes-container {
@@ -31,7 +31,7 @@ function fechar() {
   background: var(--cinza);
   border-radius: 8px;
   overflow: hidden;
-  box-shadow: 0 0 7px  rgba(255, 255, 255, 0.25);
+  box-shadow: 0 0 7px rgba(255, 255, 255, 0.25);
   z-index: 100000000000000;
   display: flex;
   flex-direction: column;
