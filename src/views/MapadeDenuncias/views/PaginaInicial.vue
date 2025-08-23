@@ -4,7 +4,6 @@ import { onMounted, nextTick } from 'vue'
 import L from 'leaflet'
 import 'leaflet/dist/leaflet.css'
 import DadosBairro from '@/views/MapadeDenuncias/components/DadosBairros.vue'
-import NavBarra from '@/components/NavBarra.vue'
 import BarraPesquisa from '@/views/MapadeDenuncias/components/BarraPesquisa.vue'
 
 let map: L.Map | null = null
@@ -88,7 +87,6 @@ onMounted(() => {
 </script>
 
 <template>
-  <NavBarra />
   <main>
     <BarraPesquisa />
     <div class="map-container">

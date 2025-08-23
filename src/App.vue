@@ -1,8 +1,10 @@
 <script setup lang="ts">
+import NavBarra from '@/components/NavBarra.vue'
 </script>
 
 <template>
-    <router-view></router-view>
+  <NavBarra />
+  <router-view></router-view>
 </template>
 
 <style lang="scss">
