@@ -142,18 +142,17 @@ header {
     bottom: 25px;
     left: 50%;
     transform: translateX(-50%);
-    height: 65px;
-    width: 90vw;
-    max-width: 400px;
+    height: var(--altura-componentes);
+    width: var(--largura-componentes);
     background: var(--cinza);
     box-shadow: 0 0 7px 0 rgba(255, 255, 255, 0.25);
     display: flex;
     align-items: center;
     justify-content: center;
-    z-index: 2;
     border-radius: 8px;
     overflow: hidden;
     z-index: 100000000000000;
+    font-size: var(--texto-p);
 
     ul {
       overflow: hidden;
@@ -162,7 +161,8 @@ header {
       align-items: center;
       width: 100%;
       height: 100%;
-      padding: 0 15px;
+      padding: 0 12px;
+      box-sizing: border-box;
 
       li {
         border-radius: 5px;
@@ -170,7 +170,7 @@ header {
         max-height: 24px;
         display: flex;
         align-items: center;
-        padding: 7px;
+        padding: 5px;
 
         &:focus-visible {
           outline: 2px solid var(--branco);
@@ -189,12 +189,11 @@ header {
           transition: gap 0.3s ease-in-out;
 
           svg {
-            width: 24px;
-            height: 24px;
+            width: var(--tamanho-icones);
+            height: var(--tamanho-icones);
           }
 
           p {
-            font-size: var(--texto-medio);
             white-space: nowrap;
           }
         }
@@ -215,7 +214,7 @@ header {
 
         &.rotaAtual {
           a {
-            gap: 10px;
+            gap: 8px;
             transition: gap 0.5s ease-in-out;
             svg {
               animation: mudaIconePreto 0.5s forwards ease-in-out;
@@ -349,47 +348,34 @@ header {
 }
 
 @media (min-width: 576px) {
-  header {
+   header {
     nav {
-      max-width: 500px;
-      height: 70px;
       ul {
-        padding: 0 20px;
         li {
-          padding: 12px;
-          a {
-            p {
-              font-size: var(--texto-grande);
-            }
-            svg {
-              width: 28px;
-              height: 28px;
-            }
-          }
-
+          padding: 10px;
           &.configuracoes {
-            max-width: 155px;
+            max-width: 165px;
           }
           &.usuario {
-            max-width: 100px;
+            max-width: 105px;
           }
           &.informacao {
-            max-width: 140px;
+            max-width: 145px;
           }
           &.mapa {
-            max-width: 125px;
+            max-width: 130px;
           }
           &.rotaAtual.configuracoes {
-            max-width: 155px;
+            max-width: 165px;
           }
           &.rotaAtual.usuario {
-            max-width: 100px;
+            max-width: 105px;
           }
           &.rotaAtual.mapa {
-            max-width: 125px;
+            max-width: 130px;
           }
           &.rotaAtual.informacao {
-            max-width: 140px;
+            max-width: 145px;
           }
         }
       }
@@ -398,51 +384,35 @@ header {
 }
 
 @media (min-width: 768px) {
-  header nav {
-    max-width: 620px;
-    height: 75px;
-    ul li {
-      max-width: 32x;
-      max-height: 32px;
-      padding: 10px 12px;
-      a {
-        p {
-          font-size: var(--texto-extragrande);
+  header {
+    nav {
+      ul {
+        li {
+          &.configuracoes {
+            max-width: 185px;
+          }
+          &.usuario {
+            max-width: 120px;
+          }
+          &.informacao {
+            max-width: 165px;
+          }
+          &.mapa {
+            max-width: 150px;
+          }
+          &.rotaAtual.configuracoes {
+            max-width: 185px;
+          }
+          &.rotaAtual.usuario {
+            max-width: 120px;
+          }
+          &.rotaAtual.mapa {
+            max-width: 150px;
+          }
+          &.rotaAtual.informacao {
+            max-width: 165px;
+          }
         }
-        svg {
-          width: 24px;
-          height: 24px;
-        }
-      }
-
-      &.rotaAtual {
-        a {
-          gap: 15px;
-        }
-      }
-      &.configuracoes {
-        max-width: 185px;
-      }
-      &.usuario {
-        max-width: 120px;
-      }
-      &.informacao {
-        max-width: 165px;
-      }
-      &.mapa {
-        max-width: 150px;
-      }
-      &.rotaAtual.configuracoes {
-        max-width: 185px;
-      }
-      &.rotaAtual.usuario {
-        max-width: 120px;
-      }
-      &.rotaAtual.mapa {
-        max-width: 150px;
-      }
-      &.rotaAtual.informacao {
-        max-width: 165px;
       }
     }
   }
@@ -477,7 +447,6 @@ header {
           max-height: 24px;
           a {
             p {
-              font-size: var(--texto-medio);
             }
             svg {
               width: 24px;
@@ -535,7 +504,6 @@ header {
               gap: 10px;
               transition: gap 0s;
               p {
-                font-size: var(--texto-medio);
                 color: var(--branco);
               }
             }
@@ -626,16 +594,6 @@ header {
   100% {
     opacity: 1;
     color: var(--cinza);
-  }
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .rotaAtual,
-  .rotaEscondida,
-  .navExpandida,
-  .navExpandida ul li a p {
-    animation: none !important;
-    transition: none !important;
   }
 }
 </style>

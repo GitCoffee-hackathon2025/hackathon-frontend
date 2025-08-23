@@ -31,14 +31,10 @@ const router = createRouter({
     {
       path: '/configuracoes',
       component: Configuracoes,
-      redirect: '/configuracoes/pagina-inicial',
-      children: [],
     },
     {
       path: '/usuario',
       component: Usuario,
-      redirect: {},
-      children: [],
     },
     {
       path: '/cadastro',
@@ -55,8 +51,6 @@ const router = createRouter({
     {
       path: '/sobre-o-site',
       component: SobreSite,
-      redirect: '/sobre-o-site/pagina-inicial',
-      children: [],
     },
     {
       path: '/:pathMatch(.*)*',
