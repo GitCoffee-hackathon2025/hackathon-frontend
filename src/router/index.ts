@@ -1,5 +1,6 @@
 import { createRouter, createWebHistory } from 'vue-router'
-import MapadeDenuncia from '@/views/MapadeDenuncias/PaginaMapadeDenuncia.vue'
+import MapadeDenuncia from '@/views/MapadeDenuncias/MapaDenuncias.vue'
+import MapaDenunciasInicial from '@/views/MapadeDenuncias/views/PaginaInicial.vue'
 import Configuracoes from '@/views/Configuracoes/PaginaConfiguracoes.vue'
 import Usuario from '@/views/Usuario/PaginaUsuario.vue'
 import SobreSite from '@/views/SobreSite/PaginaSobreSite.vue'
@@ -15,7 +16,17 @@ const router = createRouter({
     {
       path: '/mapa-de-denuncias',
       component: MapadeDenuncia,
-      children: [],
+
+      children: [
+        {
+          path: '',
+          component: MapaDenunciasInicial,
+        },
+        {
+          path: 'fazer-denuncia',
+          component: () => import('@/views/MapadeDenuncias/views/FormularioDenuncia.vue'),
+        },
+      ],
     },
     {
       path: '/configuracoes',
@@ -40,7 +51,6 @@ const router = createRouter({
     {
       path: '/recuperar-conta',
       component: () => import('@/views/Autenticacao/RecuperarSenha.vue'),
-
     },
     {
       path: '/sobre-o-site',
