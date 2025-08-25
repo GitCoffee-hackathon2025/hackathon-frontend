@@ -5,7 +5,7 @@ import verifyExp from '../verifyExp';
 
 interface RequestBody {
   header: {
-    rsa: { alg: string; length: number };
+    rsa: { alg: string; kid: `${number}v`; length: number };
     aes: { enc: string };
   };
   ek: ArrayBuffer;
@@ -15,9 +15,9 @@ interface RequestBody {
 
 class CryptoEngine {
   private aes!: ArrayBuffer;
-  private rsa!: { key: JsonWebKey; kid: number };
+  private rsa!: { key: JsonWebKey; kid: `${number}v` };
 
-  private static async importAES(aes: ArrayBuffer) {
+  private static async importAES(aes: ArrayBuffer): Promise<CryptoKey> {
     return await crypto.subtle.importKey(
       webcrypto.aes.format,
       aes,
@@ -27,7 +27,7 @@ class CryptoEngine {
     );
   }
 
-  private static async importRSA(rsa: JsonWebKey) {
+  private static async importRSA(rsa: JsonWebKey): Promise<CryptoKey> {
     return await crypto.subtle.importKey(
       webcrypto.jwa.format,
       rsa,
@@ -89,24 +89,29 @@ class CryptoEngine {
   ): Promise<
     | {
         status: false;
-        result: string;
+        result: unknown;
       }
     | {
         status: true;
         result: RequestBody;
       }
   > {
-    // validando parametros
-    if (!this._init) throw new Error('not started key');
-
-    if (typeof data !== 'object' && Object.keys(data).length === 0) throw new Error('invalid data');
-
     try {
+      // validando parametros
+      if (!this._init) throw new Error('not started key');
+
+      if (typeof data !== 'object' && Object.keys(data).length === 0)
+        throw new Error('invalid data');
+
       return {
         status: true,
         result: {
           header: {
-            rsa: { alg: webcrypto.jwa.alg.name, length: webcrypto.jwa.alg.length },
+            rsa: {
+              alg: webcrypto.jwa.alg.name,
+              kid: this.rsa.kid,
+              length: webcrypto.jwa.alg.length,
+            },
             aes: { enc: webcrypto.aes.enc },
           },
           ...(await CryptoEngine.encodeData(data, { aes: this.aes, rsa: this.rsa.key }, auth)),
@@ -115,7 +120,7 @@ class CryptoEngine {
     } catch (error) {
       return {
         status: false,
-        result: String(error),
+        result: error,
       };
     }
   }
