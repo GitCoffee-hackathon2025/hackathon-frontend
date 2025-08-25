@@ -48,12 +48,17 @@ class CryptoEngine {
     auth: boolean = false,
   ): Promise<{
     ct: ArrayBuffer;
+    iv: Uint8Array<ArrayBuffer>;
     ek: ArrayBuffer;
   }> {
+    // criando vetor de inicialização para ser usado na encriptação
+    const iv = crypto.getRandomValues(new Uint8Array(12));
+
     return {
       // criptografando a chave
-      ct: await crypto.subtle.encrypt(webcrypto.jwa.alg, await this.importRSA(rsa), aes),
-
+      ct: await crypto.subtle.encrypt({ ...webcrypto.jwa.alg, iv }, await this.importRSA(rsa), aes),
+      // enviando vetor de inicialização
+      iv,
       // criptografando o dado e vendo se precisa do id
       ek: await crypto.subtle.encrypt(
         webcrypto.aes.alg,
@@ -68,15 +73,16 @@ class CryptoEngine {
     };
   }
 }
+/* 
 
-/* const json = {
-  header: {
-    rsa: { alg: 'RSA-OAEP-256', length: 2048, iv: 'versão do rsa' },
-    aes: {
-      enc: 'A256GCM',
-    },
+{
+  "header": {
+    "rsa": { "alg": "RSA-OAEP-256", "length": 2048 },
+    "aes": { "enc": "A256GCM" }
   },
-  ek: '',
-  ct: '',
-  tag: '',
-}; */
+  "ek": "<RSA_encrypted_AES_key_base64url>",
+  "iv": "<AES_GCM_iv_base64url>",
+  "ct": "<AES_GCM_ciphertext_plus_tag_base64url>"
+}
+
+*/
