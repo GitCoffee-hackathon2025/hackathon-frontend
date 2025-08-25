@@ -6,6 +6,7 @@ const webcrypto = {
   },
   aes: {
     alg: { name: 'AES-GCM', length: 256 },
+    enc: 'A256GCM',
     format: 'raw',
     keyUsages: ['encrypt', 'decrypt'],
   },

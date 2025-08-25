@@ -3,6 +3,16 @@ import webcrypto from '@/config/aesConfig';
 import browserFingerprint from '../browserFingerprint';
 import verifyExp from '../verifyExp';
 
+interface RequestBody {
+  header: {
+    rsa: { alg: string; length: number };
+    aes: { enc: string };
+  };
+  ek: ArrayBuffer;
+  iv: Uint8Array<ArrayBuffer>;
+  ct: ArrayBuffer;
+}
+
 class CryptoEngine {
   private aes!: ArrayBuffer;
   private rsa!: { key: JsonWebKey; kid: number };
@@ -45,7 +55,7 @@ class CryptoEngine {
   private static async encodeData(
     data: Record<string, any>,
     { aes, rsa }: { aes: ArrayBuffer; rsa: JsonWebKey },
-    auth: boolean = false,
+    auth: boolean,
   ): Promise<{
     ct: ArrayBuffer;
     iv: Uint8Array<ArrayBuffer>;
@@ -71,6 +81,43 @@ class CryptoEngine {
         ),
       ),
     };
+  }
+
+  public async encode(
+    data: Record<string, any>,
+    auth: boolean = false,
+  ): Promise<
+    | {
+        status: false;
+        result: string;
+      }
+    | {
+        status: true;
+        result: RequestBody;
+      }
+  > {
+    // validando parametros
+    if (!this._init) throw new Error('not started key');
+
+    if (typeof data !== 'object' && Object.keys(data).length === 0) throw new Error('invalid data');
+
+    try {
+      return {
+        status: true,
+        result: {
+          header: {
+            rsa: { alg: webcrypto.jwa.alg.name, length: webcrypto.jwa.alg.length },
+            aes: { enc: webcrypto.aes.enc },
+          },
+          ...(await CryptoEngine.encodeData(data, { aes: this.aes, rsa: this.rsa.key }, auth)),
+        },
+      };
+    } catch (error) {
+      return {
+        status: false,
+        result: String(error),
+      };
+    }
   }
 }
 /* 
