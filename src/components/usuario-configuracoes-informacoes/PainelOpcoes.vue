@@ -1,6 +1,15 @@
 <script setup lang="ts">
 import type Opcao from '@/store/ClasseOpcoes'
-import { defineProps, computed, onBeforeUnmount, onMounted, ref } from 'vue'
+import {
+  defineProps,
+  computed,
+  onBeforeUnmount,
+  onMounted,
+  ref,
+  reactive,
+  watch,
+  nextTick,
+} from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 
 const roteador = useRouter()
@@ -35,9 +44,14 @@ function atualizarLargura() {
   //*Vamos ter que fazer isso para "configuracoes" e "informacoes"👆
 }
 //Atualizar os componentes quando a tela redimensionar durante o uso do site
-onMounted(() => window.addEventListener('resize', atualizarLargura))
+onMounted(() => {
+  window.addEventListener('resize', atualizarLargura)
+})
 onBeforeUnmount(() => window.removeEventListener('resize', atualizarLargura))
 
+if (larguraTela.value >= 992 && !infoRota.path.split('/')[2]) {
+  roteador.push('/usuario/conta')
+}
 //Scroll dentro do painel quando está em alguma página como "/usuario/conta"
 const scrollRef = ref<HTMLElement | null>(null) //Div que tem o scroll mais pro final do template
 const posicaoScroll = ref(0)
@@ -54,14 +68,87 @@ const atualizarScroll = () => {
     limiteBaixoAparece.value = !(posicaoScroll.value < 1) ? true : false //Se a distância para alcançar o máximo for menor que 1, o degradê desaparece
   }
 }
+
+//Lógica começa aqui
+type li = {
+  elemento: HTMLElement | null
+  rota: string
+}
+
+const refs = reactive<Record<string, li>>({})
+const tamanhoRotaAtual = ref<number | undefined>(0)
+const distanciaLeft = ref(0)
+const tamanhoGap = ref(0)
+async function calcularPosicao() {
+  // garante que o DOM tenha sido atualizado pelo Vue
+  await nextTick()
+
+  let quantidadeGaps = 0
+  let distancia = 0
+
+  // tenta ler o gap real do container (ul.opcoes)
+  const gapPx = 40 // fallback
+
+  for (const key in refs) {
+    const el = refs[key].elemento
+    if (!el) continue
+
+    if (rotaAtual.value === refs[key].rota) {
+      // define o tamanho do elemento atual
+      tamanhoRotaAtual.value = el.offsetWidth ?? 0
+      // para de somar aqui (só a esquerda da rota)
+      break
+    }
+    quantidadeGaps += 1
+    // soma os que estão à esquerda
+    distancia += el.offsetWidth
+  }
+
+  distanciaLeft.value = distancia
+
+  tamanhoGap.value = quantidadeGaps * gapPx
+}
+
+// roda quando a rota muda E imediatamente no mount
+watch(
+  rotaAtual,
+  async () => {
+    await nextTick()
+    calcularPosicao()
+  },
+  { immediate: true },
+)
+
+//Atualiza a classe do item quando a rota muda
+const classeDaRota = (nome: string) =>
+  rotaAtual.value === nome.split('/')[2] ? 'rotaAtualLi' : 'rotaEscondidaLi'
 </script>
 
 <template>
   <div class="painel">
     <!-- Caso for um disposotivo móvel e estiver na página principal de qualquer que seja a rota, as opções ficam ocultas-->
     <nav v-if="!rotaAtual || larguraTela >= 992">
+      <!--  -->
+      <div
+        class="rotaAtual"
+        :style="{
+          left: 'calc(' + (distanciaLeft + tamanhoGap) + 'px + var(--tamanho-icones) / 100 ) ',
+          width: 'calc(' + (tamanhoRotaAtual ?? 0) + 'px + var(--tamanho-icones) ) ',
+        }"
+      ></div>
       <ul class="opcoes">
-        <li v-for="(opcao, index) in props.opcoes" :key="index">
+        <li
+          v-for="(opcao, index) in props.opcoes"
+          :key="index"
+          :ref="
+            (el) =>
+              (refs[opcao.refKey] = {
+                elemento: el as HTMLElement | null,
+                rota: (opcao.link || '').split('/')[2] || '',
+              })
+          "
+          :class="classeDaRota(opcao.link)"
+        >
           <router-link :to="opcao.link">
             <svg
               xmlns="http://www.w3.org/2000/svg"
@@ -147,6 +234,7 @@ div.painel {
   nav {
     width: 100%;
     height: 100%;
+    position: relative;
 
     ul.opcoes {
       width: 100%;
@@ -281,18 +369,46 @@ div.painel {
     nav {
       height: clamp(40px, 10%, 70px);
 
+      div.rotaAtual {
+        position: absolute;
+        background-color: var(--branco);
+        z-index: 99;
+
+        height: 100%;
+        bottom: 0;
+
+        border-radius: 8px;
+
+        transition:
+          left 0.3s ease-in-out,
+          width 0.3s ease-in-out;
+      }
+
       ul.opcoes {
         flex-direction: row;
         overflow-y: hidden;
         overflow-x: scroll;
         border-bottom: 2px solid var(--branco);
         padding-bottom: 10px;
+        padding-left: calc(var(--tamanho-icones) / 2);
         gap: 40px;
 
         li {
+          z-index: 100;
           width: auto;
           a {
             gap: 5px;
+          }
+          &.rotaAtualLi {
+            a {
+              svg {
+                color: var(--cinza);
+              }
+
+              p {
+                color: var(--cinza);
+              }
+            }
           }
         }
       }
