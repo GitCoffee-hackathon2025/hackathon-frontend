@@ -1,7 +1,7 @@
 const webcrypto = {
   jwa: {
     format: 'jwk',
-    alg: { name: 'RSA-OAEP', hash: 'SHA-256', length: 2048 },
+    alg: { name: 'RSA-OAEP', hash: { name: 'SHA-256' }, length: 2048 },
     keyUsages: ['encrypt'],
   },
   aes: {
