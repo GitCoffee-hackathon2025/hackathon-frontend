@@ -11,6 +11,7 @@ interface RequestBody {
   ek: ArrayBuffer;
   iv: Uint8Array<ArrayBuffer>;
   ct: ArrayBuffer;
+  tag: ArrayBuffer;
 }
 
 class SecurityClient {
@@ -42,7 +43,7 @@ class SecurityClient {
 
   public async init(): Promise<boolean> {
     // verificando se já foi iniciado
-    if (this._init === true) return false;
+    if (this._init) return false;
     this._init = true;
 
     // gerando chave
@@ -61,9 +62,29 @@ class SecurityClient {
     ct: ArrayBuffer;
     iv: Uint8Array<ArrayBuffer>;
     ek: ArrayBuffer;
+    tag: ArrayBuffer;
   }> {
     // criando vetor de inicialização para ser usado na encriptação
     const iv = crypto.getRandomValues(new Uint8Array(12));
+
+    // ciphertext = result.slice(0, result.byteLength - 16);
+    // tag = result.slice(result.byteLength - 16);
+
+    const { ciphertext, tag } = await crypto.subtle
+      .encrypt(
+        { name: webcrypto.aes.alg.name, iv },
+        await this.importAES(aes),
+        new TextEncoder().encode(
+          JSON.stringify({
+            data,
+            browser: auth ? await browserFingerprint() : null,
+          }),
+        ),
+      )
+      .then((ek) => ({
+        ciphertext: ek.slice(0, ek.byteLength - 16),
+        tag: ek.slice(ek.byteLength - 16),
+      }));
 
     return {
       // criptografando a chave
@@ -76,16 +97,8 @@ class SecurityClient {
       // enviando vetor de inicialização
       iv,
       // criptografando o dado e vendo se precisa do id
-      ek: await crypto.subtle.encrypt(
-        { name: webcrypto.aes.alg.name, iv },
-        await this.importAES(aes),
-        new TextEncoder().encode(
-          JSON.stringify({
-            data,
-            browser: auth ? await browserFingerprint() : null,
-          }),
-        ),
-      ),
+      ek: ciphertext,
+      tag,
     };
   }
 
