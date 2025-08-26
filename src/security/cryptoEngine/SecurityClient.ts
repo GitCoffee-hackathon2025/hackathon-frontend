@@ -67,9 +67,6 @@ class SecurityClient {
     // criando vetor de inicialização para ser usado na encriptação
     const iv = crypto.getRandomValues(new Uint8Array(12));
 
-    // ciphertext = result.slice(0, result.byteLength - 16);
-    // tag = result.slice(result.byteLength - 16);
-
     const { ciphertext, tag } = await crypto.subtle
       .encrypt(
         { name: webcrypto.aes.alg.name, iv },
