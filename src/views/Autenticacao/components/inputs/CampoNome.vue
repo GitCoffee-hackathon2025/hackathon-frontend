@@ -1,13 +1,15 @@
-<script lang="ts">
-  import { ref, watch } from 'vue'
-  import { useDataUserStore } from '@/store/dataUserStore';
-  const dataUserStore = useDataUserStore();
-  const name = ref<string>("")
-  
-  watch(name, (newName) => {
-  dataUserStore.userEmail = newName
+<script setup lang="ts">
+import { computed } from 'vue'
+import { useDataUserStore } from '@/store/dataUserStore'
+
+const dataUserStore = useDataUserStore()
+
+const name = computed({
+  get: () => dataUserStore.userName,
+  set: (val: string) => dataUserStore.userName = val
 })
 </script>
+
 <template>
   <div class="campo">
     <svg xmlns="http://www.w3.org/2000/svg" width="25" height="20" viewBox="0 0 25 20" fill="none">

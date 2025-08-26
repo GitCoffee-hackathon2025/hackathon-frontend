@@ -1,5 +1,5 @@
 import { defineStore } from 'pinia'
-import { ref } from 'vue'
+import { ref, watch } from 'vue'
 
 // Interfaces para tipagem
 export interface UserData {
@@ -39,6 +39,13 @@ export const useDataUserStore = defineStore('DataUser', () => {
   const authToken = ref<string>('')
   const currentUser = ref<any>(null)
 
+    watch(userEmail, (newVal, oldVal) => {
+    console.log(`userEmail mudou de "${oldVal}" para "${newVal}"`)
+  })
+
+  watch(userPassword, (newVal, oldVal) => {
+    console.log(`userPassword mudou de "${oldVal}" para "${newVal}"`)
+  })
   // Função de registro
   const registerUser = async (): Promise<AuthResponse> => {
     try {
@@ -94,13 +101,13 @@ export const useDataUserStore = defineStore('DataUser', () => {
   // Função de login
   const loginUser = async (email: string, password: string): Promise<AuthResponse> => {
     try {
+      
       if (!email || !password) {
         return {
           success: false,
           message: 'Email e senha são obrigatórios'
         }
       }
-
       const loginData: LoginData = {
         userEmail: email,
         userPassword: password

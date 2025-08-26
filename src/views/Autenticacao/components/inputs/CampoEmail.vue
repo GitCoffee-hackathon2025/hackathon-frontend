@@ -1,14 +1,15 @@
-<script lang="ts">
-  import { ref, watch } from 'vue'
-  import { useDataUserStore } from '@/store/dataUserStore';
-  const dataUserStore = useDataUserStore();
-  const email = ref<string>("")
-  
+<script setup lang="ts">
+import { computed } from 'vue'
+import { useDataUserStore } from '@/store/dataUserStore'
 
-  watch(email, (newEmail) => {
-  dataUserStore.userEmail = newEmail
+const dataUserStore = useDataUserStore()
+
+const email = computed({
+  get: () => dataUserStore.userEmail,
+  set: (value: string) => { dataUserStore.userEmail = value }
 })
 </script>
+
 <template>
   <div class="campo">
     <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
@@ -21,7 +22,7 @@
 </template>
 
 <style scoped lang="scss">
-@import url('../../../../assets/inputs.scss');
+@import '../../../../assets/inputs.scss';
 
 div {
   grid-column: 1 / 31;

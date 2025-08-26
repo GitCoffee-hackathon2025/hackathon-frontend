@@ -1,16 +1,19 @@
-<script lang="ts">
-  import { ref, watch } from 'vue'
-  import { useDataUserStore } from '@/store/dataUserStore';
-  const dataUserStore = useDataUserStore();
-  const telefone = ref<string>("")
-  
-  watch(telefone, (newTelefone) => {
-  dataUserStore.userTelefone = newTelefone
+<script setup lang="ts">
+import { computed } from 'vue'
+import { useDataUserStore } from '@/store/dataUserStore'
+
+const dataUserStore = useDataUserStore()
+
+// Computed que lê/escreve direto na store
+const telefone = computed({
+  get: () => dataUserStore.userTelefone,
+  set: (val: string) => dataUserStore.userTelefone = val
 })
 </script>
+
 <template>
   <div class="campo">
-    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
+    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none">
       <path
         fill-rule="evenodd"
         clip-rule="evenodd"

@@ -4,93 +4,77 @@ import { useDataUserStore } from '@/store/dataUserStore'
 
 const dataUserStore = useDataUserStore()
 
-// Declaração única das variáveis (remover a duplicação)
-const diaNascimento = ref<string>('')
-const mesNascimento = ref<string>('')
-const anoNascimento = ref<string>('')
+// Estados locais
+const dia = ref('')
+const mes = ref('')
+const ano = ref('')
 
-// Watch para atualizar a data completa na store
-watch([diaNascimento, mesNascimento, anoNascimento], ([dia, mes, ano]) => {
-  if (dia && mes && ano) {
-    // Criar objeto Date (mês é 0-indexed, por isso mes - 1)
-    const dataCompleta = new Date(Number(ano), Number(mes) - 1, Number(dia))
-    
-    // Validar se a data é válida
-    if (!isNaN(dataCompleta.getTime())) {
-      dataUserStore.userDateBirth = dataCompleta
-    } else {
-      dataUserStore.userDateBirth = null
-    }
-  } else {
-    dataUserStore.userDateBirth = null
-  }
-})
-
+// Meses disponíveis
 const meses = [
   'Janeiro', 'Fevereiro', 'Março', 'Abril', 'Maio', 'Junho',
   'Julho', 'Agosto', 'Setembro', 'Outubro', 'Novembro', 'Dezembro'
 ]
 
+// Lista de anos (do atual até 1900)
 const anos = computed(() => {
-  const anoAtual = new Date().getFullYear()
-  const lista: number[] = []
-  for (let i = anoAtual; i >= 1900; i--) {
-    lista.push(i)
-  }
-  return lista
+  const atual = new Date().getFullYear()
+  return Array.from({ length: atual - 1899 }, (_, i) => (atual - i).toString())
 })
 
-// Cálculo correto de dias no mês
+// Dias do mês dinâmicos
 const diasNoMes = computed(() => {
-  if (!mesNascimento.value || !anoNascimento.value) {
-    return Array.from({ length: 31 }, (_, i) => i + 1)
+  if (!mes.value || !ano.value) return Array.from({ length: 31 }, (_, i) => i + 1)
+
+  const m = Number(mes.value)
+  const a = Number(ano.value)
+
+  if (m === 2) {
+    const bissexto = (a % 4 === 0 && a % 100 !== 0) || (a % 400 === 0)
+    return Array.from({ length: bissexto ? 29 : 28 }, (_, i) => i + 1)
   }
 
-  const mes = Number(mesNascimento.value)
-  const ano = Number(anoNascimento.value)
-  
-  // Fevereiro: verificar se é ano bissexto
-  if (mes === 2) {
-    const isBissexto = (ano % 4 === 0 && ano % 100 !== 0) || (ano % 400 === 0)
-    return Array.from({ length: isBissexto ? 29 : 28 }, (_, i) => i + 1)
-  }
-  
-  // Meses com 30 ou 31 dias
-  const dias = [31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31]
-  return Array.from({ length: dias[mes - 1] }, (_, i) => i + 1)
+  const diasMes = [31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31]
+  return Array.from({ length: diasMes[m - 1] }, (_, i) => i + 1)
 })
 
-// Resetar dia selecionado se for maior que os dias do mês
-watch([mesNascimento, anoNascimento], () => {
-  const diaAtual = Number(diaNascimento.value)
-  const diasDisponiveis = diasNoMes.value
-  
-  if (diaAtual && diaAtual > diasDisponiveis.length) {
-    diaNascimento.value = ''
+// Zerar dia inválido ao trocar mês/ano
+watch([mes, ano], () => {
+  if (dia.value && Number(dia.value) > diasNoMes.value.length) {
+    dia.value = ''
+  }
+})
+
+// Atualizar a store sempre que todos os campos forem válidos
+watch([dia, mes, ano], ([d, m, a]) => {
+  if (d && m && a) {
+    const data = new Date(Number(a), Number(m) - 1, Number(d))
+    dataUserStore.userDateBirth = isNaN(data.getTime()) ? null : data
+  } else {
+    dataUserStore.userDateBirth = null
   }
 })
 </script>
 
 <template>
   <div class="datanascimento">
-    <select v-model="diaNascimento">
+    <select v-model="dia">
       <option disabled value="">Dia</option>
-      <option v-for="dia in diasNoMes" :key="dia" :value="dia.toString()">
-        {{ dia.toString().padStart(2, '0') }}
+      <option v-for="d in diasNoMes" :key="d" :value="d.toString()">
+        {{ d.toString().padStart(2, '0') }}
       </option>
     </select>
 
-    <select v-model="mesNascimento">
+    <select v-model="mes">
       <option disabled value="">Mês</option>
-      <option v-for="(mes, index) in meses" :key="index" :value="(index + 1).toString()">
-        {{ mes }}
+      <option v-for="(nome, i) in meses" :key="i" :value="(i+1).toString()">
+        {{ nome }}
       </option>
     </select>
 
-    <select v-model="anoNascimento">
+    <select v-model="ano">
       <option disabled value="">Ano</option>
-      <option v-for="ano in anos" :key="ano" :value="ano.toString()">
-        {{ ano }}
+      <option v-for="a in anos" :key="a" :value="a">
+        {{ a }}
       </option>
     </select>
   </div>
@@ -123,10 +107,7 @@ watch([mesNascimento, anoNascimento], () => {
     background-repeat: no-repeat;
     background-position: right 1rem center;
     background-size: calc(var(--tamanho-icones) - 2.5vw);
-
-    transition:
-      border 0.2s ease,
-      box-shadow 0.2s ease;
+    transition: border 0.2s ease, box-shadow 0.2s ease;
 
     &:focus {
       outline: none;
