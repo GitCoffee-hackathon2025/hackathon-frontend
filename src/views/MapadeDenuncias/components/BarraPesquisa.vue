@@ -1,20 +1,73 @@
 <script setup lang="ts">
-import { ref } from 'vue'
+import { ref, onMounted } from 'vue';
+import { useBairroStore } from '../../../store/Bairro';
+import L from 'leaflet';
 
-const searchQuery = ref('')
+const Procura = ref('');
+const filtroAberto = ref(false);
+const bairros = ref<any[]>([]);
+const sugestoes = ref<any[]>([]);
+const bairroStore = useBairroStore();
 
-const procurarBairro = () => {}
-
-const filtroAberto = ref(false)
 function estadoFiltro() {
-  filtroAberto.value = !filtroAberto.value
+  filtroAberto.value = !filtroAberto.value;
 }
+
+onMounted(async () => {
+  try {
+    const response = await fetch('/geo/bairros.json');
+    const data = await response.json();
+    bairros.value = data.features || [];
+  } catch (err) {
+    console.error('Erro ao carregar bairros:', err);
+  }
+});
+
+const filtrarSugestoes = () => {
+  const termo = Procura.value.toLowerCase();
+  if (termo.length < 2) {
+    sugestoes.value = [];
+    return;
+  }
+  sugestoes.value = bairros.value
+    .filter(f => f.properties?.nome_bairr?.toLowerCase().includes(termo))
+    .slice(0, 5);
+};
+
+const searchNeighborhood = () => {
+  if (!Procura.value.trim()) return;
+
+  const found = bairros.value.find(f =>
+    f.properties?.nome_bairr?.toLowerCase().includes(Procura.value.toLowerCase())
+  );
+
+  if (found) {
+    bairroStore.selectBairro(found.properties);
+    sugestoes.value = [];
+    const bounds = L.geoJSON(found).getBounds();
+    bairroStore.mapInstance?.flyToBounds(bounds, {
+      padding: [50, 50],
+      maxZoom: 17,
+      duration: 0.4,
+      easeLinearity: 0.25
+    });
+    Procura.value = '';
+  } else {
+    bairroStore.clearBairro();
+    alert('Bairro não encontrado!');
+  }
+};
+
+const selecionarSugestao = (sug: any) => {
+  Procura.value = sug.properties.nome_bairr;
+  searchNeighborhood();
+};
 </script>
 
 <template>
   <div class="container-pesquisa">
     <div class="barra-pesquisa">
-      <button class="botao-pesquisa" @click="procurarBairro">
+      <button class="botao-pesquisa" @click="searchNeighborhood">
         <svg
           width="24"
           height="23"
@@ -37,10 +90,19 @@ function estadoFiltro() {
         type="text"
         placeholder="Pesquise seu bairro..."
         class="entrada-pesquisa"
-        v-model="searchQuery"
-        @keyup.enter="procurarBairro"
+        v-model="Procura"
+        @input="filtrarSugestoes"
+        @keyup.enter="searchNeighborhood"
       />
     </div>
+
+    
+    <ul v-if="sugestoes.length" class="suggestions-list">
+      <li v-for="(sug, index) in sugestoes" :key="index" @click="selecionarSugestao(sug)">
+        {{ sug.properties.nome_bairr }}
+      </li>
+    </ul>
+
     <div class="filtro">
       <button
         type="button"
@@ -80,6 +142,7 @@ function estadoFiltro() {
     </div>
   </div>
 </template>
+
 
 <style scoped lang="scss">
 .container-pesquisa {
@@ -252,5 +315,33 @@ function estadoFiltro() {
   }
 }
 
+  .suggestions-list {
+    position: absolute;
+    top: calc(var(--altura-componentes) + 10px);
+    left: 50%;
+    transform: translateX(-50%);
+    width: 60%;
+    background: var(--branco);
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    list-style: none;
+    padding: 4px 0;
+    margin: 0;
+    max-height: 220px;
+    overflow-y: auto;
+    z-index: 1000001;
+
+    li {
+      padding: 12px 16px;
+      cursor: pointer;
+      font-size: var(--texto-m);
+      color: var(--cinza);
+      transition: background 0.2s ease;
+
+      &:hover {
+        background: rgba(0, 0, 0, 0.05);
+      }
+    }
+  }
 
 </style>

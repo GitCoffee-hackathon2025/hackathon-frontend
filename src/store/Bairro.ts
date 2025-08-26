@@ -1,10 +1,16 @@
 import { defineStore } from 'pinia'
 import { ref } from 'vue'
+import type L from 'leaflet'
 
 export const useBairroStore = defineStore('bairro', () => {
-  const selectedData = ref<Record<string, unknown> | null>(null)
+  const selectedData = ref<Record<string, any> | null>(null)
+  const mapInstance = ref<L.Map | null>(null) 
 
-  function selectBairro(data: Record<string, unknown>) {
+  function setMap(map: L.Map) {
+    mapInstance.value = map
+  }
+
+  function selectBairro(data: Record<string, any>) {
     selectedData.value = data
   }
 
@@ -12,5 +18,5 @@ export const useBairroStore = defineStore('bairro', () => {
     selectedData.value = null
   }
 
-  return { selectedData, selectBairro, clearBairro }
+  return { selectedData, mapInstance, setMap, selectBairro, clearBairro }
 })
