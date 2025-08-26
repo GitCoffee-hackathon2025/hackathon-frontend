@@ -13,7 +13,7 @@ interface RequestBody {
   ct: ArrayBuffer;
 }
 
-class CryptoEngine {
+class SecurityClient {
   private aes!: ArrayBuffer;
   private rsa!: { key: JsonWebKey; kid: `${number}v` };
 
@@ -28,10 +28,11 @@ class CryptoEngine {
   }
 
   private static async importRSA(rsa: JsonWebKey): Promise<CryptoKey> {
+    const { name, hash } = webcrypto.jwa.alg;
     return await crypto.subtle.importKey(
       webcrypto.jwa.format,
       rsa,
-      webcrypto.jwa.alg.name,
+      { name, hash },
       true,
       webcrypto.jwa.keyUsages,
     );
@@ -114,7 +115,7 @@ class CryptoEngine {
             },
             aes: { enc: webcrypto.aes.enc },
           },
-          ...(await CryptoEngine.encodeData(data, { aes: this.aes, rsa: this.rsa.key }, auth)),
+          ...(await SecurityClient.encodeData(data, { aes: this.aes, rsa: this.rsa.key }, auth)),
         },
       };
     } catch (error) {
