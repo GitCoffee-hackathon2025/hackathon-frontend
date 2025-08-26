@@ -5,7 +5,7 @@ import verifyExp from '../verifyExp';
 
 interface RequestBody {
   header: {
-    rsa: { alg: string; kid: `${number}v`; length: number };
+    rsa: { alg: string; kid: `${number}v` };
     aes: { enc: string };
   };
   ek: ArrayBuffer;
@@ -67,12 +67,17 @@ class SecurityClient {
 
     return {
       // criptografando a chave
-      ct: await crypto.subtle.encrypt({ ...webcrypto.jwa.alg, iv }, await this.importRSA(rsa), aes),
+      ct: await crypto.subtle.encrypt(
+        // criando uma função autoexecutavel que retorna o name e hash
+        (({ name, hash }) => ({ name, hash }))(webcrypto.jwa.alg),
+        await this.importRSA(rsa),
+        aes,
+      ),
       // enviando vetor de inicialização
       iv,
       // criptografando o dado e vendo se precisa do id
       ek: await crypto.subtle.encrypt(
-        webcrypto.aes.alg,
+        { name: webcrypto.aes.alg.name, iv },
         await this.importAES(aes),
         new TextEncoder().encode(
           JSON.stringify({
@@ -111,7 +116,6 @@ class SecurityClient {
             rsa: {
               alg: webcrypto.jwa.alg.name,
               kid: this.rsa.kid,
-              length: webcrypto.jwa.alg.length,
             },
             aes: { enc: webcrypto.aes.enc },
           },
