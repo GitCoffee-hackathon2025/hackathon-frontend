@@ -1,5 +1,6 @@
 import { createRouter, createWebHistory } from 'vue-router'
-import MapadeDenuncia from '@/views/MapadeDenuncias/PaginaMapadeDenuncia.vue'
+import MapadeDenuncia from '@/views/MapadeDenuncias/MapaDenuncias.vue'
+import MapaDenunciasInicial from '@/views/MapadeDenuncias/views/PaginaInicial.vue'
 import Configuracoes from '@/views/Configuracoes/PaginaConfiguracoes.vue'
 import Usuario from '@/views/Usuario/PaginaUsuario.vue'
 import SobreSite from '@/views/SobreSite/PaginaSobreSite.vue'
@@ -15,19 +16,25 @@ const router = createRouter({
     {
       path: '/mapa-de-denuncias',
       component: MapadeDenuncia,
-      children: [],
+
+      children: [
+        {
+          path: '',
+          component: MapaDenunciasInicial,
+        },
+        {
+          path: 'fazer-denuncia',
+          component: () => import('@/views/MapadeDenuncias/views/FormularioDenuncia.vue'),
+        },
+      ],
     },
     {
       path: '/configuracoes',
       component: Configuracoes,
-      redirect: '/configuracoes/pagina-inicial',
-      children: [],
     },
     {
       path: '/usuario',
       component: Usuario,
-      redirect: {},
-      children: [],
     },
     {
       path: '/cadastro',
@@ -44,8 +51,6 @@ const router = createRouter({
     {
       path: '/sobre-o-site',
       component: SobreSite,
-      redirect: '/sobre-o-site/pagina-inicial',
-      children: [],
     },
     {
       path: '/:pathMatch(.*)*',
