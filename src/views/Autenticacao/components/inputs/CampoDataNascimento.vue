@@ -1,65 +1,95 @@
-<!-- Feito  rápidamente com chatgpt, necessário análise -->
-
 <script setup lang="ts">
-import { ref, computed } from 'vue'
+import { ref, computed, watch } from 'vue'
+import { useDataUserStore } from '@/store/dataUserStore'
 
-const diaNascimento = ref<string | number>('')
-const mesNascimento = ref<string | number>('')
-const anoNascimento = ref<string | number>('')
+const dataUserStore = useDataUserStore()
+
+// Declaração única das variáveis (remover a duplicação)
+const diaNascimento = ref<string>('')
+const mesNascimento = ref<string>('')
+const anoNascimento = ref<string>('')
+
+// Watch para atualizar a data completa na store
+watch([diaNascimento, mesNascimento, anoNascimento], ([dia, mes, ano]) => {
+  if (dia && mes && ano) {
+    // Criar objeto Date (mês é 0-indexed, por isso mes - 1)
+    const dataCompleta = new Date(Number(ano), Number(mes) - 1, Number(dia))
+    
+    // Validar se a data é válida
+    if (!isNaN(dataCompleta.getTime())) {
+      dataUserStore.userDateBirth = dataCompleta
+    } else {
+      dataUserStore.userDateBirth = null
+    }
+  } else {
+    dataUserStore.userDateBirth = null
+  }
+})
 
 const meses = [
-  'Janeiro',
-  'Fevereiro',
-  'Março',
-  'Abril',
-  'Maio',
-  'Junho',
-  'Julho',
-  'Agosto',
-  'Setembro',
-  'Outubro',
-  'Novembro',
-  'Dezembro',
+  'Janeiro', 'Fevereiro', 'Março', 'Abril', 'Maio', 'Junho',
+  'Julho', 'Agosto', 'Setembro', 'Outubro', 'Novembro', 'Dezembro'
 ]
 
 const anos = computed(() => {
   const anoAtual = new Date().getFullYear()
-  const lista = []
+  const lista: number[] = []
   for (let i = anoAtual; i >= 1900; i--) {
     lista.push(i)
   }
   return lista
 })
 
+// Cálculo correto de dias no mês
 const diasNoMes = computed(() => {
-  if (!diasNoMes.value || !anoNascimento.value) return Array.from({ length: 31 }, (_, i) => i + 1)
+  if (!mesNascimento.value || !anoNascimento.value) {
+    return Array.from({ length: 31 }, (_, i) => i + 1)
+  }
 
-  const days = new Date(Number(anoNascimento.value), Number(mesNascimento.value), 0).getDate()
-  return Array.from({ length: days }, (_, i) => i + 1)
+  const mes = Number(mesNascimento.value)
+  const ano = Number(anoNascimento.value)
+  
+  // Fevereiro: verificar se é ano bissexto
+  if (mes === 2) {
+    const isBissexto = (ano % 4 === 0 && ano % 100 !== 0) || (ano % 400 === 0)
+    return Array.from({ length: isBissexto ? 29 : 28 }, (_, i) => i + 1)
+  }
+  
+  // Meses com 30 ou 31 dias
+  const dias = [31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31]
+  return Array.from({ length: dias[mes - 1] }, (_, i) => i + 1)
 })
 
-// fazer com que fevereiro tenha apenas 28 dias
+// Resetar dia selecionado se for maior que os dias do mês
+watch([mesNascimento, anoNascimento], () => {
+  const diaAtual = Number(diaNascimento.value)
+  const diasDisponiveis = diasNoMes.value
+  
+  if (diaAtual && diaAtual > diasDisponiveis.length) {
+    diaNascimento.value = ''
+  }
+})
 </script>
 
 <template>
   <div class="datanascimento">
     <select v-model="diaNascimento">
       <option disabled value="">Dia</option>
-      <option v-for="dia in diasNoMes" :key="dia" :value="dia">
-        {{ dia }}
+      <option v-for="dia in diasNoMes" :key="dia" :value="dia.toString()">
+        {{ dia.toString().padStart(2, '0') }}
       </option>
     </select>
 
     <select v-model="mesNascimento">
       <option disabled value="">Mês</option>
-      <option v-for="(mes, index) in meses" :key="index" :value="index + 1">
+      <option v-for="(mes, index) in meses" :key="index" :value="(index + 1).toString()">
         {{ mes }}
       </option>
     </select>
 
     <select v-model="anoNascimento">
       <option disabled value="">Ano</option>
-      <option v-for="ano in anos" :key="ano" :value="ano">
+      <option v-for="ano in anos" :key="ano" :value="ano.toString()">
         {{ ano }}
       </option>
     </select>

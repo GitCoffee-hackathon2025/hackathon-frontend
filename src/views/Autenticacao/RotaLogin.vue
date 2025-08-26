@@ -4,6 +4,8 @@ import CampoEmail from './components/inputs/CampoEmail.vue'
 import LinkForm from './components/LinkForm.vue'
 import TextoAviso from './components/TextoAviso.vue'
 import ParteCima from './components/ParteCima.vue'
+import { useDataUserStore } from '@/store/dataUserStore'
+const DataUserStore = useDataUserStore()
 </script>
 
 <template>
@@ -21,7 +23,7 @@ import ParteCima from './components/ParteCima.vue'
           <span class="texto">Lembre de mim</span>
         </label>
       </div>
-      <div class="acoes-form"><button>Entrar</button></div>
+      <div class="acoes-form"><button @click="DataUserStore.loginUser">Entrar</button></div>
       <LinkForm :rota="'/recuperar-conta'" :texto="'Esqueceu a senha?'" />
       <LinkForm :rota="'/cadastro'" :texto="'Não tem uma conta?'" />
     </div>

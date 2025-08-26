@@ -1,3 +1,23 @@
+<script lang="ts">
+  import { ref, watch } from 'vue'
+  import { useDataUserStore } from '@/store/dataUserStore';
+  const dataUserStore = useDataUserStore();
+  const password = ref<string>("")
+  
+  watch(password, (newPassword) => {
+  dataUserStore.userPassword= newPassword
+})
+
+
+// Estado reativo
+const senha = ref('')
+const mostrarSenha = ref(false)
+
+// Função para alternar
+function toggleSenha() {
+  mostrarSenha.value = !mostrarSenha.value
+}
+</script>
 <template>
   <div class="campo">
     <!-- Ícone fixo da esquerda -->
@@ -7,7 +27,7 @@
       />
     </svg>
     <!-- Campo de senha com binding dinâmico -->
-    <input :type="mostrarSenha ? 'text' : 'password'" placeholder="Senha..." v-model="senha" />
+    <input :type="mostrarSenha ? 'text' : 'password'" placeholder="Senha..." v-model="password" />
 
     <!-- Ícone de visualização -->
     <svg
@@ -45,21 +65,8 @@
   </div>
 </template>
 
-<script setup lang="ts">
-import { ref } from 'vue'
-
-// Estado reativo
-const senha = ref('')
-const mostrarSenha = ref(false)
-
-// Função para alternar
-function toggleSenha() {
-  mostrarSenha.value = !mostrarSenha.value
-}
-</script>
-
 <style scoped lang="scss">
-@import url('../inputs/../../assets/inputs.scss');
+@import url('../../../../assets/inputs.scss');
 
 div {
   grid-column: 1 / 31;
