@@ -33,7 +33,6 @@ const atualizarLargura = () => {
   }, 100)
 }
 
-
 const navExpandida = ref(false)
 //Expande e recolhe a nav se for uma tela maior ou igual que 992px (desktop)
 const expandirNav = () => {
@@ -87,10 +86,8 @@ onMounted(async () => {
   window.addEventListener('resize', atualizarLargura, { passive: true })
 })
 
-
 //Executa sempre o componente é desmontado
 onBeforeUnmount(() => {
-
   //Listener é removido quando o componente é desmontado
   window.removeEventListener('resize', atualizarLargura)
 
@@ -108,7 +105,6 @@ type Opcao = {
   padrao: string
   refKey: string
 }
-
 
 //Esses dois tipos são a mesma coisa kkkkkk, é um array com as opcões de página da nav
 const opcoes: Opcao[] | Array<Opcao> = [
@@ -174,33 +170,62 @@ const opcoes: Opcao[] | Array<Opcao> = [
 </template>
 
 <style scoped lang="scss">
+/* --- Variáveis SCSS para valores repetidos / estáticos --- */
+$bottom-mobile: 25px;
+$left-desktop: 30px;
+$nav-padding-horizontal: 12px;
+
+$border-radius: 8px;
+$box-shadow: 0 0 7px 0 rgba(255, 255, 255, 0.25);
+
+$li-padding-mobile: 5px;
+$li-padding-tablet: 10px;
+$li-padding-desktop: 8px;
+
+$gap-rota-atual-mobile: 8px;
+
+$anim-medium: 0.3s;
+$anim-long: 0.5s;
+$anim-texto: 1.5s;
+
+$nav-width-collapsed: 70px;
+$nav-width-expanded: 230px;
+
+$barra-collapsed-width: 50px;
+$barra-expanded-width: 250px;
+
+/* --- Estilos (preservando as CSS custom properties já usadas no teu componente) --- */
 header {
   nav {
     position: fixed;
-    bottom: 25px;
+    bottom: $bottom-mobile;
     left: 50%;
     transform: translateX(-50%);
+
     height: var(--altura-componentes);
     width: var(--largura-componentes);
+    padding: 0 $nav-padding-horizontal;
+    box-sizing: border-box;
+
     background: var(--cinza);
-    box-shadow: 0 0 7px 0 rgba(255, 255, 255, 0.25);
+    box-shadow: $box-shadow;
+
     display: flex;
     align-items: center;
     justify-content: center;
-    border-radius: 8px;
+
+    border-radius: $border-radius;
     overflow: hidden;
     z-index: 6;
-    font-size: var(--texto-p);
+
+    font-size: var(--texto-p, 14px);
 
     ul {
-      overflow: hidden;
       display: flex;
       justify-content: space-between;
       align-items: center;
       width: 100%;
       height: 100%;
-      padding: 0 12px;
-      box-sizing: border-box;
 
       li {
         border-radius: 5px;
@@ -208,12 +233,13 @@ header {
         max-height: var(--tamanho-icones);
         display: flex;
         align-items: center;
-        padding: 5px;
+        padding: $li-padding-mobile;
 
         &:focus-visible {
           outline: 2px solid var(--branco);
           outline-offset: 3px;
         }
+
         a {
           touch-action: manipulation;
           -webkit-tap-highlight-color: transparent;
@@ -223,8 +249,8 @@ header {
           align-items: center;
           justify-content: flex-start;
           text-decoration: none;
-          gap: 0px;
-          transition: gap 0.3s ease-in-out;
+          gap: 0;
+          transition: gap $anim-medium ease-in-out;
 
           svg {
             width: var(--tamanho-icones);
@@ -233,6 +259,7 @@ header {
 
           p {
             white-space: nowrap;
+            transition: width $anim-medium;
           }
         }
 
@@ -252,64 +279,60 @@ header {
 
         &.rotaAtual {
           a {
-            gap: 8px;
-            transition: gap 0.5s ease-in-out;
+            gap: $gap-rota-atual-mobile;
+            transition: gap $anim-medium ease-in-out;
             svg {
-              animation: mudaIconePreto 0.5s forwards ease-in-out;
+              animation: mudaIconePreto $anim-long forwards ease-in-out;
             }
             p {
               width: 0;
-              animation: textoAparece 1.5s forwards ease-in-out;
+              animation: textoAparece $anim-texto forwards ease-in-out;
               color: var(--cinza);
             }
           }
         }
+
         &.usuario {
           max-width: calc(var(--tamanho-usuario) + var(--tamanho-icones) + 8px + 5px);
         }
         &.mapa {
           max-width: calc(var(--tamanho-mapa) + var(--tamanho-icones) + 8px + 5px);
         }
-
         &.informacao {
           max-width: calc(var(--tamanho-info) + var(--tamanho-icones) + 8px + 5px);
         }
         &.configuracoes {
           max-width: calc(var(--tamanho-configuracoes) + var(--tamanho-icones) + 8px + 5px);
         }
+
         &.rotaAtual.usuario {
           animation: cresceBarra 0.7s forwards ease-in-out 0.3s;
           max-width: calc(var(--tamanho-usuario) + var(--tamanho-icones) + 8px + 5px);
         }
         &.rotaAtual.mapa {
           animation: cresceBarra 0.6s forwards ease-in-out 0.3s;
-          max-width: calc(var(--tamanho-mapa) + var(--tamanho-icones) + 8px + 5px);
         }
         &.rotaAtual.informacao {
           animation: cresceBarra 0.5s forwards ease-in-out 0.3s;
-          max-width: calc(var(--tamanho-info) + var(--tamanho-icones) + 8px + 5px);
         }
         &.rotaAtual.configuracoes {
           animation: cresceBarra 0.4s forwards ease-in-out 0.3s;
-          max-width: calc(var(--tamanho-configuracoes) + var(--tamanho-icones) + 8px + 5px);
         }
+
         &.rotaEscondida.usuario {
           animation: diminuiBarra 0.3s ease-in-out;
         }
-        &.rotaEscondida.mapa {
-          animation: diminuiBarra 0.2s ease-in-out;
-        }
-        &.rotaEscondida.informacao {
-          animation: diminuiBarra 0.2s ease-in-out;
-        }
+        &.rotaEscondida.mapa,
+        &.rotaEscondida.informacao,
         &.rotaEscondida.configuracoes {
           animation: diminuiBarra 0.2s ease-in-out;
         }
-      }
-    }
-  }
-}
+      } /* li */
+    } /* ul */
+  } /* nav */
+} /* header */
 
+/* Keyframes (mesma lógica que o original) */
 @keyframes mudaIconePreto {
   0% {
     fill: var(--branco);
@@ -342,8 +365,8 @@ header {
     opacity: 0.5;
   }
   50% {
-    fill: var(--branco);
     opacity: 0;
+    fill: var(--branco);
   }
   75% {
     opacity: 0.5;
@@ -356,24 +379,24 @@ header {
 }
 @keyframes cresceBarra {
   0% {
-    width: 32px;
-    height: 32px;
+    width: $barra-collapsed-width;
+    height: var(--tamanho-icones);
   }
   100% {
-    width: 250px;
-    height: 32px;
+    width: $barra-expanded-width;
+    height: var(--tamanho-icones);
     background-color: var(--branco);
   }
 }
 @keyframes diminuiBarra {
   0% {
     background-color: var(--branco);
-    width: 250px;
-    height: 32px;
+    width: $barra-expanded-width;
+    height: var(--tamanho-icones);
   }
   100% {
-    width: 32px;
-    height: 32px;
+    width: $barra-collapsed-width;
+    height: var(--tamanho-icones);
   }
 }
 @keyframes textoAparece {
@@ -385,15 +408,10 @@ header {
   }
 }
 
+/* MEDIA QUERIES */
 @media (min-width: 576px) {
-  header {
-    nav {
-      ul {
-        li {
-          padding: 10px;
-        }
-      }
-    }
+  header nav ul li {
+    padding: $li-padding-tablet;
   }
 }
 
@@ -402,37 +420,34 @@ header {
     nav {
       position: fixed;
       bottom: 50%;
-      left: 30px;
+      left: $left-desktop;
       transform: translateY(50%);
-      width: 70px;
+
+      width: $nav-width-collapsed;
       height: 94vh;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      z-index: 2;
-      transition: width 0.3s ease-in-out;
+      padding: 20px calc(35px - (var(--tamanho-icones) / 2) - 8px);
+      box-sizing: border-box;
+
+      transition: width $anim-medium ease-in-out;
 
       ul {
         display: flex;
         flex-direction: column;
-        justify-content: center;
+        justify-content: flex-start;
         align-items: flex-start;
-        padding: 20px calc(35px - 12.5px - 7px);
         gap: 20px;
-        box-sizing: border-box;
+
         li {
-          padding: 7px;
-          max-width: 10px;
-          max-height: 24px;
-          a {
-            svg {
-              width: var(--tamanho-icones);
-              height: var(--tamanho-icones);
-            }
-          }
+          padding: $li-padding-desktop;
+
+          //Joga o ícone de informação pra baixo da nav
           &.informacao {
-            margin: auto 0 0;
+            margin: auto 0 0 0;
           }
+          a {
+            gap: $gap-rota-atual-mobile;
+          }
+
           &.configuracoes,
           &.usuario,
           &.informacao,
@@ -441,14 +456,16 @@ header {
           &.rotaAtual.usuario,
           &.rotaAtual.mapa,
           &.rotaAtual.informacao {
-            max-width: 24px;
+            max-width: var(--tamanho-icones);
+            max-height: var(--tamanho-icones);
             transition: max-width 0.3s ease-in-out;
           }
+
           &.rotaAtual {
             a {
-              gap: 10px;
               p {
                 opacity: 0;
+                color: var(--branco);
                 width: 0;
                 pointer-events: none;
                 animation:
@@ -460,7 +477,6 @@ header {
 
           &.rotaEscondida {
             a {
-              gap: 10px;
               p {
                 opacity: 0;
                 width: 0;
@@ -471,42 +487,34 @@ header {
           }
         }
       }
+
+      /* --- navExpandida: EXCLUSIVAMENTE dentro do breakpoint desktop --- */
       &.navExpandida {
-        width: 230px;
-        transition: width 0.3s ease-in-out;
+        width: $nav-width-expanded;
+        transition: width $anim-medium ease-in-out;
 
         ul {
           li {
-            a {
-              gap: 10px;
-              transition: gap 0s;
-              p {
-                color: var(--branco);
-              }
-            }
-            &.informacao {
-              margin: auto 0 0;
-            }
             &.rotaAtual.usuario {
-              max-width: 80px;
+              max-width: calc(var(--tamanho-usuario) + var(--tamanho-icones) + 8px + 5px);
             }
             &.rotaAtual.mapa {
-              max-width: 100px;
+              max-width: calc(var(--tamanho-mapa) + var(--tamanho-icones) + 8px + 5px);
             }
-
             &.rotaAtual.informacao {
-              max-width: 115px;
+              max-width: calc(var(--tamanho-info) + var(--tamanho-icones) + 8px + 5px);
             }
             &.rotaAtual.configuracoes {
-              max-width: 125px;
+              max-width: calc(var(--tamanho-configuracoes) + var(--tamanho-icones) + 8px + 5px);
             }
+
             &.rotaAtual {
-              gap: 10px;
-              transition: max-width 0.3s ease-in-out;
+              transition: max-width $anim-medium ease-in-out;
               a {
                 p {
-                  animation: mudaTextoPreto 0.5s forwards ease-in-out;
+                  animation: mudaTextoPreto 0.5s ease-in-out;
                   opacity: 1;
+                  color: var(--cinza);
                   pointer-events: all;
                 }
               }
@@ -514,20 +522,20 @@ header {
 
             &.rotaEscondida {
               a {
-                gap: 10px;
                 p {
-                  animation: mudaTextoBranco 0.8s forwards ease-in-out;
+                  animation: mudaTextoBranco 0.8s ease-in-out;
                   opacity: 1;
                   pointer-events: all;
                 }
               }
             }
-          }
-        }
-      }
-    }
+          } /* li */
+        } /* ul */
+      } /* &.navExpandida (desktop) */
+    } /* nav */
   }
-}
+} /* media 992 */
+
 @keyframes mudaTextoBranco {
   0% {
     color: var(--cinza);
@@ -550,7 +558,6 @@ header {
     color: var(--branco);
   }
 }
-
 @keyframes mudaTextoPreto {
   0% {
     color: var(--branco);
