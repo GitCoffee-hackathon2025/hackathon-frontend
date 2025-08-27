@@ -14,10 +14,10 @@ const avisoTexto = ref('')
 const avisoErro = ref(false)
 
 async function entrar() {
+    console.log("Email:", DataUserStore.userEmail, "Senha:", DataUserStore.userPassword)
     const response = await DataUserStore.loginUser(DataUserStore.userEmail, DataUserStore.userPassword)
     avisoTexto.value = response.message 
     avisoErro.value = false
-  
 }
 </script>
 

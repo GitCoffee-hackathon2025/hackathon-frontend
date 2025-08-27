@@ -37,7 +37,7 @@ export const useDataUserStore = defineStore('DataUser', () => {
   // Estado de autenticação
   const isAuthenticated = ref<boolean>(false)
   const authToken = ref<string>('')
-  const currentUser = ref<any>(null)
+  const currentUser = ref<any | null>(null)
 
     watch(userEmail, (newVal, oldVal) => {
     console.log(`userEmail mudou de "${oldVal}" para "${newVal}"`)
@@ -108,17 +108,14 @@ export const useDataUserStore = defineStore('DataUser', () => {
           message: 'Email e senha são obrigatórios'
         }
       }
-      const loginData: LoginData = {
-        userEmail: email,
-        userPassword: password
-      }
+     
 
-      const response = await fetch('http://localhost:3000/login', {
+      const response = await fetch('http://localhost:3000/auth/login', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify(loginData)
+        body: JSON.stringify({ email, password })
       })
 
       if (!response.ok) {
