@@ -35,6 +35,23 @@ const router = createRouter({
     {
       path: '/usuario',
       component: Usuario,
+      children: [
+        {
+          path: 'conta',
+          component: () => import('@/views/Usuario/views/GerenciamentConta.vue'),
+          meta: { titulo: 'Conta' },
+        },
+        {
+          path: 'historico-de-denuncias',
+          component: () => import('@/views/Usuario/views/HistoricoDenuncias.vue'),
+          meta: { titulo: 'Histórico de denúncias' },
+        },
+        {
+          path: 'termos-e-privacidade',
+          component: () => import('@/views/Usuario/views/TermosPrivacidade.vue'),
+          meta: { titulo: 'Termos e Privacidade' },
+        },
+      ],
     },
     {
       path: '/cadastro',
