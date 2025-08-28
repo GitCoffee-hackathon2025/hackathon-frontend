@@ -15,8 +15,12 @@ interface RequestBody {
 }
 
 class SecurityClient {
+  private static connected: ArrayBuffer;
+
   private aes!: ArrayBuffer;
-  private rsa!: { key: JsonWebKey; kid: `${number}v` };
+  private static rsa: { key: JsonWebKey; kid: `${number}v` };
+
+  private _init: boolean = false;
 
   private static async importAES(aes: ArrayBuffer): Promise<CryptoKey> {
     return await crypto.subtle.importKey(
@@ -39,8 +43,6 @@ class SecurityClient {
     );
   }
 
-  private _init: boolean = false;
-
   public async init(): Promise<boolean> {
     // verificando se já foi iniciado
     if (this._init) return false;
@@ -51,6 +53,9 @@ class SecurityClient {
 
     // exportando chave
     this.aes = await crypto.subtle.exportKey(webcrypto.aes.format, key);
+
+    if (!SecurityClient.connected) SecurityClient.connected = this.aes;
+
     return true;
   }
 
@@ -74,7 +79,9 @@ class SecurityClient {
         new TextEncoder().encode(
           JSON.stringify({
             data,
-            browser: auth ? await browserFingerprint() : null,
+            browser: auth
+              ? { auth: await browserFingerprint(), connect: SecurityClient.connected }
+              : null,
           }),
         ),
       )
@@ -125,11 +132,15 @@ class SecurityClient {
           header: {
             rsa: {
               alg: webcrypto.jwa.alg.name,
-              kid: this.rsa.kid,
+              kid: SecurityClient.rsa.kid,
             },
             aes: { enc: webcrypto.aes.enc },
           },
-          ...(await SecurityClient.encodeData(data, { aes: this.aes, rsa: this.rsa.key }, auth)),
+          ...(await SecurityClient.encodeData(
+            data,
+            { aes: this.aes, rsa: SecurityClient.rsa.key },
+            auth,
+          )),
         },
       };
     } catch (error) {
