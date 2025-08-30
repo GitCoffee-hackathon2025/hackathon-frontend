@@ -5,6 +5,8 @@ import CampoTelefone from './components/inputs/CampoTelefone.vue'
 import LinkForm from './components/LinkForm.vue'
 import TextoAviso from './components/TextoAviso.vue'
 import ParteCima from './components/ParteCima.vue'
+import { useDataUserStore } from '@/store/dataUserStore'
+const dataUserStore = useDataUserStore()
 </script>
 
 <template>

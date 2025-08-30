@@ -2,6 +2,7 @@
 import { useBairroStore } from '@/store/Bairro'
 import { onMounted, nextTick } from 'vue'
 import L from 'leaflet'
+import { markRaw } from 'vue'
 import 'leaflet/dist/leaflet.css'
 import DadosBairro from '@/views/MapadeDenuncias/components/DadosBairros.vue'
 import BarraPesquisa from '@/views/MapadeDenuncias/components/BarraPesquisa.vue'
@@ -23,6 +24,9 @@ onMounted(() => {
     maxZoom: 20,
     zoomControl: false,
   }).setView([-26.3045, -48.8487], 12)
+
+  
+  bairroStore.setMap(markRaw(map))
 
   L.control.zoom({ position: 'topright' }).addTo(map)
 

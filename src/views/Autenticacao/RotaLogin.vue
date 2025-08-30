@@ -1,19 +1,35 @@
 <script setup lang="ts">
+import { ref } from "vue"
 import CampoSenha from './components/inputs/CampoSenha.vue'
 import CampoEmail from './components/inputs/CampoEmail.vue'
 import LinkForm from './components/LinkForm.vue'
 import TextoAviso from './components/TextoAviso.vue'
 import ParteCima from './components/ParteCima.vue'
+import { useDataUserStore } from '@/store/dataUserStore'
+
+const DataUserStore = useDataUserStore()
+
+
+const avisoTexto = ref('')
+const avisoErro = ref(false)
+
+async function entrar() {
+    console.log("Email:", DataUserStore.userEmail, "Senha:", DataUserStore.userPassword)
+    const response = await DataUserStore.loginUser(DataUserStore.userEmail, DataUserStore.userPassword)
+    avisoTexto.value = response.message 
+    avisoErro.value = false
+}
 </script>
 
+
 <template>
-  <form>
+  <form @submit.prevent="entrar">
     <ParteCima :rota="'/mapa-de-denuncias'" :ativo="true" />
     <div class="entradas">
       <h1>Entre com sua conta</h1>
       <CampoEmail class="entrar" />
       <CampoSenha class="entrar" />
-      <TextoAviso :posicao="'entrar'" :erro="false" :texto="'Entre'" />
+      <TextoAviso :posicao="'entrar'" :erro="avisoErro" :texto="avisoTexto" />
       <div class="caixa-lembre">
         <label class="lembre">
           <input type="checkbox" />
@@ -21,7 +37,13 @@ import ParteCima from './components/ParteCima.vue'
           <span class="texto">Lembre de mim</span>
         </label>
       </div>
-      <div class="acoes-form"><button>Entrar</button></div>
+     
+      <div class="acoes-form">
+        <button 
+        @click="entrar">
+        Entrar
+        </button>
+      </div>
       <LinkForm :rota="'/recuperar-conta'" :texto="'Esqueceu a senha?'" />
       <LinkForm :rota="'/cadastro'" :texto="'Não tem uma conta?'" />
     </div>
