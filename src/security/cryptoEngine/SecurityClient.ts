@@ -54,7 +54,8 @@ class SecurityClient {
     // exportando chave
     this.aes = await crypto.subtle.exportKey(webcrypto.aes.format, key);
 
-    if (!SecurityClient.connected) SecurityClient.connected = this.aes;
+    if (!SecurityClient.connected)
+      SecurityClient.connected = this.aes.slice(this.aes.byteLength - 16);
 
     return true;
   }
