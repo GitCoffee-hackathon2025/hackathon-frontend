@@ -11,7 +11,7 @@ export const useReportStore = defineStore("report", () => {
   // função para enviar relatório
   const sendReport = async (userId: number) => {
     try {
-      const response = await fetch("http://localhost:3000/reports", {
+      const response = await fetch("http://localhost:3000/reports/register", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -20,7 +20,7 @@ export const useReportStore = defineStore("report", () => {
           userId,
           content: reportContent.value,
           type: reportType.value,
-          date: reportDate.value,
+          date: new Date(reportDate.value).toISOString(),
           local: reportLocal.value,
         }),
       })
