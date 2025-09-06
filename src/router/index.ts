@@ -26,6 +26,10 @@ const router = createRouter({
           path: 'fazer-denuncia',
           component: () => import('@/views/MapadeDenuncias/views/FormularioDenuncia.vue'),
         },
+        {
+          path: 'selecionar-localizacao',
+          component: MapaDenunciasInicial,
+        },
       ],
     },
     {
