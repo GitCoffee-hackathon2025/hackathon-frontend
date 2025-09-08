@@ -8,6 +8,7 @@ import { markRaw } from 'vue'
 import 'leaflet/dist/leaflet.css'
 import DadosBairro from '@/views/MapadeDenuncias/components/DadosBairros.vue'
 import BarraPesquisa from '@/views/MapadeDenuncias/components/BarraPesquisa.vue'
+import { findBairroByCoordinates } from '@/utils/geocoding'
 
 let map: L.Map | null = null
 let clickHandler: ((e: L.LeafletMouseEvent) => void) | null = null
@@ -22,18 +23,76 @@ const bounds: L.LatLngBoundsExpression = [
   [-26.1, -48.7],
 ]
 
+// Criar ícone personalizado para o marcador
+const createCustomIcon = () => {
+  return L.divIcon({
+    className: 'custom-marker',
+    html: `
+      <div style="
+        background-color: #ff4444;
+        width: 24px;
+        height: 24px;
+        border-radius: 50%;
+        border: 3px solid white;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      ">
+        <div style="
+          background-color: white;
+          width: 8px;
+          height: 8px;
+          border-radius: 50%;
+        "></div>
+      </div>
+    `,
+    iconSize: [24, 24],
+    iconAnchor: [12, 12],
+  })
+}
+
 // Função para ativar modo de seleção de localização
 const enableLocationSelection = () => {
   if (!map) return
   
-  // Alterar cursor para indicar modo de seleção
-  map.getContainer().style.cursor = 'crosshair'
+  // Alterar cursor para indicar modo de seleção (crosshair apenas sobre áreas válidas)
+  // Vamos deixar o cursor padrão e mudar apenas quando estiver sobre um bairro
+  map.getContainer().style.cursor = 'default'
+  
+  // Adicionar evento de movimento do mouse para mudar o cursor
+  map.eachLayer((layer) => {
+    if (layer instanceof L.GeoJSON) {
+      layer.on('mouseover', () => {
+        if (clickHandler) {
+          map!.getContainer().style.cursor = 'crosshair'
+        }
+      })
+      layer.on('mouseout', () => {
+        if (clickHandler) {
+          map!.getContainer().style.cursor = 'default'
+        }
+      })
+    }
+  })
   
   // Adicionar evento de clique no mapa
   clickHandler = async (e: L.LeafletMouseEvent) => {
     const { lat, lng } = e.latlng
     
-    // Guardar as coordenadas na store de report (isso agora busca automaticamente o bairro)
+    // VERIFICAR SE O PONTO ESTÁ DENTRO DE ALGUM BAIRRO
+    const bairroName = await findBairroByCoordinates(lat, lng)
+    
+    if (!bairroName) {
+      // Mostrar popup de erro se estiver fora da área
+      L.popup()
+        .setLatLng(e.latlng)
+        .setContent('Localização fora da área coberta. Selecione um local dentro dos bairros disponíveis.')
+        .openOn(map!)
+      return
+    }
+    
+    // Guardar as coordenadas na store de report
     await reportStore.setReportCoordinates({ lat, lng })
     
     // Remover marcador anterior se existir
@@ -41,19 +100,13 @@ const enableLocationSelection = () => {
       map?.removeLayer(selectionMarker)
     }
     
-    // Adicionar um marcador no local selecionado
+    // Adicionar um marcador no local selecionado com ícone personalizado
     selectionMarker = L.marker([lat, lng], {
-      icon: L.icon({
-        iconUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-icon.png',
-        iconSize: [25, 41],
-        iconAnchor: [12, 41],
-      })
+      icon: createCustomIcon()
     }).addTo(map!)
     
     // Mostrar popup com informações do local selecionado
-    const popupContent = reportStore.reportBairro 
-      ? `Bairro: ${reportStore.reportBairro}<br>Coordenadas: ${lat.toFixed(6)}, ${lng.toFixed(6)}`
-      : `Coordenadas: ${lat.toFixed(6)}, ${lng.toFixed(6)}<br>Bairro não identificado`
+    const popupContent = `Bairro: ${bairroName}<br>Coordenadas: ${lat.toFixed(6)}, ${lng.toFixed(6)}`
     
     selectionMarker.bindPopup(popupContent).openPopup()
     
@@ -76,6 +129,14 @@ const disableLocationSelection = () => {
     map.off('click', clickHandler)
     clickHandler = null
   }
+  
+  // Remover eventos de movimento do mouse
+  map.eachLayer((layer) => {
+    if (layer instanceof L.GeoJSON) {
+      layer.off('mouseover')
+      layer.off('mouseout')
+    }
+  })
   
   // Remover marcador de seleção
   if (selectionMarker) {
@@ -129,8 +190,10 @@ onMounted(() => {
         },
         onEachFeature: (feature, layer) => {
           layer.on('mouseover', function () {
-            // Se estiver no modo de seleção, não fazer nada
-            if (clickHandler) return
+            // Se estiver no modo de seleção, mudar cursor para crosshair
+            if (clickHandler) {
+              map!.getContainer().style.cursor = 'crosshair'
+            }
             
             // muda o estilo apos o cara passar o mouse pro cima
             this.setStyle({
@@ -141,8 +204,10 @@ onMounted(() => {
           })
 
           layer.on('mouseout', function () {
-            // Se estiver no modo de seleção, não fazer nada
-            if (clickHandler) return
+            // Se estiver no modo de seleção, voltar cursor para padrão
+            if (clickHandler) {
+              map!.getContainer().style.cursor = 'default'
+            }
             
             // volta ao estilo padrao apos tirar o mouse
             this.setStyle({
@@ -173,13 +238,12 @@ onMounted(() => {
     })
     .catch((err) => console.error('Erro ao carregar GeoJSON:', err))
     
-  // Verificar se a rota inicial já é a de seleção de localização
+  // Verificar se a rota inicial já é a de seleção de localização eba 
   if (route.path.includes('selecionar-localizacao')) {
     enableLocationSelection()
   }
 })
 
-// Limpar eventos quando o componente for desmontado
 onUnmounted(() => {
   disableLocationSelection()
 })
@@ -215,6 +279,11 @@ onUnmounted(() => {
   .leaflet-control-zoom a {
     font-size: 1.5rem;
     padding: 0.75rem;
+  }
+
+  :deep(.custom-marker) {
+    background: transparent !important;
+    border: none !important;
   }
 }
 
