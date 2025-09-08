@@ -1,7 +1,9 @@
 <script setup lang="ts">
 import { useBairroStore } from '@/store/Bairro'
+import { storeToRefs } from 'pinia'
 
 const bairroStore = useBairroStore()
+const { selectedData, bairroReports, loading } = storeToRefs(bairroStore)
 
 function fechar() {
   bairroStore.clearBairro()
@@ -9,27 +11,48 @@ function fechar() {
 </script>
 
 <template>
-  <div v-if="bairroStore.selectedData" class="detalhes-container">
+  <div v-if="selectedData" class="detalhes-container">
     <div class="detalhes-content">
       <button class="close-button" @click="fechar">×</button>
       <h2>Reports do Bairro</h2>
       
-      <p v-if="bairroStore.selectedData.nome_bairr">
-        <strong>Bairro:</strong> {{ bairroStore.selectedData.nome_bairr }}
+      <!-- Use campos genéricos ou ajuste conforme sua API -->
+      <p v-if="selectedData.nome">
+        <strong>Bairro:</strong> {{ selectedData.nome }}
+      </p>
+      <p v-else-if="selectedData.name">
+        <strong>Bairro:</strong> {{ selectedData.name }}
+      </p>
+      <p v-else-if="selectedData.nome_bairro">
+        <strong>Bairro:</strong> {{ selectedData.nome_bairro }}
+      </p>
+      <p v-else>
+        <strong>Bairro:</strong> {{ selectedData.id }}
       </p>
       
+      <!-- Loading state -->
+      <div v-if="loading" class="loading">
+        Carregando reports...
+      </div>
+      
       <!-- Exibir reports do bairro -->
-      <div class="reports-container">
-        <h3>Reports ({{ bairroStore.bairroReports.length }})</h3>
+      <div v-else class="reports-container">
+        <h3>Reports ({{ bairroReports.length }})</h3>
         
-        <div v-if="bairroStore.bairroReports.length">
-          <div v-for="(report, index) in bairroStore.bairroReports" :key="report.id" class="report-item">
+        <div v-if="bairroReports.length">
+          <div v-for="report in bairroReports" :key="report.id" class="report-item">
             <p class="report-user"> 
               <strong>{{ report.user.name }}</strong> — 
               <span class="report-type">{{ report.type.name }}</span>
             </p>
             <p class="report-content">
               {{ report.content }}
+            </p>
+            <p v-if="report.coordenadas" class="report-coords">
+              <small>Coordenadas: {{ report.coordenadas }}</small>
+            </p>
+            <p class="report-date">
+              <small>{{ new Date(report.created_at).toLocaleDateString('pt-BR') }}</small>
             </p>
           </div>
         </div>
@@ -94,6 +117,12 @@ function fechar() {
     padding-bottom: 4px;
   }
 
+  .loading {
+    text-align: center;
+    margin: 20px 0;
+    color: #aaa;
+  }
+
   .reports-container {
     margin-top: 10px;
   }
@@ -120,6 +149,13 @@ function fechar() {
       font-size: 0.95rem;
       line-height: 1.4;
       color: #f1f1f1;
+      margin-bottom: 8px;
+    }
+
+    .report-coords, .report-date {
+      font-size: 0.8rem;
+      color: #888;
+      margin: 2px 0;
     }
   }
 

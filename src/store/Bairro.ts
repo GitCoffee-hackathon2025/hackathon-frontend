@@ -44,19 +44,20 @@ export const useBairroStore = defineStore('bairro', () => {
       if (result.success && result.data && Array.isArray(result.data)) {
         console.log('Dados dos reports recebidos:', result.data)
 
-        // Agora pega direto user e type
-        const reportsData = result.data.map((report: any, index: number) => {
+        // CORREÇÃO: Mapeamento correto baseado na estrutura da resposta
+        const reportsData = result.data.map((report: any) => {
           return {
-            id: report.id_report,
-            content: report.content_report,
-            neighborhoodId: report.id_neighborhood,
+            id: report.id,
+            content: report.content,
+            coordenadas: report.coordenadas,
+            created_at: report.created_at,
             user: report.user 
-              ? { id: report.user.id_user, name: report.user.name }
+              ? { id: report.user.id, name: report.user.name }
               : { id: null, name: 'Usuário anônimo' },
             type: report.type 
-              ? { id: report.type.id_type_report, name: report.type.name_type_report }
+              ? { id: report.type.id, name: report.type.name }
               : { id: null, name: 'Tipo não informado' },
-            _fullData: report
+            _fullData: report // Mantém todos os dados originais
           }
         })
 
