@@ -1,5 +1,6 @@
 import { createRouter, createWebHistory } from 'vue-router'
-import MapadeDenuncia from '@/views/MapadeDenuncias/PaginaMapadeDenuncia.vue'
+import MapadeDenuncia from '@/views/MapadeDenuncias/MapaDenuncias.vue'
+import MapaDenunciasInicial from '@/views/MapadeDenuncias/views/PaginaInicial.vue'
 import Configuracoes from '@/views/Configuracoes/PaginaConfiguracoes.vue'
 import Usuario from '@/views/Usuario/PaginaUsuario.vue'
 import SobreSite from '@/views/SobreSite/PaginaSobreSite.vue'
@@ -10,43 +11,63 @@ const router = createRouter({
   routes: [
     {
       path: '/',
-      redirect: '/mapa-de-crime',
+      redirect: '/mapa-de-denuncias',
     },
     {
-      path: '/mapa-de-crime',
+      path: '/mapa-de-denuncias',
       component: MapadeDenuncia,
-      children: [],
-    },
-    {
-      path: '/configuracoes',
-      component: Configuracoes,
-      redirect: {},
-      children: [],
-    },
-    {
-      path: '/usuario',
-      component: Usuario,
-      redirect: {},
+
       children: [
         {
-          path: 'cadastro',
-          component: () => import('@/views/Usuario/cadastro-login/RotaCadastro.vue'),
+          path: '',
+          component: MapaDenunciasInicial,
         },
         {
-          path: 'entrar',
-          component: () => import('@/views/Usuario/cadastro-login/RotaLogin.vue'),
-        },
-        {
-          path: 'recuperar-conta',
-          component: () => import('@/views/Usuario/cadastro-login/RecuperarSenha.vue'),
+          path: 'fazer-denuncia',
+          component: () => import('@/views/MapadeDenuncias/views/FormularioDenuncia.vue'),
         },
       ],
     },
     {
+      path: '/configuracoes',
+      component: Configuracoes,
+    },
+    {
+      path: '/usuario',
+      component: Usuario,
+      children: [
+        {
+          path: 'conta',
+          component: () => import('@/views/Usuario/views/GerenciamentConta.vue'),
+          meta: { titulo: 'Conta' },
+        },
+        {
+          path: 'historico-de-denuncias',
+          component: () => import('@/views/Usuario/views/HistoricoDenuncias.vue'),
+          meta: { titulo: 'Histórico de denúncias' },
+        },
+        {
+          path: 'termos-e-privacidade',
+          component: () => import('@/views/Usuario/views/TermosPrivacidade.vue'),
+          meta: { titulo: 'Termos e Privacidade' },
+        },
+      ],
+    },
+    {
+      path: '/cadastro',
+      component: () => import('@/views/Autenticacao/RotaCadastro.vue'),
+    },
+    {
+      path: '/entrar',
+      component: () => import('@/views/Autenticacao/RotaLogin.vue'),
+    },
+    {
+      path: '/recuperar-conta',
+      component: () => import('@/views/Autenticacao/RecuperarSenha.vue'),
+    },
+    {
       path: '/sobre-o-site',
       component: SobreSite,
-      redirect: {},
-      children: [],
     },
     {
       path: '/:pathMatch(.*)*',

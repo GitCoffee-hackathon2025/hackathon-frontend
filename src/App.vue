@@ -1,15 +1,15 @@
 <script setup lang="ts">
-import BarraNav from '@/components/NavBarra.vue'
+import NavBarra from '@/components/NavBarra.vue'
+
 </script>
 
 <template>
-  <BarraNav/>
-  <main>
-    <router-view></router-view>
-  </main>
+  <NavBarra />
+  <router-view></router-view>
 </template>
 
-<style scoped lang="scss">
+<style lang="scss">
+@import './assets/base.scss';
 main {
   width: 100%;
 }
