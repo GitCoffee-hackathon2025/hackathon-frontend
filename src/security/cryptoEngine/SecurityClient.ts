@@ -1,167 +1,55 @@
+// Tipagens
+import { type RequestBody, type ResponseBody } from '../typescript/Body';
+
+// Configurações
 import webcrypto from '@/config/aesConfig';
 
-import browserFingerprint from '../browserFingerprint';
-import verifyExp from '../verifyExp';
-
-interface RequestBody {
-  header: {
-    rsa: { alg: string; kid: `${number}v` };
-    aes: { enc: string };
-  };
-  ek: ArrayBuffer;
-  iv: Uint8Array<ArrayBuffer>;
-  ct: ArrayBuffer;
-  tag: ArrayBuffer;
-}
+// Classes
+import CryptoClient from './CryptoClient';
+import KeysClient from './KeysClient';
 
 class SecurityClient {
-  private static connected: ArrayBuffer;
+  private keysClient = new KeysClient();
 
-  private aes!: ArrayBuffer;
-  private static rsa: { key: JsonWebKey; kid: `${number}v` };
-
-  private _init: boolean = false;
-
-  private static async importAES(aes: ArrayBuffer): Promise<CryptoKey> {
-    return await crypto.subtle.importKey(
-      webcrypto.aes.format,
-      aes,
-      webcrypto.aes.alg.name,
-      true,
-      webcrypto.aes.keyUsages,
-    );
+  public async init(): Promise<void> {
+    await this.keysClient.init();
   }
 
-  private static async importRSA(rsa: JsonWebKey): Promise<CryptoKey> {
-    const { name, hash } = webcrypto.jwa.alg;
-    return await crypto.subtle.importKey(
-      webcrypto.jwa.format,
-      rsa,
-      { name, hash },
-      true,
-      webcrypto.jwa.keyUsages,
-    );
-  }
-
-  public async init(): Promise<boolean> {
-    // verificando se já foi iniciado
-    if (this._init) return false;
-    this._init = true;
-
-    // gerando chave
-    const key = await crypto.subtle.generateKey(webcrypto.aes.alg, true, webcrypto.aes.keyUsages);
-
-    // exportando chave
-    this.aes = await crypto.subtle.exportKey(webcrypto.aes.format, key);
-
-    if (!SecurityClient.connected)
-      SecurityClient.connected = this.aes.slice(this.aes.byteLength - 16);
-
-    return true;
-  }
-
-  private static async encodeData(
-    data: Record<string, any>,
-    { aes, rsa }: { aes: ArrayBuffer; rsa: JsonWebKey },
-    auth: boolean,
-  ): Promise<{
-    ct: ArrayBuffer;
-    iv: Uint8Array<ArrayBuffer>;
-    ek: ArrayBuffer;
-    tag: ArrayBuffer;
-  }> {
-    // criando vetor de inicialização para ser usado na encriptação
-    const iv = crypto.getRandomValues(new Uint8Array(12));
-
-    const { ciphertext, tag } = await crypto.subtle
-      .encrypt(
-        { name: webcrypto.aes.alg.name, iv },
-        await this.importAES(aes),
-        new TextEncoder().encode(
-          JSON.stringify({
-            data,
-            browser: auth
-              ? { auth: await browserFingerprint(), connect: SecurityClient.connected }
-              : null,
-          }),
-        ),
-      )
-      .then((ek) => ({
-        ciphertext: ek.slice(0, ek.byteLength - 16),
-        tag: ek.slice(ek.byteLength - 16),
-      }));
-
-    return {
-      // criptografando a chave
-      ct: await crypto.subtle.encrypt(
-        // criando uma função autoexecutavel que retorna o name e hash
-        (({ name, hash }) => ({ name, hash }))(webcrypto.jwa.alg),
-        await this.importRSA(rsa),
-        aes,
-      ),
-      // enviando vetor de inicialização
-      iv,
-      // criptografando o dado e vendo se precisa do id
-      ek: ciphertext,
-      tag,
-    };
-  }
-
-  public async encode(
-    data: Record<string, any>,
-    auth: boolean = false,
-  ): Promise<
-    | {
-        status: false;
-        result: unknown;
-      }
-    | {
-        status: true;
-        result: RequestBody;
-      }
-  > {
+  public async encode(data: Record<string, any>, auth: boolean = false): Promise<RequestBody> {
     try {
-      // validando parametros
-      if (!this._init) throw new Error('not started key');
-
       if (typeof data !== 'object' && Object.keys(data).length === 0)
         throw new Error('invalid data');
 
       return {
-        status: true,
-        result: {
-          header: {
-            rsa: {
-              alg: webcrypto.jwa.alg.name,
-              kid: SecurityClient.rsa.kid,
-            },
-            aes: { enc: webcrypto.aes.enc },
+        header: {
+          rsa: {
+            alg: webcrypto.jwa.alg.name,
+            kid: KeysClient.rsa.kid,
           },
-          ...(await SecurityClient.encodeData(
-            data,
-            { aes: this.aes, rsa: SecurityClient.rsa.key },
-            auth,
-          )),
+          aes: { enc: webcrypto.aes.enc },
         },
+        ...(await CryptoClient.encodeData(
+          data,
+          { aes: this.keysClient.aes, rsa: KeysClient.rsa.key },
+          auth,
+        )),
       };
     } catch (error) {
-      return {
-        status: false,
-        result: error,
-      };
+      throw new Error();
+    }
+  }
+
+  public async decode(body: ResponseBody): Promise<Record<string, any>> {
+    try {
+      const payload = JSON.parse(
+        new TextDecoder().decode(await CryptoClient.decodeData(body, this.keysClient.aes)),
+      );
+      this.keysClient.aes = {} as ArrayBuffer;
+      return payload;
+    } catch (error) {
+      throw error;
     }
   }
 }
-/* 
 
-{
-  "header": {
-    "rsa": { "alg": "RSA-OAEP-256", "length": 2048 },
-    "aes": { "enc": "A256GCM" }
-  },
-  "ek": "<RSA_encrypted_AES_key_base64url>",
-  "iv": "<AES_GCM_iv_base64url>",
-  "ct": "<AES_GCM_ciphertext_plus_tag_base64url>"
-}
-
-*/
+export default SecurityClient;
