@@ -24,7 +24,7 @@ export const useBairroStore = defineStore('bairro', () => {
   }
 
   const getDataBairro = async (idData: number): Promise<any> => {
-    console.log("Buscando reports do bairro para o ID:", idData)
+    // console.log("Buscando reports do bairro para o ID:", idData)
     loading.value = true
     bairroReports.value = []
 
