@@ -14,9 +14,8 @@ export const useBairroStore = defineStore('bairro', () => {
 
   function selectBairro(data: Record<string, any>) {
     selectedData.value = data
-    if (data.id) {
-      getDataBairro(data.id)
-    }
+    
+    if (data.id) getDataBairro(data.id)
   }
 
   function clearBairro() {
@@ -39,10 +38,10 @@ export const useBairroStore = defineStore('bairro', () => {
       }
 
       const result = await response.json()
-      console.log('Resposta COMPLETA da API:', result)
+      // console.log('Resposta COMPLETA da API:', result)
 
       if (result.success && result.data && Array.isArray(result.data)) {
-        console.log('Dados dos reports recebidos:', result.data)
+        // console.log('Dados dos reports recebidos:', result.data)
 
         // CORREÇÃO: Mapeamento correto baseado na estrutura da resposta
         const reportsData = result.data.map((report: any) => {
@@ -62,9 +61,9 @@ export const useBairroStore = defineStore('bairro', () => {
         })
 
         bairroReports.value = reportsData
-        console.log('Reports processados:', bairroReports.value)
+        // console.log('Reports processados:', bairroReports.value)
       } else {
-        console.log('Nenhum dado encontrado ou formato inválido')
+        // console.log('Nenhum dado encontrado ou formato inválido')
         bairroReports.value = []
       }
     } catch (error) {
