@@ -48,14 +48,14 @@ class AuthClient {
     ${this.cookieName}=${refresh};
     SameSite=Strict;
     Max-age=${lifeTime};
-    Patch=/
+    Path=/
     `;
 
     document.cookie = cookie.replace(/\n/g, '').trim();
   }
 
   public static deleteRefreshTokenCookie(): void {
-    document.cookie = `${this.cookieName}=;Max-Age=0;SameSite=Strict;Patch=/`;
+    document.cookie = `${this.cookieName}=;Max-Age=0;SameSite=Strict;Path=/`;
   }
 }
 
