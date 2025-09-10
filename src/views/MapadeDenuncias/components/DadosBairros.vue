@@ -17,17 +17,8 @@ function fechar() {
       <h2>Reports do Bairro</h2>
       
       <!-- Use campos genéricos ou ajuste conforme sua API -->
-      <p v-if="selectedData.nome">
-        <strong>Bairro:</strong> {{ selectedData.nome }}
-      </p>
-      <p v-else-if="selectedData.name">
-        <strong>Bairro:</strong> {{ selectedData.name }}
-      </p>
-      <p v-else-if="selectedData.nome_bairro">
-        <strong>Bairro:</strong> {{ selectedData.nome_bairro }}
-      </p>
-      <p v-else>
-        <strong>Bairro:</strong> {{ selectedData.id }}
+      <p>
+        <strong>Bairro: {{ [selectedData.nome, selectedData.name, selectedData.nome_bairro, selectedData.id].find((nameBairro) => nameBairro !== '' && nameBairro != null) ?? 'Bairro não informado' }} 
       </p>
       
       <!-- Loading state -->
