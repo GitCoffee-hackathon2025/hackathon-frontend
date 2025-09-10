@@ -82,6 +82,10 @@ onMounted(() => {
 
             await nextTick()
             bairroStore.selectBairro(feature.properties || {})
+            const bairroId = feature.properties?.id_bairro
+            // console.log(bairroId)
+            bairroStore.getDataBairro(bairroId)
+
           })
         },
       }).addTo(map!)
