@@ -1,37 +1,40 @@
 <script setup lang="ts">
 import { defineProps } from 'vue'
 
-const { texto, erro, posicao } = defineProps({
-  texto: String,
-  erro: Boolean,
-  posicao: String
+const { text, position } = defineProps({
+  text: String,
+  position: String,
 })
 </script>
 
 <template>
-  <p :class="['aviso', posicao, { 'erro': erro }]">{{ texto }}</p>
+  <p :class="['alert', position, 'error']">{{ text }}</p>
 </template>
 
 <style scoped lang="scss">
-p.aviso {
+p.alert {
   grid-column: 1 / 31;
-  grid-row: 17 / 20;
+  grid-row: 10 / 20;
   width: var(--largura-componentes);
   font-size: var(--texto-m);
   text-align: left;
   margin-top: 3rem;
 
-  &.entrar {
+  &.login {
     grid-row: 16 / 20;
   }
 
-  &.erro {
+  &.error {
     color: var(--vermelho);
+  }
+
+  &.recover-password {
+    grid-row: 12 / 20;
   }
 }
 
 @media (min-width: 576px) {
-  p.aviso.entrar {
+  p.alert.login {
     grid-row: 17 / 19;
   }
 }

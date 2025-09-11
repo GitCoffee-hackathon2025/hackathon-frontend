@@ -1,78 +1,110 @@
-<!-- Feito  rápidamente com chatgpt, necessário análise -->
-
 <script setup lang="ts">
-import { ref, watch } from 'vue'
+import { ref, onMounted, computed, watch } from 'vue'
 
-const DIGITOS = 6
-const otp = ref<string[]>(Array(DIGITOS).fill(''))
-const inputs = ref<(HTMLInputElement | null)[]>([])
+import { UserStore } from '@/store/UserStore'
+const user = UserStore()
+
+const digits = 6
+const otp = ref<string[]>(Array(digits).fill(''))
+const inputs = ref<(HTMLInputElement | null)[]>(Array(digits).fill(null))
+
+const countArray = computed(() => Array.from({ length: digits }))
+
+onMounted(() => {
+  setTimeout(() => inputs.value[0]?.focus(), 0)
+})
+
+watch(otp.value, () => {
+  user.emailToken = Number(otp.value.join(''))
+  console.log(user.emailToken)
+})
 
 function onInput(index: number, event: Event) {
-  const input = event.target as HTMLInputElement
-  const valor = input.value.replace(/\D/g, '').slice(0, 1)
-  otp.value[index] = valor
-
-  if (valor && index < DIGITOS - 1) {
+  const el = event.target as HTMLInputElement
+  const digit = el.value.replace(/\D/g, '').slice(0, 1)
+  otp.value[index] = digit
+  if (digit && index < digits - 1) {
     inputs.value[index + 1]?.focus()
+    inputs.value[index + 1]?.select()
   }
 }
 
 function onKeyDown(index: number, event: KeyboardEvent) {
-  if (event.key === 'Backspace' && !otp.value[index] && index > 0) {
+  const k = event.key
+  if (k === 'Backspace') {
+    if (otp.value[index]) {
+      otp.value[index] = ''
+    } else if (index > 0) {
+      inputs.value[index - 1]?.focus()
+      otp.value[index - 1] = ''
+    }
+  } else if (k === 'ArrowLeft' && index > 0) {
     inputs.value[index - 1]?.focus()
+  } else if (k === 'ArrowRight' && index < digits - 1) {
+    inputs.value[index + 1]?.focus()
+  } else if (/^\d$/.test(k)) {
+  } else if (k.length === 1) {
+    event.preventDefault()
+  }
+
+  if (
+    index === digits - 1 &&
+    !(k === 'ArrowRight') &&
+    !(k === 'ArrowLeft') &&
+    !(k === 'Backspace')
+  ) {
+    setTimeout(() => inputs.value[index]?.select(), 0)
   }
 }
-
-function onPaste(event: ClipboardEvent) {
-  const texto = event.clipboardData?.getData('text') || ''
-  const numeros = texto.replace(/\D/g, '').slice(0, DIGITOS).split('')
-  numeros.forEach((num, i) => {
-    otp.value[i] = num
-    if (inputs.value[i]) {
-      inputs.value[i]!.value = num
-    }
-  })
-  const next = numeros.length < DIGITOS ? numeros.length : DIGITOS - 1
+function onPaste(e: ClipboardEvent) {
+  const text = e.clipboardData?.getData('text') ?? ''
+  console.log(text)
+  const nums = text.replace(/\D/g, '').slice(0, digits).split('')
+  nums.forEach((n, i) => (otp.value[i] = n))
+  const next = nums.length < digits ? nums.length : digits - 1
   inputs.value[next]?.focus()
 }
 
-const codigoFinal = ref('')
-watch(otp, () => {
-  codigoFinal.value = otp.value.join('')
-})
+function onFocus(index: number) {
+  setTimeout(() => inputs.value[index]?.select(), 0)
+}
 </script>
-
 <template>
-  <div class="otp-container" @paste="onPaste">
+  <div class="otp-container">
     <input
-      v-for="(_, i) in DIGITOS"
+      v-for="(n, i) in countArray"
       :key="i"
+      :ref="(el) => (inputs[i] = el)"
+      class="otp-box"
       type="text"
       inputmode="numeric"
       maxlength="1"
-      class="otp-box"
-      ref="inputs"
       v-model="otp[i]"
       @input="onInput(i, $event)"
       @keydown="onKeyDown(i, $event)"
+      @paste="onPaste"
+      @focus="onFocus(i)"
     />
   </div>
 </template>
 
 <style scoped lang="scss">
 .otp-container {
+  max-width: var(--largura-componentes);
+  height: calc(var(--altura-componentes) * 1.6);
   grid-column: 1 / 31;
-  grid-row: 1 / 31;
+  grid-row: 1 / 27;
   display: flex;
-  gap: 2.1rem;
-  justify-content: center;
+
+  justify-content: space-between;
   justify-self: center;
   align-self: center;
+
   .otp-box {
-    width: 4.2rem;
-    height: 5.5rem;
+    font-size: var(--texto-gg);
+    width: 15%;
+    height: 100%;
     text-align: center;
-    font-size: 1.8rem;
     font-weight: bold;
     border-radius: 0.8rem;
     background: var(--cinza-claro);
@@ -80,10 +112,26 @@ watch(otp, () => {
     border: none;
     font-family: monospace;
     color: var(--cinza);
+    caret-color: transparent;
+
+    &::selection {
+      background: transparent;
+      color: inherit;
+    }
+    &::-moz-selection {
+      background: transparent;
+      color: inherit;
+    }
 
     &:focus {
       outline: 1px solid var(--preto);
     }
+  }
+}
+
+@media (min-width: 992px) {
+  .otp-container {
+    height: calc(var(--altura-componentes) * 1.8);
   }
 }
 </style>

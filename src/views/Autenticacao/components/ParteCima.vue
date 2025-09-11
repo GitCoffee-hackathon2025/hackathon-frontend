@@ -1,11 +1,11 @@
 <script setup lang="ts">
 import { defineProps } from 'vue'
 const props = defineProps({
-  rota: {
+  route: {
     type: String,
     required: true,
   },
-  ativo: {
+  active: {
     type: Boolean,
     required: true,
   },
@@ -14,7 +14,7 @@ const props = defineProps({
 
 <template>
   <div>
-    <router-link :to="props.rota" v-if="props.ativo">
+    <router-link :to="props.route" v-if="props.active">
       <svg
         xmlns="http://www.w3.org/2000/svg"
         width="35"
@@ -46,6 +46,7 @@ div {
       left: 10px;
       fill: var(--branco);
       width: var(--tamanho-icones);
+
     }
   }
 }
@@ -56,7 +57,7 @@ div {
     height: 100vh;
     a {
       svg {
-        
+
         left: 0px;
         transform: translateX(51vw);
         fill: var(--cinza);
