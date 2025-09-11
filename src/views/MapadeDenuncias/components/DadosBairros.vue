@@ -18,7 +18,7 @@ function fechar() {
       
       <!-- Use campos genéricos ou ajuste conforme sua API -->
       <p>
-        <strong>Bairro: {{ [selectedData.nome, selectedData.name, selectedData.nome_bairro, selectedData.id].find((nameBairro) => nameBairro !== '' && nameBairro != null) ?? 'Bairro não informado' }} 
+        <strong>Bairro: {{ [selectedData.nome, selectedData.name, selectedData.nome_bairro, selectedData.id].find((nameBairro) => nameBairro !== '' && nameBairro != null) ?? 'Bairro não informado' }} </strong>
       </p>
       
       <!-- Loading state -->
