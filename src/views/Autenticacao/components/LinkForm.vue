@@ -1,22 +1,36 @@
 <script setup lang="ts">
 import { defineProps } from 'vue'
+import { AnimsAuthStore } from '@/store/AnimsAuth'
+const animsAuth = AnimsAuthStore()
 
 const props = defineProps({
-  texto: {
+  text: {
     type: String,
     required: true,
   },
-  rota: {
+  route: {
     type: String,
     required: true,
+  },
+  anim: {
+    type: String,
   },
 })
+
+function validAnim(a: string | undefined) {
+  if (!a) return
+
+  if (a == 'login') {
+    animsAuth.animLogin = true
+  }
+  if (a == 'register') {
+    animsAuth.animRegister = true
+  }
+}
 </script>
 
 <template>
-  <router-link :class="{'mais-perto-botao': props.rota == '/recuperar-conta'}" :to="props.rota">{{
-    props.texto
-  }}</router-link>
+  <router-link @click="validAnim(props.anim)" :to="props.route">{{ props.text }}</router-link>
 </template>
 
 <style scoped lang="scss">
@@ -30,7 +44,7 @@ a {
   align-self: center;
   justify-content: center;
 
-  &.mais-perto-botao{
+  &.recover-password {
     grid-row: 24 / 27;
   }
 }

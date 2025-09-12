@@ -5,6 +5,7 @@ import type L from 'leaflet'
 export const useBairroStore = defineStore('bairro', () => {
   const selectedData = ref<Record<string, any> | null>(null)
   const mapInstance = ref<L.Map | null>(null)
+
   const bairroReports = ref<any[]>([])
   const loading = ref(false)
 
@@ -22,6 +23,8 @@ export const useBairroStore = defineStore('bairro', () => {
     selectedData.value = null
     bairroReports.value = []
   }
+
+  return { selectedData, mapInstance, setMap, selectBairro, clearBairro }
 
   const getDataBairro = async (idData: number): Promise<any> => {
     // console.log("Buscando reports do bairro para o ID:", idData)
@@ -83,4 +86,5 @@ export const useBairroStore = defineStore('bairro', () => {
     clearBairro, 
     getDataBairro
   }
+
 })

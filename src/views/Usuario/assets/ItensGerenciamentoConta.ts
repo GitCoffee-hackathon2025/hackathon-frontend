@@ -1,4 +1,4 @@
-import { informacoesLogadoStore } from '@/store/InformacoesLogado'
+import { informacoesLogadoStore } from '@/store/UserLogged'
 const objetoInformacoesLogado = informacoesLogadoStore()
 
 type Item = {

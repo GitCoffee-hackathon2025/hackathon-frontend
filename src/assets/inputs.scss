@@ -20,9 +20,14 @@
       right: 1rem;
       cursor: pointer;
     }
+
+    &.erroSVG{
+      fill: var(--vermelho);
+    }
   }
 
-  input,select {
+  input,
+  select {
     width: 100%;
     height: 100%;
     border-radius: 8px;
@@ -37,6 +42,16 @@
     &::placeholder {
       color: var(--cinza);
       font-size: var(--texto-m);
+    }
+
+    &.erroINPUT {
+      outline: 1px solid var(--vermelho);
+      color: var(--vermelho);
+
+      &::placeholder {
+        color: var(--vermelho);
+        font-size: var(--texto-m);
+      }
     }
   }
 }

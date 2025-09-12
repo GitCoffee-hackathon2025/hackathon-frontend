@@ -1,8 +1,8 @@
 <script setup lang="ts">
 import { ref, computed, watch } from 'vue'
-import { useDataUserStore } from '@/store/dataUserStore'
+import { UserStore } from '@/store/UserStore'
 
-const dataUserStore = useDataUserStore()
+const user = UserStore()
 
 // Estados locais
 const dia = ref('')
@@ -11,8 +11,18 @@ const ano = ref('')
 
 // Meses disponíveis
 const meses = [
-  'Janeiro', 'Fevereiro', 'Março', 'Abril', 'Maio', 'Junho',
-  'Julho', 'Agosto', 'Setembro', 'Outubro', 'Novembro', 'Dezembro'
+  'Janeiro',
+  'Fevereiro',
+  'Março',
+  'Abril',
+  'Maio',
+  'Junho',
+  'Julho',
+  'Agosto',
+  'Setembro',
+  'Outubro',
+  'Novembro',
+  'Dezembro',
 ]
 
 // Lista de anos (do atual até 1900)
@@ -29,7 +39,7 @@ const diasNoMes = computed(() => {
   const a = Number(ano.value)
 
   if (m === 2) {
-    const bissexto = (a % 4 === 0 && a % 100 !== 0) || (a % 400 === 0)
+    const bissexto = (a % 4 === 0 && a % 100 !== 0) || a % 400 === 0
     return Array.from({ length: bissexto ? 29 : 28 }, (_, i) => i + 1)
   }
 
@@ -47,16 +57,15 @@ watch([mes, ano], () => {
 // Atualizar a store sempre que todos os campos forem válidos
 watch([dia, mes, ano], ([d, m, a]) => {
   if (d && m && a) {
-    const data = new Date(Number(a), Number(m) - 1, Number(d))
-    dataUserStore.userDateBirth = isNaN(data.getTime()) ? null : data
+    user.birthday = new Date(Number(a), Number(m) - 1, Number(d))
   } else {
-    dataUserStore.userDateBirth = null
+    user.birthday = null
   }
 })
 </script>
 
 <template>
-  <div class="datanascimento">
+  <div class="birthday">
     <select v-model="dia">
       <option disabled value="">Dia</option>
       <option v-for="d in diasNoMes" :key="d" :value="d.toString()">
@@ -66,7 +75,7 @@ watch([dia, mes, ano], ([d, m, a]) => {
 
     <select v-model="mes">
       <option disabled value="">Mês</option>
-      <option v-for="(nome, i) in meses" :key="i" :value="(i+1).toString()">
+      <option v-for="(nome, i) in meses" :key="i" :value="(i + 1).toString()">
         {{ nome }}
       </option>
     </select>
@@ -81,9 +90,9 @@ watch([dia, mes, ano], ([d, m, a]) => {
 </template>
 
 <style scoped lang="scss">
-.datanascimento {
+.birthday {
   grid-column: 1 / 31;
-  grid-row: 8 / 12;
+  grid-row: 11 / 15;
   justify-self: center;
   align-self: center;
   width: var(--largura-componentes);
@@ -107,7 +116,9 @@ watch([dia, mes, ano], ([d, m, a]) => {
     background-repeat: no-repeat;
     background-position: right 1rem center;
     background-size: calc(var(--tamanho-icones) - 2.5vw);
-    transition: border 0.2s ease, box-shadow 0.2s ease;
+    transition:
+      border 0.2s ease,
+      box-shadow 0.2s ease;
 
     &:focus {
       outline: none;
