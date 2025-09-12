@@ -23,7 +23,7 @@ div {
   gap: 20px;
 
   svg {
-    fill: var(--branco);
+    fill: var(--color-white);
     width: 50px;
     height: 50px;
   }
@@ -34,13 +34,13 @@ div {
     justify-content: center;
     gap: 6px;
     a {
-      font-size: var(--texto-gg);
-      color: var(--branco);
+      font-size: var(--text-xl);
+      color: var(--color-white);
     }
 
     p {
-      font-size: var(--texto-gg);
-      color: var(--branco);
+      font-size: var(--text-xl);
+      color: var(--color-whitebranco);
     }
   }
 }

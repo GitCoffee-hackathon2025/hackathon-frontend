@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { useBairroStore } from '@/store/Bairro'
-import { useReportStore } from '@/store/report'
+import { useReportStore } from '@/requisitions/Ocurrences'
 import { onMounted, nextTick, watch, onUnmounted } from 'vue'
 import { useRoute } from 'vue-router'
 import L from 'leaflet'
@@ -55,11 +55,11 @@ const createCustomIcon = () => {
 // Função para ativar modo de seleção de localização
 const enableLocationSelection = () => {
   if (!map) return
-  
+
   // Alterar cursor para indicar modo de seleção (crosshair apenas sobre áreas válidas)
   // Vamos deixar o cursor padrão e mudar apenas quando estiver sobre um bairro
   map.getContainer().style.cursor = 'default'
-  
+
   // Adicionar evento de movimento do mouse para mudar o cursor
   map.eachLayer((layer) => {
     if (layer instanceof L.GeoJSON) {
@@ -75,61 +75,63 @@ const enableLocationSelection = () => {
       })
     }
   })
-  
+
   // Adicionar evento de clique no mapa
   clickHandler = async (e: L.LeafletMouseEvent) => {
     const { lat, lng } = e.latlng
-    
+
     // VERIFICAR SE O PONTO ESTÁ DENTRO DE ALGUM BAIRRO
     const bairroName = await findBairroByCoordinates(lat, lng)
-    
+
     if (!bairroName) {
       // Mostrar popup de erro se estiver fora da área
       L.popup()
         .setLatLng(e.latlng)
-        .setContent('Localização fora da área coberta. Selecione um local dentro dos bairros disponíveis.')
+        .setContent(
+          'Localização fora da área coberta. Selecione um local dentro dos bairros disponíveis.',
+        )
         .openOn(map!)
       return
     }
-    
+
     // Guardar as coordenadas na store de report
     await reportStore.setReportCoordinates({ lat, lng })
-    
+
     // Remover marcador anterior se existir
     if (selectionMarker) {
       map?.removeLayer(selectionMarker)
     }
-    
+
     // Adicionar um marcador no local selecionado com ícone personalizado
     selectionMarker = L.marker([lat, lng], {
-      icon: createCustomIcon()
+      icon: createCustomIcon(),
     }).addTo(map!)
-    
+
     // Mostrar popup com informações do local selecionado
     const popupContent = `Bairro: ${bairroName}<br>Coordenadas: ${lat.toFixed(6)}, ${lng.toFixed(6)}`
-    
+
     selectionMarker.bindPopup(popupContent).openPopup()
-    
+
     console.log('Coordenadas salvas:', reportStore.reportCoordinates)
     console.log('Bairro identificado:', reportStore.reportBairro)
   }
-  
+
   map.on('click', clickHandler)
 }
 
 // Função para desativar modo de seleção de localização
 const disableLocationSelection = () => {
   if (!map) return
-  
+
   // Restaurar cursor padrão
   map.getContainer().style.cursor = ''
-  
+
   // Remover evento de clique se existir
   if (clickHandler) {
     map.off('click', clickHandler)
     clickHandler = null
   }
-  
+
   // Remover eventos de movimento do mouse
   map.eachLayer((layer) => {
     if (layer instanceof L.GeoJSON) {
@@ -137,7 +139,7 @@ const disableLocationSelection = () => {
       layer.off('mouseout')
     }
   })
-  
+
   // Remover marcador de seleção
   if (selectionMarker) {
     map.removeLayer(selectionMarker)
@@ -146,13 +148,16 @@ const disableLocationSelection = () => {
 }
 
 // Observar mudanças na rota
-watch(() => route.path, (newPath) => {
-  if (newPath.includes('selecionar-localizacao')) {
-    enableLocationSelection()
-  } else {
-    disableLocationSelection()
-  }
-})
+watch(
+  () => route.path,
+  (newPath) => {
+    if (newPath.includes('selecionar-localizacao')) {
+      enableLocationSelection()
+    } else {
+      disableLocationSelection()
+    }
+  },
+)
 
 onMounted(() => {
   map = L.map('map', {
@@ -194,7 +199,7 @@ onMounted(() => {
             if (clickHandler) {
               map!.getContainer().style.cursor = 'crosshair'
             }
-            
+
             // muda o estilo apos o cara passar o mouse pro cima
             this.setStyle({
               fillOpacity: 0.05,
@@ -208,7 +213,7 @@ onMounted(() => {
             if (clickHandler) {
               map!.getContainer().style.cursor = 'default'
             }
-            
+
             // volta ao estilo padrao apos tirar o mouse
             this.setStyle({
               fillOpacity: 0.02,
@@ -221,7 +226,7 @@ onMounted(() => {
           layer.on('click', async (e) => {
             // Se estiver no modo de seleção, não processar clique no bairro
             if (clickHandler) return
-            
+
             // Dar um zoom brisado no bairro clicado
             map?.flyToBounds(e.target.getBounds(), {
               padding: [50, 50],
@@ -235,14 +240,13 @@ onMounted(() => {
             const bairroId = feature.properties?.id_bairro
             // console.log(bairroId)
             bairroStore.getDataBairro(bairroId)
-
           })
         },
       }).addTo(map!)
     })
     .catch((err) => console.error('Erro ao carregar GeoJSON:', err))
-    
-  // Verificar se a rota inicial já é a de seleção de localização eba 
+
+  // Verificar se a rota inicial já é a de seleção de localização eba
   if (route.path.includes('selecionar-localizacao')) {
     enableLocationSelection()
   }

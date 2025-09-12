@@ -15,7 +15,7 @@ export const useBairroStore = defineStore('bairro', () => {
 
   function selectBairro(data: Record<string, any>) {
     selectedData.value = data
-    
+
     if (data.id) getDataBairro(data.id)
   }
 
@@ -32,8 +32,8 @@ export const useBairroStore = defineStore('bairro', () => {
     bairroReports.value = []
 
     try {
-      const response = await fetch(`http://localhost:3000/reportsByNeighborhood/${idData}`, { 
-        method: 'GET' 
+      const response = await fetch(`http://localhost:3000/reportsByNeighborhood/${idData}`, {
+        method: 'GET',
       })
 
       if (!response.ok) {
@@ -53,13 +53,13 @@ export const useBairroStore = defineStore('bairro', () => {
             content: report.content,
             coordenadas: report.coordenadas,
             created_at: report.created_at,
-            user: report.user 
+            user: report.user
               ? { id: report.user.id, name: report.user.name }
               : { id: null, name: 'Usuário anônimo' },
-            type: report.type 
+            type: report.type
               ? { id: report.type.id, name: report.type.name }
               : { id: null, name: 'Tipo não informado' },
-            _fullData: report // Mantém todos os dados originais
+            _fullData: report, // Mantém todos os dados originais
           }
         })
 
@@ -77,14 +77,13 @@ export const useBairroStore = defineStore('bairro', () => {
     }
   }
 
-  return { 
-    setMap, 
-    selectedData, 
+  return {
+    setMap,
+    selectedData,
     bairroReports,
     loading,
-    selectBairro, 
-    clearBairro, 
-    getDataBairro
+    selectBairro,
+    clearBairro,
+    getDataBairro,
   }
-
 })

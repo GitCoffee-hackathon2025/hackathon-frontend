@@ -6,8 +6,6 @@ import type {
   UpdateUserParams,
   UpdateType,
 } from '@/store/Types'
-import { UserStore } from '@/store/UserStore'
-const user = UserStore()
 
 export const UserRequisitions = defineStore('User requisitions', () => {
   async function register(req: CreateUserDTO) {

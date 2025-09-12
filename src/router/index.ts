@@ -4,7 +4,7 @@ import MapaDenunciasInicial from '@/views/MapadeDenuncias/views/PaginaInicial.vu
 import Configuracoes from '@/views/Configuracoes/PaginaConfiguracoes.vue'
 import Usuario from '@/views/Usuario/PaginaUsuario.vue'
 import SobreSite from '@/views/SobreSite/PaginaSobreSite.vue'
-import NaoEncontrada from '@/views/PaginaNaoEncontrada.vue'
+import NaoEncontrada from '@/views/PageNotFound.vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),

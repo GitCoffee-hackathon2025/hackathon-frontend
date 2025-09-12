@@ -1,71 +1,79 @@
 <script setup lang="ts">
-import { ref } from "vue"
-import { useReportStore } from "@/store/report"
+import { ref } from 'vue'
+import { useReportStore } from '@/requisitions/Ocurrences'
 
 const store = useReportStore()
-const mensagem = ref("")  // <--- aqui armazenamos a mensagem de erro ou sucesso
+const mensagem = ref('') // <--- aqui armazenamos a mensagem de erro ou sucesso
 
 async function enviar() {
   try {
     const data = await store.sendReport(1)
-    mensagem.value = "Relatório enviado com sucesso!" // ou use data.message se a API retornar
+    mensagem.value = 'Relatório enviado com sucesso!' // ou use data.message se a API retornar
   } catch (error: any) {
-    mensagem.value = error.message || "Ocorreu um erro ao enviar."
+    mensagem.value = error.message || 'Ocorreu um erro ao enviar.'
   }
 }
+</script>
 
-  </script>
+<template>
+  <section>
+    <form @submit.prevent="enviar">
+      <h2 class="titulo">Criar Report</h2>
+      <router-link to="">
+        <!-- SVG de voltar -->
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          width="35"
+          height="21"
+          viewBox="0 0 35 21"
+          fill="none"
+        >
+          <path fill-rule="evenodd" clip-rule="evenodd" d="M6.27812 10.2101L10.5875 14.4613..." />
+        </svg>
+      </router-link>
 
-  <template>
-    <section>
-      <form @submit.prevent="enviar">
-        <h2 class="titulo">Criar Report</h2>
-        <router-link to="">
-          <!-- SVG de voltar -->
-          <svg xmlns="http://www.w3.org/2000/svg" width="35" height="21" viewBox="0 0 35 21" fill="none">
-            <path fill-rule="evenodd" clip-rule="evenodd" d="M6.27812 10.2101L10.5875 14.4613..." />
+      <div class="entradas">
+        <!-- Tipo -->
+        <div class="tipo-denuncia campo">
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            width="36"
+            height="32"
+            viewBox="0 0 36 32"
+            fill="none"
+          >
+            <path fill-rule="evenodd" clip-rule="evenodd" d="M13.993 2.55819C15.7409..." />
           </svg>
-        </router-link>
-
-          <div class="entradas">
-
-          <!-- Tipo -->
-          <div class="tipo-denuncia campo">
-            <svg xmlns="http://www.w3.org/2000/svg" width="36" height="32" viewBox="0 0 36 32" fill="none">
-              <path fill-rule="evenodd" clip-rule="evenodd" d="M13.993 2.55819C15.7409..." />
-            </svg>
-            <select v-model="store.reportType">
-              <option value="" disabled selected>Escolha um crime</option>
-              <option value="Acidente de trânsito">Acidente de trânsito</option>
-              <option value="Assalto">Assalto</option>
-              <option value="Outro">Outro</option>
-            </select>
-          </div>
-
-          <!-- Data -->
-          <div class="dia-hora campo">
-            <label>Data:</label>
-            <div class="escolher-dia-hora">
-              <input type="date" v-model="store.reportDate" />
-            </div>
-          </div>
-
-          <!-- Descrição -->
-          <div class="descricao">
-            <label>Descrição:</label>
-            <textarea v-model="store.reportContent"></textarea>
-          </div>
-
-          <p>{{ mensagem }}</p>
-          <button type="submit" @click="store.sendReport(1)">Enviar</button>
+          <select v-model="store.reportType">
+            <option value="" disabled selected>Escolha um crime</option>
+            <option value="Acidente de trânsito">Acidente de trânsito</option>
+            <option value="Assalto">Assalto</option>
+            <option value="Outro">Outro</option>
+          </select>
         </div>
-      </form>
 
-    </section>
+        <!-- Data -->
+        <div class="dia-hora campo">
+          <label>Data:</label>
+          <div class="escolher-dia-hora">
+            <input type="date" v-model="store.reportDate" />
+          </div>
+        </div>
 
-  </template>
-  <style scoped lang="scss">
- .titulo {
+        <!-- Descrição -->
+        <div class="descricao">
+          <label>Descrição:</label>
+          <textarea v-model="store.reportContent"></textarea>
+        </div>
+
+        <p>{{ mensagem }}</p>
+        <button type="submit" @click="store.sendReport(1)">Enviar</button>
+      </div>
+    </form>
+  </section>
+</template>
+<style scoped lang="scss">
+.titulo {
   grid-row: 5/31;
   text-align: center;
   color: var(--cinza);
@@ -107,11 +115,21 @@ form {
     }
 
     // delays
-    .local { animation-delay: 0.2s; }
-    .tipo-denuncia { animation-delay: 0.4s; }
-    .dia-hora { animation-delay: 0.6s; }
-    .descricao { animation-delay: 0.8s; }
-    button { animation-delay: 1s; }
+    .local {
+      animation-delay: 0.2s;
+    }
+    .tipo-denuncia {
+      animation-delay: 0.4s;
+    }
+    .dia-hora {
+      animation-delay: 0.6s;
+    }
+    .descricao {
+      animation-delay: 0.8s;
+    }
+    button {
+      animation-delay: 1s;
+    }
 
     // Local
     .local {
@@ -123,7 +141,9 @@ form {
       align-self: center;
       border: none;
 
-      svg { fill: var(--cinza); }
+      svg {
+        fill: var(--cinza);
+      }
     }
 
     // Tipo
@@ -136,7 +156,9 @@ form {
       align-self: center;
       border: none;
 
-      svg { fill: var(--cinza); }
+      svg {
+        fill: var(--cinza);
+      }
     }
 
     .tipo-denuncia select {
@@ -160,7 +182,10 @@ form {
       justify-content: flex-start;
       gap: 5px;
 
-      label { color: var(--cinza); align-self: baseline; }
+      label {
+        color: var(--cinza);
+        align-self: baseline;
+      }
 
       .escolher-dia-hora {
         width: var(--largura-componentes);
@@ -213,7 +238,10 @@ form {
       justify-content: flex-start;
       gap: 5px;
 
-      label { color: var(--cinza); align-self: baseline; }
+      label {
+        color: var(--cinza);
+        align-self: baseline;
+      }
 
       textarea {
         width: var(--largura-componentes);
@@ -231,26 +259,25 @@ form {
 
     // Mensagem de erro
     // Mensagem de erro/sucesso
-p {
-  grid-column: 1 / -1;
-  grid-row: 20/32;     
-  justify-self: center;      
-  align-self: center;         
-  width: var(--largura-componentes);
-  max-width: 100%;
-  min-height: calc(var(--altura-componentes) / 1.5);
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  border-radius: 8px;
-  font-size: var(--texto-p);
-  padding: 0.5rem 1rem;
-  text-align: center;
-  color: var(--vermelho);    // você pode trocar dinamicamente se quiser sucesso/erro
-  background-color: var(--branco);
-  box-sizing: border-box;
-}
-
+    p {
+      grid-column: 1 / -1;
+      grid-row: 20/32;
+      justify-self: center;
+      align-self: center;
+      width: var(--largura-componentes);
+      max-width: 100%;
+      min-height: calc(var(--altura-componentes) / 1.5);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      border-radius: 8px;
+      font-size: var(--texto-p);
+      padding: 0.5rem 1rem;
+      text-align: center;
+      color: var(--vermelho); // você pode trocar dinamicamente se quiser sucesso/erro
+      background-color: var(--branco);
+      box-sizing: border-box;
+    }
 
     // Botão
     button {
@@ -272,7 +299,10 @@ p {
     select,
     textarea,
     button {
-      transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out, background-color 0.2s ease-in-out;
+      transition:
+        transform 0.2s ease-in-out,
+        box-shadow 0.2s ease-in-out,
+        background-color 0.2s ease-in-out;
     }
 
     input:hover,
@@ -317,13 +347,24 @@ p {
 }
 
 @keyframes fadeInUp {
-  from { opacity: 0; transform: translateY(30px); }
-  to   { opacity: 1; transform: translateY(0); }
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 @keyframes slideUp {
-  from { opacity: 0; transform: translateY(25px); }
-  to   { opacity: 1; transform: translateY(0); }
+  from {
+    opacity: 0;
+    transform: translateY(25px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
-
-  </style>
+</style>

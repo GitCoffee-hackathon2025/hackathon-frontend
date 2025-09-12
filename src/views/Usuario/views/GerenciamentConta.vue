@@ -120,7 +120,7 @@ function cancelarEditacao(refKey: string) {
 </template>
 
 <style scoped lang="scss">
-@import '@/assets/inputs.scss';
+@use '@/assets/inputs.scss';
 
 div.conta {
   width: 100%;

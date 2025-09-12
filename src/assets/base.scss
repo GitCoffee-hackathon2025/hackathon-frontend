@@ -1,62 +1,62 @@
-@import './cores.scss';
-@import './inputs.scss';
+@use '@/assets/colors.scss';
+@use '@/assets/inputs.scss';
 
 :root {
   font-family: Arial, Helvetica, sans-serif;
   font-size: 16px;
 
-  --texto-p: clamp(0.75rem, 0.75rem + 0.5vw, 1rem);
-  --texto-m: clamp(1rem, 1rem + 0.5vw, 1.5rem);
-  --texto-g: clamp(1.125rem, 1.125rem + 0.5vw, 1.5rem);
-  --texto-gg: clamp(1.5rem, 1.5rem + 0.5vw, 2rem);
-  --texto-xxg: clamp(2rem, 2rem + 0.5vw, 2.1rem);
+  --text-sm: clamp(0.75rem, 0.75rem + 0.5vw, 1rem);
+  --text-md: clamp(1rem, 1rem + 0.5vw, 1.5rem);
+  --text-lg: clamp(1.125rem, 1.125rem + 0.5vw, 1.5rem);
+  --text-xl: clamp(1.5rem, 1.5rem + 0.5vw, 2rem);
+  --text-xxl: clamp(2rem, 2rem + 0.5vw, 2.1rem);
 
-  --altura-componentes: clamp(2.75rem, 2.75rem + 0.5vw, 3.5rem);
-  --largura-componentes: clamp(17.5rem, 85vw, 25rem);
-  --tamanho-icones: clamp(1.3rem, 1.3rem + 0.8vw, 2rem);
+  --component-height: clamp(2.75rem, 2.75rem + 0.5vw, 3.5rem);
+  --component-width: clamp(17.5rem, 85vw, 25rem);
+  --icon-size: clamp(1.3rem, 1.3rem + 0.8vw, 2rem);
 }
 
 @media (min-width: 576px) {
   :root {
-    --texto-p: clamp(1rem, 1rem + 0.5vw, 1.2rem);
-    --texto-m: clamp(1.2rem, 1.2rem + 15vw, 1.4rem);
-    --texto-g: clamp(2rem, 2rem + 0.5vw, 2.5rem);
-    --texto-gg: clamp(2.5rem, 2.5rem + 0.5vw, 2.5rem);
-    --texto-xxg: clamp(2.5rem, 2.5rem + 0.5vw, 3rem);
+    --text-sm: clamp(1rem, 1rem + 0.5vw, 1.2rem);
+    --text-md: clamp(1.2rem, 1.2rem + 15vw, 1.4rem);
+    --text-lg: clamp(2rem, 2rem + 0.5vw, 2.5rem);
+    --text-xl: clamp(2.5rem, 2.5rem + 0.5vw, 2.5rem);
+    --text-xxl: clamp(2.5rem, 2.5rem + 0.5vw, 3rem);
 
-    --altura-componentes: clamp(4.2rem, 4.2rem + 0.5vw, 4.5rem);
-    --largura-componentes: clamp(17.5rem, 85vw, 560px);
-    --tamanho-icones: clamp(1.8rem, 1.8rem + 0.5vw, 2.4rem);
+    --component-height: clamp(4.2rem, 4.2rem + 0.5vw, 4.5rem);
+    --component-width: clamp(17.5rem, 85vw, 560px);
+    --icon-size: clamp(1.8rem, 1.8rem + 0.5vw, 2.4rem);
   }
 }
+
 @media (min-width: 768px) {
   :root {
-    --texto-p: clamp(1.1rem, 1.1rem + 0.5vw, 1.4rem);
-    --texto-m: clamp(1.4rem, 1.4rem + 0.5vw, 1.6rem);
-    --texto-g: clamp(2rem, 2rem + 0.5vw, 2.5rem);
-    --texto-gg: clamp(2.5rem, 2.5rem + 0.5vw, 2.5rem);
-    --texto-xxg: clamp(2.8rem, 2.8rem + 0.5vw, 3.3rem);
+    --text-sm: clamp(1.1rem, 1.1rem + 0.5vw, 1.4rem);
+    --text-md: clamp(1.4rem, 1.4rem + 0.5vw, 1.6rem);
+    --text-lg: clamp(2rem, 2rem + 0.5vw, 2.5rem);
+    --text-xl: clamp(2.5rem, 2.5rem + 0.5vw, 2.5rem);
+    --text-xxl: clamp(2.8rem, 2.8rem + 0.5vw, 3.3rem);
 
-    --altura-componentes: clamp(4.2rem, 4.2rem + 0.5vw, 4.8rem);
-    --largura-componentes: clamp(17.5rem, 85vw, 40rem);
-    --tamanho-icones: clamp(2rem, 2rem + 0.5vw, 2.7rem);
+    --component-height: clamp(4.2rem, 4.2rem + 0.5vw, 4.8rem);
+    --component-width: clamp(17.5rem, 85vw, 40rem);
+    --icon-size: clamp(2rem, 2rem + 0.5vw, 2.7rem);
   }
 }
 
 @media (min-width: 992px) {
   :root {
-    --texto-p: clamp(0.8rem, 0.8rem + 0.3vw, 0.87rem);
-    --texto-m: clamp(1rem, 1rem + 0.3vw, 1rem);
-    --texto-g: clamp(2rem, 2rem + 0.3vw, 2rem);
-    --texto-gg: clamp(1.6rem, 1.5rem + 0.3vw, 1.8rem);
-    --texto-xxg: clamp(2.2rem, 2.2rem + 0.3vw, 3rem);
+    --text-sm: clamp(0.8rem, 0.8rem + 0.3vw, 0.87rem);
+    --text-md: clamp(1rem, 1rem + 0.3vw, 1rem);
+    --text-lg: clamp(2rem, 2rem + 0.3vw, 2rem);
+    --text-xl: clamp(1.6rem, 1.5rem + 0.3vw, 1.8rem);
+    --text-xxl: clamp(2.2rem, 2.2rem + 0.3vw, 3rem);
 
-    --altura-componentes: clamp(2.8rem, 2.7rem + 0.3vw, 3rem);
-    --largura-componentes: clamp(17.5rem, 85vw, 25rem);
-    --tamanho-icones: clamp(1.3rem, 1.25rem + 0.3vw, 1.6rem);
+    --component-height: clamp(2.8rem, 2.7rem + 0.3vw, 3rem);
+    --component-width: clamp(17.5rem, 85vw, 25rem);
+    --icon-size: clamp(1.3rem, 1.25rem + 0.3vw, 1.6rem);
   }
 }
-
 
 * {
   margin: 0;
