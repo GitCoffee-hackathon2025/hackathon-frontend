@@ -1,15 +1,20 @@
 <script setup lang="ts">
 import { onMounted, reactive, ref } from 'vue'
-import CampoEmail from './components/inputs/CampoEmail.vue'
-import ParteCima from './components/ParteCima.vue'
-import CampoDigitos from './components/inputs/CampoDigitos.vue'
-import CampoSenha from './components/inputs/CampoSenha.vue'
-import TextoAviso from './components/TextoAviso.vue'
+import CampoEmail from './components/inputs/EmailInput.vue'
+import ParteCima from './components/BlackSide.vue'
+import CampoDigitos from './components/inputs/CodeInput.vue'
+import CampoSenha from './components/inputs/PasswordInput.vue'
+import TextoAviso from './components/AlertText.vue'
 
 import resetData from '@/utils/resetData'
 resetData.setup()
 
-import type { tokenSendOrVerify, UpdateType, UpdateUserBody, UpdateUserParams } from '@/store/Types'
+import type {
+  tokenSendOrVerify,
+  UpdateType,
+  UpdateUserBody,
+  UpdateUserParams,
+} from '@/store/TypesStore'
 
 import { UserStore } from '@/store/UserStore'
 const user = UserStore()
@@ -19,7 +24,7 @@ const tokenReq = TokenRequisitions()
 import { UserRequisitions } from '@/requisitions/User'
 const userReq = UserRequisitions()
 
-import { AnimsAuthStore } from '@/store/AnimsAuth'
+import { AnimsAuthStore } from '@/store/AnimsStore'
 const animsAuth = AnimsAuthStore()
 
 onMounted(() => {

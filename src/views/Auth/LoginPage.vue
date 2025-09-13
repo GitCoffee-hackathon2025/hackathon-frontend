@@ -1,12 +1,12 @@
 <script setup lang="ts">
 import { ref, onMounted } from 'vue'
-import CampoSenha from './components/inputs/CampoSenha.vue'
-import CampoEmail from './components/inputs/CampoEmail.vue'
-import LinkForm from './components/LinkForm.vue'
-import TextoAviso from './components/TextoAviso.vue'
-import ParteCima from './components/ParteCima.vue'
+import CampoSenha from './components/inputs/PasswordInput.vue'
+import CampoEmail from './components/inputs/EmailInput.vue'
+import LinkForm from './components/LinkAuth.vue'
+import TextoAviso from './components/AlertText.vue'
+import ParteCima from './components/BlackSide.vue'
 
-import { AnimsAuthStore } from '@/store/AnimsAuth'
+import { AnimsAuthStore } from '@/store/AnimsStore'
 const animsAuth = AnimsAuthStore()
 
 import resetData from '@/utils/resetData'
@@ -21,7 +21,7 @@ const userReq = UserRequisitions()
 import { UserStore } from '@/store/UserStore'
 const user = UserStore()
 
-import type { LoginUser } from '@/store/Types'
+import type { LoginUser } from '@/store/TypesStore'
 
 const errorText = ref<string>('')
 const loginFailed = ref(false)

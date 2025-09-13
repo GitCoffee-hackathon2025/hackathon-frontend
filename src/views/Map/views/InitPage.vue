@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { useBairroStore } from '@/store/Bairro'
+import { useBairroStore } from '@/store/NeighborhoodStore'
 import { useReportStore } from '@/requisitions/Ocurrences'
 import { onMounted, nextTick, watch, onUnmounted } from 'vue'
 import { useRoute } from 'vue-router'
@@ -8,7 +8,7 @@ import { markRaw } from 'vue'
 import 'leaflet/dist/leaflet.css'
 import DadosBairro from '@/views/MapadeDenuncias/components/DadosBairros.vue'
 import BarraPesquisa from '@/views/MapadeDenuncias/components/BarraPesquisa.vue'
-import { findBairroByCoordinates } from '@/utils/geocoding'
+import { findBairroByCoordinates } from '@/utils/geoCoding'
 
 let map: L.Map | null = null
 let clickHandler: ((e: L.LeafletMouseEvent) => void) | null = null

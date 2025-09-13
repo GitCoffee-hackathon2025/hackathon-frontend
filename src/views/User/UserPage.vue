@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import PainelOpcoes from '@/components/PanelView.vue'
 
-import type { Option } from '@/store/Types'
+import type { Option } from '@/store/TypesStore'
 
 const listaItens: Option[] = [
   {

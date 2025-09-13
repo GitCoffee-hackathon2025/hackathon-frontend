@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { Option } from '@/store/Types'
+import type { Option } from '@/store/TypesStore'
 import {
   defineProps,
   computed,
@@ -132,8 +132,8 @@ const routeClass = (name: string) =>
       <div
         class="currentRoute"
         :style="{
-          left: 'calc(' + (leftDistance + gapSize) + 'px + var(--tamanho-icones) / 100 ) ',
-          width: 'calc(' + (currentRouteWidth ?? 0) + 'px + var(--tamanho-icones) ) ',
+          left: 'calc(' + (leftDistance + gapSize) + 'px + var(--icon-size) / 100 ) ',
+          width: 'calc(' + (currentRouteWidth ?? 0) + 'px + var(--icon-size) ) ',
         }"
       ></div>
       <ul class="options">

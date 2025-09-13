@@ -1,9 +1,9 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import MapadeDenuncia from '@/views/MapadeDenuncias/MapaDenuncias.vue'
 import MapaDenunciasInicial from '@/views/MapadeDenuncias/views/PaginaInicial.vue'
-import Configuracoes from '@/views/Configuracoes/PaginaConfiguracoes.vue'
+import Configuracoes from '@/views/Configuracoes/ConfigPage.vue'
 import Usuario from '@/views/Usuario/PaginaUsuario.vue'
-import SobreSite from '@/views/SobreSite/PaginaSobreSite.vue'
+import SobreSite from '@/views/SobreSite/AboutPage.vue'
 import NaoEncontrada from '@/views/PageNotFound.vue'
 
 const router = createRouter({

@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { useBairroStore } from '@/store/Bairro'
+import { useBairroStore } from '@/store/NeighborhoodStore'
 import { storeToRefs } from 'pinia'
 
 const bairroStore = useBairroStore()
@@ -15,25 +15,30 @@ function fechar() {
     <div class="detalhes-content">
       <button class="close-button" @click="fechar">×</button>
       <h2>Reports do Bairro</h2>
-      
+
       <!-- Use campos genéricos ou ajuste conforme sua API -->
       <p>
-        <strong>Bairro: {{ [selectedData.nome, selectedData.name, selectedData.nome_bairro, selectedData.id].find((nameBairro) => nameBairro !== '' && nameBairro != null) ?? 'Bairro não informado' }} </strong>
+        <strong
+          >Bairro:
+          {{
+            [selectedData.nome, selectedData.name, selectedData.nome_bairro, selectedData.id].find(
+              (nameBairro) => nameBairro !== '' && nameBairro != null,
+            ) ?? 'Bairro não informado'
+          }}
+        </strong>
       </p>
-      
+
       <!-- Loading state -->
-      <div v-if="loading" class="loading">
-        Carregando reports...
-      </div>
-      
+      <div v-if="loading" class="loading">Carregando reports...</div>
+
       <!-- Exibir reports do bairro -->
       <div v-else class="reports-container">
         <h3>Reports ({{ bairroReports.length }})</h3>
-        
+
         <div v-if="bairroReports.length">
           <div v-for="report in bairroReports" :key="report.id" class="report-item">
-            <p class="report-user"> 
-              <strong>{{ report.user.name }}</strong> — 
+            <p class="report-user">
+              <strong>{{ report.user.name }}</strong> —
               <span class="report-type">{{ report.type.name }}</span>
             </p>
             <p class="report-content">
@@ -47,10 +52,8 @@ function fechar() {
             </p>
           </div>
         </div>
-        
-        <div v-else class="no-data">
-          Nenhum report disponível para este bairro.
-        </div>
+
+        <div v-else class="no-data">Nenhum report disponível para este bairro.</div>
       </div>
     </div>
   </div>
@@ -143,7 +146,8 @@ function fechar() {
       margin-bottom: 8px;
     }
 
-    .report-coords, .report-date {
+    .report-coords,
+    .report-date {
       font-size: 0.8rem;
       color: #888;
       margin: 2px 0;

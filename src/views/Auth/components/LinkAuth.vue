@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { defineProps } from 'vue'
-import { AnimsAuthStore } from '@/store/AnimsAuth'
+import { AnimsAuthStore } from '@/store/AnimsStore'
 const animsAuth = AnimsAuthStore()
 
 const props = defineProps({

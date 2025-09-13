@@ -1,24 +1,24 @@
 // stores/report.ts
-import { defineStore } from "pinia"
-import { ref } from "vue"
-import { findBairroByCoordinates } from "@/utils/geocoding"
+import { defineStore } from 'pinia'
+import { ref } from 'vue'
+import { findBairroByCoordinates } from '@/utils/geoCoding'
 
-export const useReportStore = defineStore("report", () => {
-  const reportContent = ref<string>("")
-  const reportType = ref<string>("")
-  const reportDate = ref<string>("") 
-  const reportLocal = ref<string>("")
+export const useReportStore = defineStore('report', () => {
+  const reportContent = ref<string>('')
+  const reportType = ref<string>('')
+  const reportDate = ref<string>('')
+  const reportLocal = ref<string>('')
   const reportCoordinates = ref<{ lat: number; lng: number } | null>(null)
-  const reportBairro = ref<string>("") // Nova propriedade para o nome do bairro
+  const reportNeighborhood = ref<string>('') // Nova propriedade para o nome do bairro
 
   // Função para definir as coordenadas e buscar o bairro
   const setReportCoordinates = async (coords: { lat: number; lng: number }) => {
     reportCoordinates.value = coords
-    
+
     // Buscar o nome do bairro baseado nas coordenadas
     const bairroName = await findBairroByCoordinates(coords.lat, coords.lng)
     if (bairroName) {
-      reportBairro.value = bairroName
+      reportNeighborhood.value = bairroName
       reportLocal.value = bairroName // Opcional: preencher também o local com o nome do bairro
     }
   }
@@ -26,10 +26,10 @@ export const useReportStore = defineStore("report", () => {
   // função para enviar relatório
   const sendReport = async (userId: number) => {
     try {
-      const response = await fetch("http://localhost:3000/reports/register", {
-        method: "POST",
+      const res = await fetch(`${import.meta.env.VITE_REQ}/reports/register`, {
+        method: 'POST',
         headers: {
-          "Content-Type": "application/json",
+          'Content-Type': 'application/json',
         },
         body: JSON.stringify({
           userId,
@@ -42,16 +42,23 @@ export const useReportStore = defineStore("report", () => {
         }),
       })
 
-      if (!response.ok) {
-        throw new Error(`Erro ao enviar relatório: ${response.status}`)
+      if (!res.ok) {
+        const errorData = await res.json()
+        return {
+          success: false,
+          errorText: errorData.error,
+          type: errorData.type,
+        }
       }
 
-      const data = await response.json()
-      console.log("Relatório enviado com sucesso:", data)
+      const data = await res.json()
+      console.log('Relatório enviado com sucesso:', data)
       return data
-    } catch (error) {
-      console.error("Erro no envio:", error)
-      throw error
+    } catch (err) {
+      return {
+        success: false,
+        errorText: 'Erro de conexão. Tente novamente.',
+      }
     }
   }
 
@@ -61,7 +68,7 @@ export const useReportStore = defineStore("report", () => {
     reportDate,
     reportLocal,
     reportCoordinates,
-    reportBairro,
+    reportNeighborhood,
     setReportCoordinates,
     sendReport,
   }

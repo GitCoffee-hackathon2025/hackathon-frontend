@@ -1,11 +1,11 @@
 <script setup lang="ts">
-import CampoEmail from './components/inputs/CampoEmail.vue'
-import CampoDataNascimento from './components/inputs/CampoDataNascimento.vue'
-import LinkForm from './components/LinkForm.vue'
-import TextoAviso from './components/TextoAviso.vue'
-import ParteCima from './components/ParteCima.vue'
-import CampoSenha from './components/inputs/CampoSenha.vue'
-import CampoNome from './components/inputs/CampoNome.vue'
+import CampoEmail from './components/inputs/EmailInput.vue'
+import CampoDataNascimento from './components/inputs/BirthdayInput.vue'
+import LinkForm from './components/LinkAuth.vue'
+import TextoAviso from './components/AlertText.vue'
+import ParteCima from './components/BlackSide.vue'
+import CampoSenha from './components/inputs/PasswordInput.vue'
+import CampoNome from './components/inputs/NameInput.vue'
 import CampoDigitos from '@/views/Autenticacao/components/inputs/CampoDigitos.vue'
 
 import resetData from '@/utils/resetData'
@@ -24,9 +24,9 @@ const tokenReq = TokenRequisitions()
 import { UserRequisitions } from '@/requisitions/User'
 const userReq = UserRequisitions()
 
-import type { CreateUserDTO, tokenSendOrVerify } from '@/store/Types'
+import type { CreateUserDTO, tokenSendOrVerify } from '@/store/TypesStore'
 
-import { AnimsAuthStore } from '@/store/AnimsAuth'
+import { AnimsAuthStore } from '@/store/AnimsStore'
 const animsAuth = AnimsAuthStore()
 
 const registerSteps = reactive({
