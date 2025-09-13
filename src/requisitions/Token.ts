@@ -1,5 +1,5 @@
 import { defineStore } from 'pinia'
-import type { tokenSendOrVerify } from '@/store/Types'
+import type { tokenSendOrVerify } from '@/store/TypesStore'
 
 export const TokenRequisitions = defineStore('Token requisitions', () => {
   async function send(req: tokenSendOrVerify) {
@@ -39,7 +39,7 @@ export const TokenRequisitions = defineStore('Token requisitions', () => {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify(req),
-        credentials: 'include'
+        credentials: 'include',
       })
 
       if (!res.ok) {

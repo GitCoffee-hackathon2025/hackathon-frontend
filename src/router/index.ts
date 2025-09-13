@@ -1,10 +1,10 @@
 import { createRouter, createWebHistory } from 'vue-router'
-import MapadeDenuncia from '@/views/MapadeDenuncias/MapaDenuncias.vue'
-import MapaDenunciasInicial from '@/views/MapadeDenuncias/views/PaginaInicial.vue'
-import Configuracoes from '@/views/Configuracoes/PaginaConfiguracoes.vue'
-import Usuario from '@/views/Usuario/PaginaUsuario.vue'
-import SobreSite from '@/views/SobreSite/PaginaSobreSite.vue'
-import NaoEncontrada from '@/views/PaginaNaoEncontrada.vue'
+import MapadeDenuncia from '@/views/Map/OcurrenceMap.vue'
+import MapaDenunciasInicial from '@/views/Map/views/InitPage.vue'
+import Configuracoes from '@/views/Config/ConfigPage.vue'
+import Usuario from '@/views/User/UserPage.vue'
+import SobreSite from '@/views/About/AboutPage.vue'
+import NaoEncontrada from '@/views/PageNotFound.vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -24,7 +24,7 @@ const router = createRouter({
         },
         {
           path: 'fazer-denuncia',
-          component: () => import('@/views/MapadeDenuncias/views/FormularioDenuncia.vue'),
+          component: () => import('@/views/Map/views/OcurrenceForm.vue'),
         },
         {
           path: 'selecionar-localizacao',
@@ -42,32 +42,32 @@ const router = createRouter({
       children: [
         {
           path: 'conta',
-          component: () => import('@/views/Usuario/views/GerenciamentConta.vue'),
+          component: () => import('@/views/User/views/AccountManagement.vue'),
           meta: { titulo: 'Conta' },
         },
         {
           path: 'historico-de-denuncias',
-          component: () => import('@/views/Usuario/views/HistoricoDenuncias.vue'),
+          component: () => import('@/views/User/views/OcurrenceHistoric.vue'),
           meta: { titulo: 'Histórico de denúncias' },
         },
         {
           path: 'termos-e-privacidade',
-          component: () => import('@/views/Usuario/views/TermosPrivacidade.vue'),
+          component: () => import('@/views/User/views/TermsPrivacy.vue'),
           meta: { titulo: 'Termos e Privacidade' },
         },
       ],
     },
     {
       path: '/cadastro',
-      component: () => import('@/views/Autenticacao/RotaCadastro.vue'),
+      component: () => import('@/views/Auth/RegisterPage.vue'),
     },
     {
       path: '/entrar',
-      component: () => import('@/views/Autenticacao/RotaLogin.vue'),
+      component: () => import('@/views/Auth/LoginPage.vue'),
     },
     {
       path: '/recuperar-conta',
-      component: () => import('@/views/Autenticacao/RecuperarSenha.vue'),
+      component: () => import('@/views/Auth/RecoverPasswordPage.vue'),
     },
     {
       path: '/sobre-o-site',

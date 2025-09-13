@@ -1,0 +1,108 @@
+form {
+  width: 100vw;
+  height: 100vh;
+  display: grid;
+  grid-template-columns: repeat(30, 1fr);
+  grid-template-rows: repeat(30, clamp(15px, 20%, 28px));
+  background-color: var(--color-gray-dark);
+  overflow-x: hidden;
+
+  div.form-inputs {
+    min-height: 580px;
+    background-color: var(--color-white);
+    z-index: 2;
+    border-top-left-radius: clamp(10px, 20vw, 120px);
+    grid-column: 1 / 31;
+    grid-row: 6 / 31;
+    display: grid;
+    grid-template-columns: repeat(30, 1fr);
+    grid-template-rows: repeat(30, 1fr);
+
+    h1 {
+      width: var(--component-width);
+      font-size: var(--text-xxl);
+      color: var(--color-gray-dark);
+      justify-self: center;
+      align-self: center;
+      text-align: center;
+      grid-column: 1 / 31;
+      grid-row: 4 / 6;
+    }
+
+    p {
+      font-size: var(--text-lg);
+      color: var(--color-gray-dark);
+      grid-column: 1 / 31;
+      grid-row: 14 / 16;
+      margin-bottom: 2vh;
+      justify-self: center;
+      align-self: center;
+    }
+
+    .form-actions {
+      justify-self: center;
+      align-self: center;
+      width: var(--component-width);
+      grid-column: 1 / 31;
+      grid-row: 21 / 23;
+      display: flex;
+      align-items: center;
+      justify-content: space-evenly;
+      gap: 15px;
+
+      button,
+      a {
+        font-size: var(--texto-lg);
+        text-decoration: none;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        text-align: center;
+        border-radius: 8px;
+        width: var(--component-width);
+        height: var(--component-width);
+        background-color: var(--color-gray-dark);
+        color: var(--color-white);
+        border: none;
+      }
+    }
+  }
+}
+
+@media (min-width: 576px) {
+  form {
+    grid-template-rows: repeat(30, clamp(15px, 20%, 35px));
+  }
+}
+
+@media (min-width: 992px) {
+  form {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    div.form-inputs {
+      z-index: 2;
+      min-height: 0;
+      width: 50vw;
+      max-height: 720px;
+      height: 100vh;
+      border-radius: 0;
+    }
+
+    &.login{
+      flex-direction: row-reverse;
+    }
+  }
+}
+
+@media (min-width: 1440px) {
+  form {
+    grid-template-rows: repeat(30, clamp(15px, 20%, 50px));
+    div.form-inputs {
+      width: 50vw;
+      max-height: 900px;
+      height: 100vh;
+      border-radius: 0;
+    }
+  }
+}

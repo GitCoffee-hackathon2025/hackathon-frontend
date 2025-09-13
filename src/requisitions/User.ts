@@ -5,9 +5,7 @@ import type {
   UpdateUserBody,
   UpdateUserParams,
   UpdateType,
-} from '@/store/Types'
-import { UserStore } from '@/store/UserStore'
-const user = UserStore()
+} from '@/store/TypesStore'
 
 export const UserRequisitions = defineStore('User requisitions', () => {
   async function register(req: CreateUserDTO) {
@@ -18,7 +16,7 @@ export const UserRequisitions = defineStore('User requisitions', () => {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify(req),
-        credentials: 'include'
+        credentials: 'include',
       })
 
       if (!res.ok) {
@@ -85,7 +83,7 @@ export const UserRequisitions = defineStore('User requisitions', () => {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify(req.body),
-        credentials: 'include'
+        credentials: 'include',
       })
 
       if (!res.ok) {
