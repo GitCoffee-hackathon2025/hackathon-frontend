@@ -2,34 +2,34 @@ import { defineStore } from 'pinia'
 import { ref } from 'vue'
 import type L from 'leaflet'
 
-export const useBairroStore = defineStore('bairro', () => {
+export const NeighborhoodStore = defineStore('bairro', () => {
   const selectedData = ref<Record<string, any> | null>(null)
   const mapInstance = ref<L.Map | null>(null)
 
-  const bairroReports = ref<any[]>([])
+  const neighbohoodReports = ref<any[]>([])
   const loading = ref(false)
 
   function setMap(map: L.Map) {
     mapInstance.value = map
   }
 
-  function selectBairro(data: Record<string, any>) {
+  function selectNeighborhood(data: Record<string, any>) {
     selectedData.value = data
 
-    if (data.id) getDataBairro(data.id)
+    if (data.id) getDataNeighborhood(data.id)
   }
 
-  function clearBairro() {
+  function clearNeighborhood() {
     selectedData.value = null
-    bairroReports.value = []
+    neighbohoodReports.value = []
   }
 
-  return { selectedData, mapInstance, setMap, selectBairro, clearBairro }
 
-  const getDataBairro = async (idData: number): Promise<any> => {
+
+  const getDataNeighborhood = async (idData: number): Promise<any> => {
     // console.log("Buscando reports do bairro para o ID:", idData)
     loading.value = true
-    bairroReports.value = []
+    neighbohoodReports.value = []
 
     try {
       const response = await fetch(`http://localhost:3000/reportsByNeighborhood/${idData}`, {
@@ -51,7 +51,7 @@ export const useBairroStore = defineStore('bairro', () => {
           return {
             id: report.id,
             content: report.content,
-            coordenadas: report.coordenadas,
+            coordinates: report.coordenadas,
             created_at: report.created_at,
             user: report.user
               ? { id: report.user.id, name: report.user.name }
@@ -63,15 +63,15 @@ export const useBairroStore = defineStore('bairro', () => {
           }
         })
 
-        bairroReports.value = reportsData
+        neighbohoodReports.value = reportsData
         // console.log('Reports processados:', bairroReports.value)
       } else {
         // console.log('Nenhum dado encontrado ou formato inválido')
-        bairroReports.value = []
+        neighbohoodReports.value = []
       }
-    } catch (error) {
-      console.error('Erro ao buscar reports:', error)
-      bairroReports.value = []
+    } catch (err) {
+      console.error('Erro ao buscar reports:', err)
+      neighbohoodReports.value = []
     } finally {
       loading.value = false
     }
@@ -80,10 +80,10 @@ export const useBairroStore = defineStore('bairro', () => {
   return {
     setMap,
     selectedData,
-    bairroReports,
+    neighbohoodReports,
     loading,
-    selectBairro,
-    clearBairro,
-    getDataBairro,
+    selectNeighborhood,
+    clearNeighborhood,
+    getDataNeighborhood,
   }
 })

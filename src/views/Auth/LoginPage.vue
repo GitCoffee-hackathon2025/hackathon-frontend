@@ -1,13 +1,13 @@
 <script setup lang="ts">
 import { ref, onMounted } from 'vue'
-import CampoSenha from './components/inputs/PasswordInput.vue'
-import CampoEmail from './components/inputs/EmailInput.vue'
-import LinkForm from './components/LinkAuth.vue'
-import TextoAviso from './components/AlertText.vue'
-import ParteCima from './components/BlackSide.vue'
+import PasswordInput from './components/inputs/PasswordInput.vue'
+import EmailInput from './components/inputs/EmailInput.vue'
+import LinkAuth from './components/LinkAuth.vue'
+import AlertText from './components/AlertText.vue'
+import BlackSide from './components/BlackSide.vue'
 
-import { AnimsAuthStore } from '@/store/AnimsStore'
-const animsAuth = AnimsAuthStore()
+import { AnimsStore } from '@/store/AnimsStore'
+const anims = AnimsStore()
 
 import resetData from '@/utils/resetData'
 resetData.setup()
@@ -46,12 +46,12 @@ onMounted(() => {})
 </script>
 <template>
   <form @submit.prevent="login" novalidate class="login">
-    <ParteCima :route="'/mapa-de-denuncias'" :active="true" />
-    <div class="form-inputs" :class="[{ anim: animsAuth.animLogin }]">
+    <BlackSide :route="'/mapa-de-denuncias'" :active="true" />
+    <div class="form-inputs" :class="[{ anim: anims.animLogin }]">
       <h1>Entre com sua conta</h1>
-      <CampoEmail class="login" :erro="loginFailed" />
-      <CampoSenha class="login" :erro="loginFailed" />
-      <TextoAviso :position="'login'" :texto="errorText" />
+      <EmailInput class="login" :erro="loginFailed" />
+      <PasswordInput class="login" :erro="loginFailed" />
+      <AlertText :position="'login'" :texto="errorText" />
 
       <div class="remember-container">
         <label class="remember-label">
@@ -65,19 +65,19 @@ onMounted(() => {})
         <button>Entrar</button>
       </div>
 
-      <LinkForm class="recover-password" :route="'/recuperar-conta'" :text="'Esqueceu a senha?'" />
-      <LinkForm :route="'/cadastro'" :text="'Não tem uma conta?'" anim="register" />
+      <LinkAuth class="recover-password" :route="'/recuperar-conta'" :text="'Esqueceu a senha?'" />
+      <LinkAuth :route="'/cadastro'" :text="'Não tem uma conta?'" anim="register" />
     </div>
   </form>
 </template>
 
 <style scoped lang="scss">
-@import url('./assets/logincadastro.scss');
+@use './assets/auth.scss';
 
 .remember-container {
   grid-row: 15 / 18;
   grid-column: 1 / 31;
-  width: var(--largura-componentes);
+  width: var(--component-width);
   justify-self: center;
   align-self: center;
   display: flex;
@@ -85,9 +85,9 @@ onMounted(() => {})
   align-items: center;
 
   .remember-label {
-    font-size: var(--texto-m);
+    font-size: var(--text-lg);
     user-select: none;
-    color: var(--cinza);
+    color: var(--color-gray-dark);
     cursor: pointer;
     gap: 0.5rem;
     display: flex;
@@ -100,14 +100,14 @@ onMounted(() => {})
     }
 
     .custom-checkbox {
-      width: calc(var(--tamanho-icones) / 1.3);
-      height: calc(var(--tamanho-icones) / 1.3);
-      border: 2px solid var(--cinza);
+      width: calc(var(--icon-size) / 1.3);
+      height: calc(var(--icon-size) / 1.3);
+      border: 2px solid var(--color-gray-dark);
       border-radius: 3px;
       display: flex;
       align-items: center;
       justify-content: center;
-      background-color: var(--branco);
+      background-color: var(--color-white);
       transition: all 0.2s ease-in-out;
       position: relative;
     }
@@ -116,7 +116,7 @@ onMounted(() => {})
       content: '';
       width: 0.5rem;
       height: 1rem;
-      border: solid var(--branco);
+      border: solid var(--color-white);
       border-width: 0 2px 2px 0;
       transform: rotate(45deg) scale(0);
       opacity: 0;
@@ -127,7 +127,7 @@ onMounted(() => {})
     }
 
     input[type='checkbox']:checked + .custom-checkbox {
-      background-color: var(--cinza);
+      background-color: var(--color-gray-dark);
     }
 
     input[type='checkbox']:checked + .custom-checkbox::after {
@@ -136,8 +136,8 @@ onMounted(() => {})
     }
 
     .remember-text {
-      font-size: var(--texto-m);
-      color: var(--cinza);
+      font-size: var(--text-lg);
+      color: var(--color-gray-dark);
     }
   }
 }

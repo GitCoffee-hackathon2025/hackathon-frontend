@@ -4,12 +4,12 @@ form {
   display: grid;
   grid-template-columns: repeat(30, 1fr);
   grid-template-rows: repeat(30, clamp(15px, 20%, 28px));
-  background-color: var(--cinza);
+  background-color: var(--color-gray-dark);
   overflow-x: hidden;
 
   div.form-inputs {
     min-height: 580px;
-    background-color: var(--branco);
+    background-color: var(--color-white);
     z-index: 2;
     border-top-left-radius: clamp(10px, 20vw, 120px);
     grid-column: 1 / 31;
@@ -19,9 +19,9 @@ form {
     grid-template-rows: repeat(30, 1fr);
 
     h1 {
-      width: var(--largura-componentes);
-      font-size: var(--texto-xxg);
-      color: var(--cinza);
+      width: var(--component-width);
+      font-size: var(--text-xxl);
+      color: var(--color-gray-dark);
       justify-self: center;
       align-self: center;
       text-align: center;
@@ -30,8 +30,8 @@ form {
     }
 
     p {
-      font-size: var(--texto-m);
-      color: var(--cinza);
+      font-size: var(--text-lg);
+      color: var(--color-gray-dark);
       grid-column: 1 / 31;
       grid-row: 14 / 16;
       margin-bottom: 2vh;
@@ -42,7 +42,7 @@ form {
     .form-actions {
       justify-self: center;
       align-self: center;
-      width: var(--largura-componentes);
+      width: var(--component-width);
       grid-column: 1 / 31;
       grid-row: 21 / 23;
       display: flex;
@@ -52,17 +52,17 @@ form {
 
       button,
       a {
-        font-size: var(--texto-m);
+        font-size: var(--texto-lg);
         text-decoration: none;
         display: flex;
         align-items: center;
         justify-content: center;
         text-align: center;
         border-radius: 8px;
-        width: var(--largura-componentes);
-        height: var(--altura-componentes);
-        background-color: var(--cinza);
-        color: var(--branco);
+        width: var(--component-width);
+        height: var(--component-width);
+        background-color: var(--color-gray-dark);
+        color: var(--color-white);
         border: none;
       }
     }

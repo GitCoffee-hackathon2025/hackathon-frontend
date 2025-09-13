@@ -34,13 +34,13 @@ div {
     justify-content: center;
     gap: 6px;
     a {
-      font-size: var(--text-xl);
+      font-size: var(--text-xxl);
       color: var(--color-white);
     }
 
     p {
-      font-size: var(--text-xl);
-      color: var(--color-whitebranco);
+      font-size: var(--text-xxl);
+      color: var(--color-white);
     }
   }
 }

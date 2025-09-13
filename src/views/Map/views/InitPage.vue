@@ -1,21 +1,22 @@
 <script setup lang="ts">
-import { useBairroStore } from '@/store/NeighborhoodStore'
-import { useReportStore } from '@/requisitions/Ocurrences'
+import { NeighborhoodStore } from '@/store/NeighborhoodStore'
+import {  ocurrenceRequisitions } from '@/requisitions/Ocurrences'
 import { onMounted, nextTick, watch, onUnmounted } from 'vue'
 import { useRoute } from 'vue-router'
 import L from 'leaflet'
 import { markRaw } from 'vue'
 import 'leaflet/dist/leaflet.css'
-import DadosBairro from '@/views/MapadeDenuncias/components/DadosBairros.vue'
-import BarraPesquisa from '@/views/MapadeDenuncias/components/BarraPesquisa.vue'
-import { findBairroByCoordinates } from '@/utils/geoCoding'
+import NeighborhoodPanel from '@/views/Map/components/NeighborhoodPanel.vue'
+import SearchBar from '@/views/Map/views/OcurrenceForm.vue'
+import { findNeighborhoodByCoordinates } from '@/utils/geoCoding'
+
 
 let map: L.Map | null = null
 let clickHandler: ((e: L.LeafletMouseEvent) => void) | null = null
 let selectionMarker: L.Marker | null = null
 
-const bairroStore = useBairroStore()
-const reportStore = useReportStore()
+const neighborhoodStore = NeighborhoodStore()
+const ocurrenceReq = ocurrenceRequisitions()
 const route = useRoute()
 
 const bounds: L.LatLngBoundsExpression = [
@@ -29,7 +30,7 @@ const createCustomIcon = () => {
     className: 'custom-marker',
     html: `
       <div style="
-        background-color: #ff4444;
+        background-color: var(--color-white);
         width: 24px;
         height: 24px;
         border-radius: 50%;
@@ -40,7 +41,7 @@ const createCustomIcon = () => {
         justify-content: center;
       ">
         <div style="
-          background-color: white;
+          background-color: var(--color-white);
           width: 8px;
           height: 8px;
           border-radius: 50%;
@@ -81,9 +82,9 @@ const enableLocationSelection = () => {
     const { lat, lng } = e.latlng
 
     // VERIFICAR SE O PONTO ESTÁ DENTRO DE ALGUM BAIRRO
-    const bairroName = await findBairroByCoordinates(lat, lng)
+    const neighborhoodName = await findNeighborhoodByCoordinates(lat, lng)
 
-    if (!bairroName) {
+    if (!neighborhoodName) {
       // Mostrar popup de erro se estiver fora da área
       L.popup()
         .setLatLng(e.latlng)
@@ -95,7 +96,7 @@ const enableLocationSelection = () => {
     }
 
     // Guardar as coordenadas na store de report
-    await reportStore.setReportCoordinates({ lat, lng })
+    await ocurrenceReq.setReportCoordinates({ lat, lng })
 
     // Remover marcador anterior se existir
     if (selectionMarker) {
@@ -108,12 +109,12 @@ const enableLocationSelection = () => {
     }).addTo(map!)
 
     // Mostrar popup com informações do local selecionado
-    const popupContent = `Bairro: ${bairroName}<br>Coordenadas: ${lat.toFixed(6)}, ${lng.toFixed(6)}`
+    const popupContent = `Bairro: ${neighborhoodName}<br>Coordenadas: ${lat.toFixed(6)}, ${lng.toFixed(6)}`
 
     selectionMarker.bindPopup(popupContent).openPopup()
 
-    console.log('Coordenadas salvas:', reportStore.reportCoordinates)
-    console.log('Bairro identificado:', reportStore.reportBairro)
+    console.log('Coordenadas salvas:', ocurrenceReq.reportCoordinates)
+    console.log('Bairro identificado:', ocurrenceReq.reportNeighborhood)
   }
 
   map.on('click', clickHandler)
@@ -168,7 +169,7 @@ onMounted(() => {
     zoomControl: false,
   }).setView([-26.3045, -48.8487], 12)
 
-  bairroStore.setMap(markRaw(map))
+  neighborhoodStore.setMap(markRaw(map))
 
   L.control.zoom({ position: 'topright' }).addTo(map)
 
@@ -236,10 +237,10 @@ onMounted(() => {
             })
 
             await nextTick()
-            bairroStore.selectBairro(feature.properties || {})
+            neighborhoodStore.selectNeighborhood(feature.properties || {})
             const bairroId = feature.properties?.id_bairro
             // console.log(bairroId)
-            bairroStore.getDataBairro(bairroId)
+            neighborhoodStore.getDataNeighborhood(bairroId)
           })
         },
       }).addTo(map!)
@@ -259,10 +260,10 @@ onUnmounted(() => {
 
 <template>
   <main>
-    <BarraPesquisa />
+    <SearchBar />
     <div class="map-container">
       <div id="map"></div>
-      <DadosBairro />
+      <NeighborhoodPanel />
     </div>
   </main>
 </template>

@@ -17,7 +17,7 @@ const { erro } = defineProps({
 </script>
 
 <template>
-  <div class="campo">
+  <div class="field">
     <svg
       xmlns="http://www.w3.org/2000/svg"
       width="24"

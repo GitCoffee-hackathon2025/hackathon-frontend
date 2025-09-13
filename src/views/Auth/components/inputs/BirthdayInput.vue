@@ -5,12 +5,12 @@ import { UserStore } from '@/store/UserStore'
 const user = UserStore()
 
 // Estados locais
-const dia = ref('')
-const mes = ref('')
-const ano = ref('')
+const day = ref('')
+const month = ref('')
+const year = ref('')
 
 // Meses disponíveis
-const meses = [
+const months = [
   'Janeiro',
   'Fevereiro',
   'Março',
@@ -26,36 +26,36 @@ const meses = [
 ]
 
 // Lista de anos (do atual até 1900)
-const anos = computed(() => {
-  const atual = new Date().getFullYear()
-  return Array.from({ length: atual - 1899 }, (_, i) => (atual - i).toString())
+const years = computed(() => {
+  const current = new Date().getFullYear()
+  return Array.from({ length: current - 1899 }, (_, i) => (current - i).toString())
 })
 
 // Dias do mês dinâmicos
-const diasNoMes = computed(() => {
-  if (!mes.value || !ano.value) return Array.from({ length: 31 }, (_, i) => i + 1)
+const daysInMonth = computed(() => {
+  if (!month.value || !year.value) return Array.from({ length: 31 }, (_, i) => i + 1)
 
-  const m = Number(mes.value)
-  const a = Number(ano.value)
+  const m = Number(month.value)
+  const a = Number(year.value)
 
   if (m === 2) {
-    const bissexto = (a % 4 === 0 && a % 100 !== 0) || a % 400 === 0
-    return Array.from({ length: bissexto ? 29 : 28 }, (_, i) => i + 1)
+    const leapYear = (a % 4 === 0 && a % 100 !== 0) || a % 400 === 0
+    return Array.from({ length: leapYear ? 29 : 28 }, (_, i) => i + 1)
   }
 
-  const diasMes = [31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31]
-  return Array.from({ length: diasMes[m - 1] }, (_, i) => i + 1)
+  const lastDayMonth = [31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31]
+  return Array.from({ length: lastDayMonth[m - 1] }, (_, i) => i + 1)
 })
 
 // Zerar dia inválido ao trocar mês/ano
-watch([mes, ano], () => {
-  if (dia.value && Number(dia.value) > diasNoMes.value.length) {
-    dia.value = ''
+watch([month, year], () => {
+  if (day.value && Number(day.value) > daysInMonth.value.length) {
+    day.value = ''
   }
 })
 
 // Atualizar a store sempre que todos os campos forem válidos
-watch([dia, mes, ano], ([d, m, a]) => {
+watch([day, month, year], ([d, m, a]) => {
   if (d && m && a) {
     user.birthday = new Date(Number(a), Number(m) - 1, Number(d))
   } else {
@@ -66,24 +66,24 @@ watch([dia, mes, ano], ([d, m, a]) => {
 
 <template>
   <div class="birthday">
-    <select v-model="dia">
+    <select v-model="day">
       <option disabled value="">Dia</option>
-      <option v-for="d in diasNoMes" :key="d" :value="d.toString()">
+      <option v-for="d in daysInMonth" :key="d" :value="d.toString()">
         {{ d.toString().padStart(2, '0') }}
       </option>
     </select>
 
-    <select v-model="mes">
+    <select v-model="month">
       <option disabled value="">Mês</option>
-      <option v-for="(nome, i) in meses" :key="i" :value="(i + 1).toString()">
-        {{ nome }}
+      <option v-for="(name, i) in months" :key="i" :value="(i + 1).toString()">
+        {{ name }}
       </option>
     </select>
 
-    <select v-model="ano">
+    <select v-model="year">
       <option disabled value="">Ano</option>
-      <option v-for="a in anos" :key="a" :value="a">
-        {{ a }}
+      <option v-for="y in years" :key="y" :value="y">
+        {{ y }}
       </option>
     </select>
   </div>
@@ -95,8 +95,8 @@ watch([dia, mes, ano], ([d, m, a]) => {
   grid-row: 11 / 15;
   justify-self: center;
   align-self: center;
-  width: var(--largura-componentes);
-  height: var(--altura-componentes);
+  width: var(--component-width);
+  height: var(--component-height);
   display: flex;
   justify-content: space-between;
 
@@ -105,8 +105,8 @@ watch([dia, mes, ano], ([d, m, a]) => {
     height: 100%;
     border: none;
     border-radius: 0.6rem;
-    background: var(--cinza-claro);
-    color: var(--cinza);
+    background: var(--color-gray-light);
+    color: var(--color-gray-dark);
     padding: 0 1rem;
     font-size: var(--texto-m);
     appearance: none;
@@ -115,7 +115,7 @@ watch([dia, mes, ano], ([d, m, a]) => {
     background-image: url('data:image/svg+xml;charset=UTF-8,<svg width="12" height="8" viewBox="0 0 12 8" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M1 1L6 6L11 1" stroke="%23999" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>');
     background-repeat: no-repeat;
     background-position: right 1rem center;
-    background-size: calc(var(--tamanho-icones) - 2.5vw);
+    background-size: calc(var(--icon-size) - 2.5vw);
     transition:
       border 0.2s ease,
       box-shadow 0.2s ease;

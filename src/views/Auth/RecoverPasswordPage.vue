@@ -1,10 +1,9 @@
 <script setup lang="ts">
 import { onMounted, reactive, ref } from 'vue'
-import CampoEmail from './components/inputs/EmailInput.vue'
-import ParteCima from './components/BlackSide.vue'
-import CampoDigitos from './components/inputs/CodeInput.vue'
-import CampoSenha from './components/inputs/PasswordInput.vue'
-import TextoAviso from './components/AlertText.vue'
+import BlackSide from './components/BlackSide.vue'
+import CodeInput from './components/inputs/CodeInput.vue'
+import PasswordInput from './components/inputs/PasswordInput.vue'
+import AlertText from './components/AlertText.vue'
 
 import resetData from '@/utils/resetData'
 resetData.setup()
@@ -24,11 +23,12 @@ const tokenReq = TokenRequisitions()
 import { UserRequisitions } from '@/requisitions/User'
 const userReq = UserRequisitions()
 
-import { AnimsAuthStore } from '@/store/AnimsStore'
-const animsAuth = AnimsAuthStore()
+import { AnimsStore } from '@/store/AnimsStore'
+
+const anims = AnimsStore()
 
 onMounted(() => {
-  animsAuth.animLogin = false
+  anims.animLogin = false
 })
 
 const recoverPasswordSteps = reactive({
@@ -127,14 +127,14 @@ function backStep() {
 </script>
 <template>
   <form @submit.prevent="nextStep" novalidate class="login">
-    <ParteCima :route="'/mapa-de-denuncias'" :active="false" />
+    <BlackSide :route="'/mapa-de-denuncias'" :active="false" />
     <div class="form-inputs">
       <h1>Recupere sua conta</h1>
-      <CampoEmail class="recover-password" v-if="!recoverPasswordSteps.two" />
-      <CampoDigitos v-if="recoverPasswordSteps.two && recoverPasswordSteps.three" />
-      <CampoSenha v-if="recoverPasswordSteps.three" />
+      <EmailInput class="recover-password" v-if="!recoverPasswordSteps.two" />
+      <CodeInput v-if="recoverPasswordSteps.two && recoverPasswordSteps.three" />
+      <PasswordInput v-if="recoverPasswordSteps.three" />
 
-      <TextoAviso :text="errorText" :position="'recover-password'" />
+      <AlertText :text="errorText" :position="'recover-password'" />
       <div class="form-actions">
         <router-link to="/entrar" v-if="!recoverPasswordSteps.two">Cancelar</router-link
         ><button type="button" v-if="recoverPasswordSteps.two" @click="backStep">Voltar</button
@@ -145,7 +145,7 @@ function backStep() {
 </template>
 
 <style scoped lang="scss">
-@import url('./assets/logincadastro.scss');
+@use './assets/auth.scss';
 
 .email {
   grid-column: 2 / 10;

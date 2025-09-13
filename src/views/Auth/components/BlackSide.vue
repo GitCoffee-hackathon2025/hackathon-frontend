@@ -35,7 +35,7 @@ const props = defineProps({
 <style lang="scss" scoped>
 div {
   min-height: 300px;
-  background-color: var(--cinza);
+  background-color: var(--color-gray-dark);
   grid-column: 1 / 31;
   grid-row: 1 / 31;
   z-index: 1;
@@ -44,8 +44,8 @@ div {
       position: relative;
       top: 10px;
       left: 10px;
-      fill: var(--branco);
-      width: var(--tamanho-icones);
+      fill: var(--color-white);
+      width: var(--icon-size);
 
     }
   }
@@ -60,7 +60,7 @@ div {
 
         left: 0px;
         transform: translateX(51vw);
-        fill: var(--cinza);
+        fill: var(--color-gray-dark);
       }
     }
   }

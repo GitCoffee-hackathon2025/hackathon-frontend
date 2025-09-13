@@ -1,9 +1,9 @@
 // stores/report.ts
 import { defineStore } from 'pinia'
 import { ref } from 'vue'
-import { findBairroByCoordinates } from '@/utils/geoCoding'
+import { findNeighborhoodByCoordinates } from '@/utils/geoCoding'
 
-export const useReportStore = defineStore('report', () => {
+export const ocurrenceRequisitions = defineStore('report', () => {
   const reportContent = ref<string>('')
   const reportType = ref<string>('')
   const reportDate = ref<string>('')
@@ -16,10 +16,10 @@ export const useReportStore = defineStore('report', () => {
     reportCoordinates.value = coords
 
     // Buscar o nome do bairro baseado nas coordenadas
-    const bairroName = await findBairroByCoordinates(coords.lat, coords.lng)
-    if (bairroName) {
-      reportNeighborhood.value = bairroName
-      reportLocal.value = bairroName // Opcional: preencher também o local com o nome do bairro
+    const neighborhoodName = await findNeighborhoodByCoordinates(coords.lat, coords.lng)
+    if (neighborhoodName) {
+      reportNeighborhood.value = neighborhoodName
+      reportLocal.value = neighborhoodName // Opcional: preencher também o local com o nome do bairro
     }
   }
 
@@ -38,7 +38,7 @@ export const useReportStore = defineStore('report', () => {
           date: new Date(reportDate.value).toISOString(),
           local: reportLocal.value,
           coordinates: reportCoordinates.value,
-          bairro: reportBairro.value, // Incluir nome do bairro no envio
+          bairro: reportNeighborhood.value, // Incluir nome do bairro no envio
         }),
       })
 

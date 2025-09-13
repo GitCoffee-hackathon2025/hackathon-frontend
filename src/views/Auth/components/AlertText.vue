@@ -15,8 +15,8 @@ const { text, position } = defineProps({
 p.alert {
   grid-column: 1 / 31;
   grid-row: 10 / 20;
-  width: var(--largura-componentes);
-  font-size: var(--texto-m);
+  width: var(--component-width);
+  font-size: var(--texto-lg);
   text-align: left;
   margin-top: 3rem;
 
@@ -25,7 +25,7 @@ p.alert {
   }
 
   &.error {
-    color: var(--vermelho);
+    color: var(--color-red);
   }
 
   &.recover-password {

@@ -1,12 +1,12 @@
 <script setup lang="ts">
-import CampoEmail from './components/inputs/EmailInput.vue'
-import CampoDataNascimento from './components/inputs/BirthdayInput.vue'
-import LinkForm from './components/LinkAuth.vue'
-import TextoAviso from './components/AlertText.vue'
-import ParteCima from './components/BlackSide.vue'
-import CampoSenha from './components/inputs/PasswordInput.vue'
-import CampoNome from './components/inputs/NameInput.vue'
-import CampoDigitos from '@/views/Autenticacao/components/inputs/CampoDigitos.vue'
+import EmailInput from './components/inputs/EmailInput.vue'
+import BirthdayInput from './components/inputs/BirthdayInput.vue'
+import LinkAuth from './components/LinkAuth.vue'
+import AlertTExt from './components/AlertText.vue'
+import BlackSide from './components/BlackSide.vue'
+import PasswordInput from './components/inputs/PasswordInput.vue'
+import NameInput from './components/inputs/NameInput.vue'
+import CodeInput from '@/views/Auth/components/inputs/CodeInput.vue'
 
 import resetData from '@/utils/resetData'
 resetData.setup()
@@ -26,8 +26,8 @@ const userReq = UserRequisitions()
 
 import type { CreateUserDTO, tokenSendOrVerify } from '@/store/TypesStore'
 
-import { AnimsAuthStore } from '@/store/AnimsStore'
-const animsAuth = AnimsAuthStore()
+import { AnimsStore } from '@/store/AnimsStore'
+const anims = AnimsStore()
 
 const registerSteps = reactive({
   two: false,
@@ -184,15 +184,15 @@ const progressPercent = computed(() => {
     </div>
 
     <ParteCima :route="'/mapa-de-denuncias'" :active="true" />
-    <div class="form-inputs" :class="[{ anim: animsAuth.animRegister }]">
+    <div class="form-inputs" :class="[{ anim: anims.animRegister }]">
       <h1>Crie sua conta</h1>
-      <CampoDataNascimento v-if="registerSteps.three && !registerSteps.four" />
-      <CampoEmail class="register" v-if="!registerSteps.two" :erro="!errors.email" />
-      <CampoDigitos v-if="registerSteps.two && !registerSteps.three && !registerSteps.four" />
-      <CampoSenha v-if="registerSteps.four" class="register" />
-      <CampoSenha v-if="registerSteps.four" class="register" />
-      <CampoNome v-if="registerSteps.three && !registerSteps.four" class="register" />
-      <TextoAviso :text="errorText" />
+      <BirthdayInput v-if="registerSteps.three && !registerSteps.four" />
+      <EmailInput class="register" v-if="!registerSteps.two" :erro="!errors.email" />
+      <CodeInput v-if="registerSteps.two && !registerSteps.three && !registerSteps.four" />
+      <PasswordInput v-if="registerSteps.four" class="register" />
+      <PasswordInput v-if="registerSteps.four" class="register" />
+      <NameInput v-if="registerSteps.three && !registerSteps.four" class="register" />
+      <AlertText :text="errorText" />
       <div class="form-actions">
         <button v-if="registerSteps.two" @click="backStep">Voltar</button>
         <button>Avançar</button>
@@ -208,7 +208,7 @@ const progressPercent = computed(() => {
 </template>
 
 <style lang="scss">
-@import url('./assets/logincadastro.scss');
+@use './assets/auth.scss';
 
 @media (min-width: 992px) {
   .anim {
@@ -237,7 +237,7 @@ const progressPercent = computed(() => {
   .progress-track {
     position: absolute;
     inset: 0;
-    background: var(--branco);
+    background: var(--color-white);
     border-radius: 4px;
   }
   .progress-fill {
@@ -247,7 +247,7 @@ const progressPercent = computed(() => {
     bottom: 0;
     height: 0%;
     transition: height 300ms ease;
-    background: var(--verde);
+    background: var(--color-green);
     border-radius: 4px;
     z-index: 1;
   }
@@ -262,8 +262,8 @@ const progressPercent = computed(() => {
     pointer-events: none;
 
     .green-circle {
-      width: var(--tamanho-icones);
-      height: var(--tamanho-icones);
+      width: var(--icon-size);
+      height: var(--icon-size);
       border-radius: 50%;
       box-sizing: border-box;
       transition:
@@ -271,10 +271,10 @@ const progressPercent = computed(() => {
         border-color 180ms ease,
         transform 180ms ease;
       transform: translateZ(0);
-      background: var(--branco);
+      background: var(--color-white);
       &.active {
-        background: var(--verde);
-        border-color: var(--verde);
+        background: var(--color-green);
+        border-color: var(--color-green);
         transform: scale(1.05);
       }
     }

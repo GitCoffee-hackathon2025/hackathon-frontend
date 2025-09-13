@@ -1,24 +1,24 @@
 <script setup lang="ts">
 import { ref } from 'vue'
-import { useReportStore } from '@/requisitions/Ocurrences'
+import { ocurrenceRequisitions } from '@/requisitions/Ocurrences'
 
-const store = useReportStore()
-const mensagem = ref('') // <--- aqui armazenamos a mensagem de erro ou sucesso
+const ocurrenceReq = ocurrenceRequisitions()
+const menssage = ref('') // <--- aqui armazenamos a mensagem de erro ou sucesso
 
-async function enviar() {
+async function sendOcurrence() {
   try {
-    const data = await store.sendReport(1)
-    mensagem.value = 'Relatório enviado com sucesso!' // ou use data.message se a API retornar
+   await ocurrenceReq.sendReport(1)
+    menssage.value = 'Relatório enviado com sucesso!' // ou use data.message se a API retornar
   } catch (error: any) {
-    mensagem.value = error.message || 'Ocorreu um erro ao enviar.'
+    menssage.value = error.message || 'Ocorreu um erro ao enviar.'
   }
 }
 </script>
 
 <template>
   <section>
-    <form @submit.prevent="enviar">
-      <h2 class="titulo">Criar Report</h2>
+    <form @submit.prevent="sendOcurrence">
+      <h2 class="title">Criar Report</h2>
       <router-link to="">
         <!-- SVG de voltar -->
         <svg
@@ -32,9 +32,9 @@ async function enviar() {
         </svg>
       </router-link>
 
-      <div class="entradas">
+      <div class="inputs">
         <!-- Tipo -->
-        <div class="tipo-denuncia campo">
+        <div class="ocurrence-type field">
           <svg
             xmlns="http://www.w3.org/2000/svg"
             width="36"
@@ -44,7 +44,7 @@ async function enviar() {
           >
             <path fill-rule="evenodd" clip-rule="evenodd" d="M13.993 2.55819C15.7409..." />
           </svg>
-          <select v-model="store.reportType">
+          <select v-model="ocurrenceReq.reportType">
             <option value="" disabled selected>Escolha um crime</option>
             <option value="Acidente de trânsito">Acidente de trânsito</option>
             <option value="Assalto">Assalto</option>
@@ -53,30 +53,30 @@ async function enviar() {
         </div>
 
         <!-- Data -->
-        <div class="dia-hora campo">
+        <div class="time campo">
           <label>Data:</label>
-          <div class="escolher-dia-hora">
-            <input type="date" v-model="store.reportDate" />
+          <div class="choose-time">
+            <input type="date" v-model="ocurrenceReq.reportDate" />
           </div>
         </div>
 
         <!-- Descrição -->
-        <div class="descricao">
+        <div class="description">
           <label>Descrição:</label>
-          <textarea v-model="store.reportContent"></textarea>
+          <textarea v-model="ocurrenceReq.reportContent"></textarea>
         </div>
 
-        <p>{{ mensagem }}</p>
-        <button type="submit" @click="store.sendReport(1)">Enviar</button>
+        <p>{{ menssage }}</p>
+        <button type="submit" @click="ocurrenceReq.sendReport(1)">Enviar</button>
       </div>
     </form>
   </section>
 </template>
 <style scoped lang="scss">
-.titulo {
+.title {
   grid-row: 5/31;
   text-align: center;
-  color: var(--cinza);
+  color: var(--color-gray-dark);
   font-size: 1.6rem;
   margin-top: 4rem;
   margin-bottom: -3rem;
@@ -92,13 +92,13 @@ section {
 }
 
 form {
-  background-color: white;
+  background-color: var(--color-white);
   height: 40vh;
   width: 30vw;
   border-radius: 14px;
   animation: fadeInUp 0.6s ease-in-out;
 
-  .entradas {
+  .inputs {
     width: 100%;
     min-height: 580px;
     display: grid;
@@ -106,8 +106,8 @@ form {
     grid-template-rows: repeat(30, 1fr);
 
     // todos os campos animados
-    .campo,
-    .descricao,
+    .field,
+    .description,
     button {
       opacity: 0;
       transform: translateY(20px);
@@ -118,13 +118,13 @@ form {
     .local {
       animation-delay: 0.2s;
     }
-    .tipo-denuncia {
+    .ocurrence-type {
       animation-delay: 0.4s;
     }
-    .dia-hora {
+    .time {
       animation-delay: 0.6s;
     }
-    .descricao {
+    .description {
       animation-delay: 0.8s;
     }
     button {
@@ -135,46 +135,46 @@ form {
     .local {
       grid-row: 3 / 7;
       grid-column: 1 / 31;
-      height: var(--altura-componentes);
-      width: var(--largura-componentes);
+      height: var(--component-height);
+      width: var(--component-width);
       justify-self: center;
       align-self: center;
       border: none;
 
       svg {
-        fill: var(--cinza);
+        fill: var(--color-gray-dark);
       }
     }
 
     // Tipo
-    .tipo-denuncia {
+    .type-ocurrence {
       grid-row: 6 / 11;
       grid-column: 1 / 31;
-      width: var(--largura-componentes);
-      height: var(--altura-componentes);
+      width: var(--component-width);
+      height: var(--component-height);
       justify-self: center;
       align-self: center;
       border: none;
 
       svg {
-        fill: var(--cinza);
+        fill: var(--color-gray-dark);
       }
     }
 
-    .tipo-denuncia select {
-      background: var(--cinza-claro);
-      color: var(--cinza);
+    .ocurrence-type select {
+      background: var(--color-gray-light);
+      color: var(--color-gray-dark);
       padding: 0 1rem;
-      font-size: var(--texto-m);
+      font-size: var(--text-md);
       border-radius: 8px;
       border: none;
     }
 
     // Dia e hora
-    .dia-hora {
+    .time {
       grid-row: 9 / 15;
       grid-column: 1 / 31;
-      width: var(--largura-componentes);
+      width: var(--component-width);
       justify-self: center;
       align-self: center;
       display: flex;
@@ -187,9 +187,9 @@ form {
         align-self: baseline;
       }
 
-      .escolher-dia-hora {
-        width: var(--largura-componentes);
-        height: var(--altura-componentes);
+      .choose-time {
+        width: var(--component-width);
+        height: var(--component-height);
         display: flex;
         justify-content: space-between;
         align-items: center;
@@ -197,12 +197,12 @@ form {
 
         input,
         select {
-          width: var(--largura-componentes);
-          height: var(--altura-componentes);
+          width: var(--component-width);
+          height: var(--component-height);
           border: none;
           border-radius: 8px;
           padding: 0;
-          font-size: var(--texto-m);
+          font-size: var(--text-md);
         }
 
         input[type='date'],
@@ -214,23 +214,23 @@ form {
         }
 
         select {
-          background: var(--cinza-claro);
-          color: var(--cinza);
+          background: var(--color-gray-light);
+          color: var(--color-gray-dark);
           padding: 0 1rem;
           appearance: none;
           background-image: url('data:image/svg+xml;charset=UTF-8,<svg width="12" height="8" viewBox="0 0 12 8" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M1 1L6 6L11 1" stroke="%23999" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>');
           background-repeat: no-repeat;
           background-position: right 1rem center;
-          background-size: calc(var(--tamanho-icones) - 2.5vw);
+          background-size: calc(var(--icon-size) - 2.5vw);
         }
       }
     }
 
     // Descrição
-    .descricao {
+    .description {
       grid-row: 12 / 22;
       grid-column: 1 / 31;
-      width: var(--largura-componentes);
+      width: var(--component-width);
       justify-self: center;
       align-self: center;
       display: flex;
@@ -239,21 +239,21 @@ form {
       gap: 5px;
 
       label {
-        color: var(--cinza);
+        color: var(--color-gray-dark);
         align-self: baseline;
       }
 
       textarea {
-        width: var(--largura-componentes);
-        height: calc(var(--altura-componentes) * 1.9);
+        width: var(--component-width);
+        height: calc(var(--component-height) * 1.9);
         resize: none;
-        background-color: var(--branco);
-        color: var(--cinza);
+        background-color: var(--color-white);
+        color: var(--color-gray-dark);
         border-radius: 8px;
         outline: none;
         padding: 8px;
         box-sizing: border-box;
-        font-size: var(--texto-m);
+        font-size: var(--text-md);
       }
     }
 
@@ -264,18 +264,18 @@ form {
       grid-row: 20/32;
       justify-self: center;
       align-self: center;
-      width: var(--largura-componentes);
+      width: var(--component-width);
       max-width: 100%;
-      min-height: calc(var(--altura-componentes) / 1.5);
+      min-height: calc(var(--component-height) / 1.5);
       display: flex;
       justify-content: center;
       align-items: center;
       border-radius: 8px;
-      font-size: var(--texto-p);
+      font-size: var(--text-md);
       padding: 0.5rem 1rem;
       text-align: center;
-      color: var(--vermelho); // você pode trocar dinamicamente se quiser sucesso/erro
-      background-color: var(--branco);
+      color: var(--color-red); // você pode trocar dinamicamente se quiser sucesso/erro
+      background-color: var(--color-white);
       box-sizing: border-box;
     }
 
@@ -283,15 +283,15 @@ form {
     button {
       grid-row: 14 / 30;
       grid-column: 1 / 31;
-      width: var(--largura-componentes);
-      height: var(--altura-componentes);
+      width: var(--component-width);
+      height: var(--component-height);
       justify-self: center;
       align-self: center;
       border: none;
-      background-color: var(--branco);
-      color: var(--cinza);
+      background-color: var(--color-white);
+      color: var(--color-gray-dark);
       border-radius: 8px;
-      font-size: var(--texto-m);
+      font-size: var(--text-md);
     }
 
     // Hover e focus para todos inputs, selects, textarea
@@ -311,7 +311,7 @@ form {
     button:hover {
       transform: scale(1.03);
       box-shadow: 0 0 8px rgba(0, 0, 0, 0.15);
-      background-color: var(--cinza-claro);
+      background-color: var(--color-gray-light);
     }
 
     input:focus,
@@ -320,18 +320,18 @@ form {
       transform: scale(1.05);
       box-shadow: 0 0 12px rgba(0, 0, 0, 0.25);
       outline: none;
-      background-color: var(--branco);
+      background-color: var(--color-white);
     }
   }
 
   a {
     svg {
-      fill: var(--branco);
+      fill: var(--color-white);
       position: fixed;
       top: 5px;
       left: 10px;
-      width: var(--tamanho-icones);
-      height: var(--tamanho-icones);
+      width: var(--icon-size);
+      height: var(--icon-size);
     }
   }
 }
@@ -340,7 +340,7 @@ form {
   form {
     min-height: 900px;
 
-    div.entradas {
+    div.inputs {
       min-height: 900px;
     }
   }

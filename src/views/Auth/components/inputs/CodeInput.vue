@@ -90,8 +90,8 @@ function onFocus(index: number) {
 
 <style scoped lang="scss">
 .otp-container {
-  max-width: var(--largura-componentes);
-  height: calc(var(--altura-componentes) * 1.6);
+  max-width: var(--component-width);
+  height: calc(var(--component-height) * 1.6);
   grid-column: 1 / 31;
   grid-row: 1 / 27;
   display: flex;
@@ -101,17 +101,17 @@ function onFocus(index: number) {
   align-self: center;
 
   .otp-box {
-    font-size: var(--texto-gg);
+    font-size: var(--texto-xxl);
     width: 15%;
     height: 100%;
     text-align: center;
     font-weight: bold;
     border-radius: 0.8rem;
-    background: var(--cinza-claro);
+    background: var(--color-gray-dark);
     outline: none;
     border: none;
     font-family: monospace;
-    color: var(--cinza);
+    color: var(--color-gray-dark);
     caret-color: transparent;
 
     &::selection {
@@ -124,14 +124,14 @@ function onFocus(index: number) {
     }
 
     &:focus {
-      outline: 1px solid var(--preto);
+      outline: 1px solid var(--color-black);
     }
   }
 }
 
 @media (min-width: 992px) {
   .otp-container {
-    height: calc(var(--altura-componentes) * 1.8);
+    height: calc(var(--component-height) * 1.8);
   }
 }
 </style>

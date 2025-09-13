@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { defineProps } from 'vue'
-import { AnimsAuthStore } from '@/store/AnimsStore'
-const animsAuth = AnimsAuthStore()
+import {AnimsStore } from '@/store/AnimsStore'
+const anims = AnimsStore()
 
 const props = defineProps({
   text: {
@@ -21,10 +21,10 @@ function validAnim(a: string | undefined) {
   if (!a) return
 
   if (a == 'login') {
-    animsAuth.animLogin = true
+    anims.animLogin = true
   }
   if (a == 'register') {
-    animsAuth.animRegister = true
+    anims.animRegister = true
   }
 }
 </script>
