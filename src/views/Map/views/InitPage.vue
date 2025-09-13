@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { NeighborhoodStore } from '@/store/NeighborhoodStore'
-import {  ocurrenceRequisitions } from '@/requisitions/Ocurrences'
+import { ocurrenceRequisitions } from '@/requisitions/Ocurrences'
 import { onMounted, nextTick, watch, onUnmounted } from 'vue'
 import { useRoute } from 'vue-router'
 import L from 'leaflet'
@@ -9,7 +9,6 @@ import 'leaflet/dist/leaflet.css'
 import NeighborhoodPanel from '@/views/Map/components/NeighborhoodPanel.vue'
 import SearchBar from '@/views/Map/views/OcurrenceForm.vue'
 import { findNeighborhoodByCoordinates } from '@/utils/geoCoding'
-
 
 let map: L.Map | null = null
 let clickHandler: ((e: L.LeafletMouseEvent) => void) | null = null
@@ -95,8 +94,8 @@ const enableLocationSelection = () => {
       return
     }
 
-    // Guardar as coordenadas na store de report
-    await ocurrenceReq.setReportCoordinates({ lat, lng })
+    // Guardar as coordenadas na store de occurrence
+    await ocurrenceReq.setoccurrenceCoordinates({ lat, lng })
 
     // Remover marcador anterior se existir
     if (selectionMarker) {
@@ -113,8 +112,8 @@ const enableLocationSelection = () => {
 
     selectionMarker.bindPopup(popupContent).openPopup()
 
-    console.log('Coordenadas salvas:', ocurrenceReq.reportCoordinates)
-    console.log('Bairro identificado:', ocurrenceReq.reportNeighborhood)
+    console.log('Coordenadas salvas:', ocurrenceReq.occurrenceCoordinates)
+    console.log('Bairro identificado:', ocurrenceReq.occurrenceNeighborhood)
   }
 
   map.on('click', clickHandler)

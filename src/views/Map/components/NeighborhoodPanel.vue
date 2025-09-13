@@ -2,8 +2,8 @@
 import { NeighborhoodStore } from '@/store/NeighborhoodStore'
 import { storeToRefs } from 'pinia'
 
-const neighborhoodStore =NeighborhoodStore()
-const { selectedData, neighbohoodReports, loading } = storeToRefs(neighborhoodStore)
+const neighborhoodStore = NeighborhoodStore()
+const { selectedData, neighborhoodoccurrences, loading } = storeToRefs(neighborhoodStore)
 
 function fechar() {
   neighborhoodStore.clearNeighborhood()
@@ -14,7 +14,7 @@ function fechar() {
   <div v-if="selectedData" class="details-container">
     <div class="details-content">
       <button class="close-button" @click="fechar">×</button>
-      <h2>Reports do Bairro</h2>
+      <h2>occurrences do Bairro</h2>
 
       <!-- Use campos genéricos ou ajuste conforme sua API -->
       <p>
@@ -29,31 +29,35 @@ function fechar() {
       </p>
 
       <!-- Loading state -->
-      <div v-if="loading" class="loading">Carregando reports...</div>
+      <div v-if="loading" class="loading">Carregando occurrences...</div>
 
-      <!-- Exibir reports do bairro -->
-      <div v-else class="reports-container">
-        <h3>Reports ({{ neighbohoodReports.length }})</h3>
+      <!-- Exibir occurrences do bairro -->
+      <div v-else class="occurrences-container">
+        <h3>occurrences ({{ neighborhoodoccurrences.length }})</h3>
 
-        <div v-if="neighbohoodReports.length">
-          <div v-for="report in neighbohoodReports" :key="report.id" class="report-item">
-            <p class="report-user">
-              <strong>{{ report.user.name }}</strong> —
-              <span class="report-type">{{ report.type.name }}</span>
+        <div v-if="neighborhoodoccurrences.length">
+          <div
+            v-for="occurrence in neighborhoodoccurrences"
+            :key="occurrence.id"
+            class="occurrence-item"
+          >
+            <p class="occurrence-user">
+              <strong>{{ occurrence.user.name }}</strong> —
+              <span class="occurrence-type">{{ occurrence.type.name }}</span>
             </p>
-            <p class="report-content">
-              {{ report.content }}
+            <p class="occurrence-content">
+              {{ occurrence.content }}
             </p>
-            <p v-if="report.coordenadas" class="report-coords">
-              <small>Coordenadas: {{ report.coordenadas }}</small>
+            <p v-if="occurrence.coordenadas" class="occurrence-coords">
+              <small>Coordenadas: {{ occurrence.coordenadas }}</small>
             </p>
-            <p class="report-date">
-              <small>{{ new Date(report.created_at).toLocaleDateString('pt-BR') }}</small>
+            <p class="occurrence-date">
+              <small>{{ new Date(occurrence.created_at).toLocaleDateString('pt-BR') }}</small>
             </p>
           </div>
         </div>
 
-        <div v-else class="no-data">Nenhum report disponível para este bairro.</div>
+        <div v-else class="no-data">Nenhum occurrence disponível para este bairro.</div>
       </div>
     </div>
   </div>
@@ -117,37 +121,37 @@ function fechar() {
     color: #aaa;
   }
 
-  .reports-container {
+  .occurrences-container {
     margin-top: 10px;
   }
 
-  .report-item {
+  .occurrence-item {
     background: rgba(255, 255, 255, 0.05);
     border-radius: 6px;
     padding: 10px;
     margin-bottom: 12px;
 
-    .report-user {
+    .occurrence-user {
       font-size: 0.9rem;
       margin-bottom: 6px;
       color: var(--cinza-claro);
     }
 
-    .report-type {
+    .occurrence-type {
       font-style: italic;
       font-size: 0.85rem;
       color: #bbb;
     }
 
-    .report-content {
+    .occurrence-content {
       font-size: 0.95rem;
       line-height: 1.4;
       color: #f1f1f1;
       margin-bottom: 8px;
     }
 
-    .report-coords,
-    .report-date {
+    .occurrence-coords,
+    .occurrence-date {
       font-size: 0.8rem;
       color: #888;
       margin: 2px 0;

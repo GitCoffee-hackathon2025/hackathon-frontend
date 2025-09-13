@@ -6,7 +6,7 @@ export const NeighborhoodStore = defineStore('bairro', () => {
   const selectedData = ref<Record<string, any> | null>(null)
   const mapInstance = ref<L.Map | null>(null)
 
-  const neighbohoodReports = ref<any[]>([])
+  const neighborhoodoccurrences = ref<any[]>([])
   const loading = ref(false)
 
   function setMap(map: L.Map) {
@@ -21,18 +21,16 @@ export const NeighborhoodStore = defineStore('bairro', () => {
 
   function clearNeighborhood() {
     selectedData.value = null
-    neighbohoodReports.value = []
+    neighborhoodoccurrences.value = []
   }
 
-
-
   const getDataNeighborhood = async (idData: number): Promise<any> => {
-    // console.log("Buscando reports do bairro para o ID:", idData)
+    // console.log("Buscando occurrences do bairro para o ID:", idData)
     loading.value = true
-    neighbohoodReports.value = []
+    neighborhoodoccurrences.value = []
 
     try {
-      const response = await fetch(`http://localhost:3000/reportsByNeighborhood/${idData}`, {
+      const response = await fetch(`http://localhost:3000/occurrencesByNeighborhood/${idData}`, {
         method: 'GET',
       })
 
@@ -44,34 +42,34 @@ export const NeighborhoodStore = defineStore('bairro', () => {
       // console.log('Resposta COMPLETA da API:', result)
 
       if (result.success && result.data && Array.isArray(result.data)) {
-        // console.log('Dados dos reports recebidos:', result.data)
+        // console.log('Dados dos occurrences recebidos:', result.data)
 
         // CORREÇÃO: Mapeamento correto baseado na estrutura da resposta
-        const reportsData = result.data.map((report: any) => {
+        const occurrencesData = result.data.map((occurrence: any) => {
           return {
-            id: report.id,
-            content: report.content,
-            coordinates: report.coordenadas,
-            created_at: report.created_at,
-            user: report.user
-              ? { id: report.user.id, name: report.user.name }
+            id: occurrence.id,
+            content: occurrence.content,
+            coordinates: occurrence.coordenadas,
+            created_at: occurrence.created_at,
+            user: occurrence.user
+              ? { id: occurrence.user.id, name: occurrence.user.name }
               : { id: null, name: 'Usuário anônimo' },
-            type: report.type
-              ? { id: report.type.id, name: report.type.name }
+            type: occurrence.type
+              ? { id: occurrence.type.id, name: occurrence.type.name }
               : { id: null, name: 'Tipo não informado' },
-            _fullData: report, // Mantém todos os dados originais
+            _fullData: occurrence, // Mantém todos os dados originais
           }
         })
 
-        neighbohoodReports.value = reportsData
-        // console.log('Reports processados:', bairroReports.value)
+        neighborhoodoccurrences.value = occurrencesData
+        // console.log('occurrences processados:', bairrooccurrences.value)
       } else {
         // console.log('Nenhum dado encontrado ou formato inválido')
-        neighbohoodReports.value = []
+        neighborhoodoccurrences.value = []
       }
     } catch (err) {
-      console.error('Erro ao buscar reports:', err)
-      neighbohoodReports.value = []
+      console.error('Erro ao buscar occurrences:', err)
+      neighborhoodoccurrences.value = []
     } finally {
       loading.value = false
     }
@@ -80,11 +78,11 @@ export const NeighborhoodStore = defineStore('bairro', () => {
   return {
     setMap,
     selectedData,
-    neighbohoodReports,
+    neighborhoodoccurrences,
     loading,
     selectNeighborhood,
     clearNeighborhood,
     getDataNeighborhood,
-    mapInstance
+    mapInstance,
   }
 })

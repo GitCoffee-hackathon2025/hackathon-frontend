@@ -7,7 +7,7 @@ const menssage = ref('') // <--- aqui armazenamos a mensagem de erro ou sucesso
 
 async function sendOcurrence() {
   try {
-   await ocurrenceReq.sendReport(1)
+    await ocurrenceReq.sendoccurrence(1)
     menssage.value = 'Relatório enviado com sucesso!' // ou use data.message se a API retornar
   } catch (error: any) {
     menssage.value = error.message || 'Ocorreu um erro ao enviar.'
@@ -18,7 +18,7 @@ async function sendOcurrence() {
 <template>
   <section>
     <form @submit.prevent="sendOcurrence">
-      <h2 class="title">Criar Report</h2>
+      <h2 class="title">Criar occurrence</h2>
       <router-link to="">
         <!-- SVG de voltar -->
         <svg
@@ -44,7 +44,7 @@ async function sendOcurrence() {
           >
             <path fill-rule="evenodd" clip-rule="evenodd" d="M13.993 2.55819C15.7409..." />
           </svg>
-          <select v-model="ocurrenceReq.reportType">
+          <select v-model="ocurrenceReq.occurrenceType">
             <option value="" disabled selected>Escolha um crime</option>
             <option value="Acidente de trânsito">Acidente de trânsito</option>
             <option value="Assalto">Assalto</option>
@@ -56,18 +56,18 @@ async function sendOcurrence() {
         <div class="time campo">
           <label>Data:</label>
           <div class="choose-time">
-            <input type="date" v-model="ocurrenceReq.reportDate" />
+            <input type="date" v-model="ocurrenceReq.occurrenceDate" />
           </div>
         </div>
 
         <!-- Descrição -->
         <div class="description">
           <label>Descrição:</label>
-          <textarea v-model="ocurrenceReq.reportContent"></textarea>
+          <textarea v-model="ocurrenceReq.occurrenceContent"></textarea>
         </div>
 
         <p>{{ menssage }}</p>
-        <button type="submit" @click="ocurrenceReq.sendReport(1)">Enviar</button>
+        <button type="submit" @click="ocurrenceReq.sendoccurrence(1)">Enviar</button>
       </div>
     </form>
   </section>
