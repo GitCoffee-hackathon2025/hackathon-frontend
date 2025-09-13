@@ -204,7 +204,16 @@ const routeClass = (name: string) =>
         </svg>
       </button>
       <div class="scroll" ref="scrollRef" @scroll="updateScroll">
-        <div class="limit top"></div>
+        <div class="limit top"> <Transition name="slide-top" appear>
+        <div v-if="topLimitVisible" class="slide-top">
+          <svg xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid meet">
+            <path
+              fill="currentColor"
+              d=""
+            />
+          </svg>
+        </div>
+      </Transition></div>
 
         <router-view></router-view>
 
@@ -233,10 +242,10 @@ div.panel {
   transform: translateX(-50%);
 
   height: calc(
-    100% - (var(--components-height) + 25px + 25px) - 30px
+    100% - (var(--component-height) + 25px + 25px) - 30px
   ); //Cálculo que leva em conta a altura da barra de navegação, px de fora funcionando como um "gap" para que o painel e a barra de navegação não fiquem coladas. Os px que somam com a altura são os top do painel e o bottom da barra de nanvegação
 
-  width: var(--components-width);
+  width: var(--component-width);
   background-color: var(--color-gray-dark);
   padding: 20px;
   box-sizing: border-box;
@@ -297,7 +306,7 @@ div.panel {
 
           p {
             color: var(--color-white);
-            font-size: var(--text-lg);
+            font-size: var(--text-md);
           }
 
           svg.arrow {
@@ -341,12 +350,33 @@ div.panel {
 
     .slide-down {
       position: absolute;
-      bottom: calc(var(--components-height) - 20px);
+      bottom: calc(var(--component-height) - 20px);
       left: 50%;
       transform: translateX(-50%);
       border-radius: 50%;
       padding: 10px;
-      background-color: var(--white);
+      background-color: var(--color-white);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 60;
+      will-change: transform, opacity;
+
+      svg {
+        color: var(--color-gray-dark);
+        width: var(--icon-size);
+        height: var(--icon-size);
+      }
+    }
+
+    .slide-top{
+        position: absolute;
+      top: calc(var(--component-height) - 20px);
+      left: 50%;
+      transform: translateX(-50%);
+      border-radius: 50%;
+      padding: 10px;
+      background-color: var(--color-white);
       display: flex;
       align-items: center;
       justify-content: center;
@@ -379,6 +409,27 @@ div.panel {
         opacity 100ms ease-out;
     }
 
+
+
+    .slide-top-enter-from,
+    .slide-top-leave-to {
+      transform: translateX(-50%) translateY(-140%);
+      opacity: 0;
+    }
+
+    .slide-top-enter-to,
+    .slide-top-leave-from {
+      transform: translateX(-50%) translateY(0);
+      opacity: 1;
+    }
+
+    .slide-top-enter-active,
+    .slide-top-leave-active {
+      transition:
+        transform 400ms cubic-bezier(0.2, 0.9, 0.3, 1),
+        opacity 100ms ease-out;
+    }
+
     div.scroll {
       width: 100%;
       height: 100%;
@@ -394,7 +445,7 @@ div.panel {
       }
 
       div.limit {
-        height: calc(var(--components-height) - 20px); //Um pouco menor que os componentes padrões
+        height: calc(var(--component-height) - 20px); //Um pouco menor que os componentes padrões
 
         width: 100%;
         position: sticky;
@@ -419,7 +470,7 @@ div.panel {
       justify-content: flex-start;
       gap: 20px;
       text-decoration: none;
-      color: var(--white);
+      color: var(--color-white);
       position: relative;
       svg {
         width: var(--icon-size);
@@ -428,7 +479,7 @@ div.panel {
 
       h1 {
         font-weight: normal;
-        font-size: var(--text-xxl);
+        font-size: var(--text-lg);
       }
     }
   }
@@ -448,7 +499,7 @@ div.panel {
 
       div.currentRoute {
         position: absolute;
-        background-color: var(--white);
+        background-color: var(--color-white);
         z-index: 99;
 
         height: 100%;
@@ -465,7 +516,7 @@ div.panel {
         flex-direction: row;
         overflow-y: hidden;
         overflow-x: scroll;
-        border-bottom: 2px solid var(--white);
+        border-bottom: 2px solid var(--color-white);
         padding-bottom: 10px;
         padding-left: calc(var(--icon-size) / 2);
         gap: 40px;
@@ -479,11 +530,11 @@ div.panel {
           &.currentRouteLi {
             a {
               svg {
-                color: var(--gray);
+                color: var(--color-gray-dark);
               }
 
               p {
-                color: var(--gray);
+                color: var(--color-gray-dark);
               }
             }
           }

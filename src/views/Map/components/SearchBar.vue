@@ -1,73 +1,73 @@
 <script setup lang="ts">
 import { ref, onMounted } from 'vue'
-import { useBairroStore } from '../../../store/NeighborhoodStore'
+import { NeighborhoodStore } from '../../../store/NeighborhoodStore'
 import L from 'leaflet'
 
-const Procura = ref('')
-const filtroAberto = ref(false)
-const bairros = ref<any[]>([])
-const sugestoes = ref<any[]>([])
-const bairroStore = useBairroStore()
+const search = ref('')
+const filterOPened = ref(false)
+const neighborhoods = ref<any[]>([])
+const sugestions = ref<any[]>([])
+const neighborhoodStore = NeighborhoodStore()
 
-function estadoFiltro() {
-  filtroAberto.value = !filtroAberto.value
+function filterState() {
+  filterOPened.value = !filterOPened.value
 }
 
 onMounted(async () => {
   try {
-    const response = await fetch('/geo/bairros.json')
-    const data = await response.json()
-    bairros.value = data.features || []
+    const res = await fetch('/geo/bairros.json')
+    const data = await res.json()
+    neighborhoods.value = data.features || []
   } catch (err) {
     console.error('Erro ao carregar bairros:', err)
   }
 })
 
-const filtrarSugestoes = () => {
-  const termo = Procura.value.toLowerCase()
-  if (termo.length < 2) {
-    sugestoes.value = []
+const filterSugestions = () => {
+  const term = search.value.toLowerCase()
+  if (term.length < 2) {
+    sugestions.value = []
     return
   }
-  sugestoes.value = bairros.value
-    .filter((f) => f.properties?.nome_bairr?.toLowerCase().includes(termo))
+  sugestions.value = neighborhoods.value
+    .filter((f) => f.properties?.nome_bairro?.toLowerCase().includes(term))
     .slice(0, 5)
 }
 
 const searchNeighborhood = () => {
-  if (!Procura.value.trim()) return
+  if (!search.value.trim()) return
 
-  const found = bairros.value.find((f) =>
-    f.properties?.nome_bairr?.toLowerCase().includes(Procura.value.toLowerCase()),
+  const found = neighborhoods.value.find((f) =>
+    f.properties?.nome_bairr?.toLowerCase().includes(search.value.toLowerCase()),
   )
 
   if (found) {
-    bairroStore.selectBairro(found.properties)
-    sugestoes.value = []
+    neighborhoodStore.selectNeighborhood(found.properties)
+    sugestions.value = []
     const bounds = L.geoJSON(found).getBounds()
-    bairroStore.mapInstance?.flyToBounds(bounds, {
+    neighborhoodStore.mapInstance?.flyToBounds(bounds, {
       padding: [50, 50],
       maxZoom: 17,
       duration: 0.4,
       easeLinearity: 0.25,
     })
-    Procura.value = ''
+    search.value = ''
   } else {
-    bairroStore.clearBairro()
+    neighborhoodStore.clearNeighborhood()
     alert('Bairro não encontrado!')
   }
 }
 
-const selecionarSugestao = (sug: any) => {
-  Procura.value = sug.properties.nome_bairr
+const selectSugestion = (sug: any) => {
+  search.value = sug.properties.nome_bairro
   searchNeighborhood()
 }
 </script>
 
 <template>
-  <div class="container-pesquisa">
-    <div class="barra-pesquisa">
-      <button class="botao-pesquisa" @click="searchNeighborhood">
+  <div class="container-search">
+    <div class="search-bar">
+      <button class="search-button" @click="searchNeighborhood">
         <svg
           width="24"
           height="23"
@@ -89,27 +89,27 @@ const selecionarSugestao = (sug: any) => {
       <input
         type="text"
         placeholder="Pesquise seu bairro..."
-        class="entrada-pesquisa"
-        v-model="Procura"
-        @input="filtrarSugestoes"
+        class="search-input"
+        v-model="search"
+        @input="filterSugestions"
         @keyup.enter="searchNeighborhood"
       />
     </div>
 
-    <ul v-if="sugestoes.length" class="suggestions-list">
-      <li v-for="(sug, index) in sugestoes" :key="index" @click="selecionarSugestao(sug)">
+    <ul v-if="sugestions.length" class="suggestions-list">
+      <li v-for="(sug, index) in sugestions" :key="index" @click="selectSugestion(sug)">
         {{ sug.properties.nome_bairr }}
       </li>
     </ul>
 
-    <div class="filtro">
+    <div class="filter">
       <button
         type="button"
-        :class="['botao-filtro', { 'borda-quadrada': filtroAberto }]"
-        @click="estadoFiltro"
+        :class="['filter-button', { 'borda-quadrada': filterState }]"
+        @click="filterState"
       >
         <svg
-          v-if="!filtroAberto"
+          v-if="!filterState"
           xmlns="http://www.w3.org/2000/svg"
           width="16"
           height="16"
@@ -121,19 +121,19 @@ const selecionarSugestao = (sug: any) => {
         </svg>
         <p v-else>X</p>
       </button>
-      <div v-show="filtroAberto" class="filtro-opcoes">
+      <div v-show="filterOPened" class="filter-options">
         <label class="checkbox">
-          <input type="radio" name="filtro" value="1" />
+          <input type="radio" name="filter" value="1" />
           <span class="checkmark"></span>
           Último dia
         </label>
         <label class="checkbox">
-          <input type="radio" name="filtro" value="2" />
+          <input type="radio" name="filter" value="2" />
           <span class="checkmark"></span>
           Última semana
         </label>
         <label class="checkbox">
-          <input type="radio" name="filtro" value="3" />
+          <input type="radio" name="filter" value="3" />
           <span class="checkmark"></span>
           Último mês
         </label>
@@ -143,46 +143,46 @@ const selecionarSugestao = (sug: any) => {
 </template>
 
 <style scoped lang="scss">
-.container-pesquisa {
+.container-search {
   position: absolute;
   top: 25px;
   left: 50;
   transform: translateX(-50%);
   z-index: 1000000;
-  width: var(--largura-componentes);
-  height: var(--altura-componentes);
+  width: var(--component-width);
+  height: var(--component-height);
   display: flex;
   align-items: center;
   justify-content: space-between;
   gap: 10px;
 
-  .barra-pesquisa {
-    height: var(--altura-componentes);
+  .search-bar {
+    height: var(--component-height);
     display: flex;
     justify-content: space-between;
     align-items: center;
-    background: var(--branco);
+    background: var(--color-white);
     border-radius: 100px;
     width: 80%;
 
-    .entrada-pesquisa {
+    .search-input {
       flex: 1;
       border: none;
       outline: none;
-      font-size: var(--texto-m);
+      font-size: var(--text-md);
       background: transparent;
       padding: 12px 15px 12px 6px;
       box-sizing: border-box;
-      color: var(--cinza);
+      color: var(--color-gray-dark);
       width: 100%;
 
       &::placeholder {
-        color: var(--cinza);
-        font-size: var(--texto-m);
+        color: var(--color-gray-dark);
+        font-size: var(--text-md);
       }
     }
 
-    .botao-pesquisa {
+    .search-button {
       background: none;
       border: none;
       cursor: pointer;
@@ -191,37 +191,37 @@ const selecionarSugestao = (sug: any) => {
       justify-content: center;
       padding: 12px 6px 12px 12px;
       svg {
-        width: var(--tamanho-icones);
-        height: var(--tamanho-icones);
+        width: var(--icon-size);
+        height: var(--icon-size);
         circle {
-          fill: var(--cinza);
+          fill: var(--color-gray-dark);
         }
         line {
-          fill: var(--cinza);
+          fill: var(--color-gray-dark);
         }
       }
     }
   }
 
-  .filtro {
+  .filter {
     position: relative;
 
-    .botao-filtro {
+    .filter-button {
       z-index: 4;
       position: relative;
       display: flex;
       align-items: center;
       justify-content: center;
-      background-color: var(--branco);
+      background-color: var(--color-white);
       border: none;
-      width: var(--altura-componentes);
-      height: var(--altura-componentes);
+      width: var(--component-width);
+      height: var(--component-height);
       cursor: pointer;
       border-radius: 50%;
       svg {
-        width: var(--tamanho-icones);
-        height: var(--tamanho-icones);
-        fill: var(--cinza);
+        width: var(--icon-size);
+        height: var(--icon-size);
+        fill: var(--color-gray-dark);
       }
 
       p {
@@ -229,8 +229,8 @@ const selecionarSugestao = (sug: any) => {
         align-items: center;
         justify-content: center;
         text-align: center;
-        color: var(--cinza);
-        font-size: var(--texto-gg);
+        color: var(--color-gray-dark);
+        font-size: var(--text-lg);
       }
     }
     .borda-quadrada {
@@ -238,14 +238,14 @@ const selecionarSugestao = (sug: any) => {
       border-bottom-right-radius: 0;
     }
 
-    .filtro-opcoes {
+    .filter-option {
       position: absolute;
       z-index: 3;
-      padding: calc(var(--altura-componentes) / 4) calc(var(--altura-componentes) / 4)
-        calc(var(--altura-componentes) / 4) calc(var(--altura-componentes) / 4);
+      padding: calc(var(--component-height) / 4) calc(var(--component-height) / 4)
+        calc(var(--component-height) / 4) calc(var(--component-height) / 4);
       background-color: var(--branco);
       position: absolute;
-      top: var(--altura-componentes);
+      top: var(--component-height);
       right: 0;
       display: flex;
       flex-direction: column;
@@ -256,18 +256,18 @@ const selecionarSugestao = (sug: any) => {
       border-top-right-radius: 0px;
 
       .checkbox {
-        font-size: var(--texto-m);
+        font-size: var(--text-md);
         display: flex;
         align-items: center;
         justify-content: flex-start;
         gap: 8px;
         cursor: pointer;
-        color: var(--cinza);
+        color: var(--color-gray-dark);
 
         .checkmark {
-          width: calc(var(--tamanho-icones) * 0.8);
-          height: calc(var(--tamanho-icones) * 0.8);
-          border: 2px solid var(--cinza);
+          width: calc(var(--icon-size) * 0.8);
+          height: calc(var(--icon-size) * 0.8);
+          border: 2px solid var(--color-gray-dark);
           border-radius: 50%;
           display: inline-block;
           position: relative;
@@ -284,10 +284,10 @@ const selecionarSugestao = (sug: any) => {
             position: absolute;
             left: 2px;
             top: 2px;
-            width: calc(var(--tamanho-icones) * 0.65);
-            height: calc(var(--tamanho-icones) * 0.65);
+            width: calc(var(--icon-size) * 0.65);
+            height: calc(var(--icon-size) * 0.65);
             border-radius: 50%;
-            background-color: var(--cinza);
+            background-color: var(--color-gray-dark);
           }
         }
       }
@@ -296,16 +296,16 @@ const selecionarSugestao = (sug: any) => {
 }
 
 @media (min-width: 992px) {
-  .container-pesquisa {
+  .container-search {
     top: 3vh;
     left: calc(30px + 70px + 5vw);
     transform: none;
 
-    .filtro {
-      .filtro-opcoes {
+    .filter {
+      .filter-options {
         right: none;
         left: 0;
-        width: calc(var(--largura-componentes) / 2);
+        width: calc(var(--component-width) / 2);
         border-top-right-radius: 20px;
         border-top-left-radius: 0px;
       }
@@ -315,11 +315,11 @@ const selecionarSugestao = (sug: any) => {
 
 .suggestions-list {
   position: absolute;
-  top: calc(var(--altura-componentes) + 10px);
+  top: calc(var(--component-height) + 10px);
   left: 50%;
   transform: translateX(-50%);
   width: 60%;
-  background: var(--branco);
+  background: var(--color-white);
   border-radius: 12px;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
   list-style: none;
@@ -332,8 +332,8 @@ const selecionarSugestao = (sug: any) => {
   li {
     padding: 12px 16px;
     cursor: pointer;
-    font-size: var(--texto-m);
-    color: var(--cinza);
+    font-size: var(--text-m)d;
+    color: var(--color-gray-dark);
     transition: background 0.2s ease;
 
     &:hover {

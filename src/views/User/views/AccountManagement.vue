@@ -119,7 +119,7 @@ function cancelarEditacao(refKey: string) {
 </template>
 
 <style scoped lang="scss">
-@use '@/assets/inputs.scss';
+@use '@/assets/input.scss';
 
 div.account {
   width: 100%;
@@ -236,14 +236,14 @@ div.account {
         &:first-child {
           div.field {
             input {
-              background-color: var(--verde);
+              background-color: var(--color-green);
             }
           }
         }
         &:nth-child(2) {
           div.field {
             input {
-              background-color: var(--vermelho);
+              background-color: var(--color-red);
             }
           }
         }

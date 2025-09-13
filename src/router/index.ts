@@ -47,7 +47,7 @@ const router = createRouter({
         },
         {
           path: 'historico-de-denuncias',
-          component: () => import('@/views/User/UserPage.vue'),
+          component: () => import('@/views/User/views/OcurrenceHistoric.vue'),
           meta: { titulo: 'Histórico de denúncias' },
         },
         {

@@ -85,5 +85,6 @@ export const NeighborhoodStore = defineStore('bairro', () => {
     selectNeighborhood,
     clearNeighborhood,
     getDataNeighborhood,
+    mapInstance
   }
 })

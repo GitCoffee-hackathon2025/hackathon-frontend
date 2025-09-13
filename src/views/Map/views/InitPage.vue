@@ -30,7 +30,7 @@ const createCustomIcon = () => {
     className: 'custom-marker',
     html: `
       <div style="
-        background-color: var(--color-white);
+        background-color: white;
         width: 24px;
         height: 24px;
         border-radius: 50%;
@@ -41,7 +41,7 @@ const createCustomIcon = () => {
         justify-content: center;
       ">
         <div style="
-          background-color: var(--color-white);
+          background-color: white;
           width: 8px;
           height: 8px;
           border-radius: 50%;

@@ -1,18 +1,18 @@
 <script setup lang="ts">
-import { useBairroStore } from '@/store/NeighborhoodStore'
+import { NeighborhoodStore } from '@/store/NeighborhoodStore'
 import { storeToRefs } from 'pinia'
 
-const bairroStore = useBairroStore()
-const { selectedData, bairroReports, loading } = storeToRefs(bairroStore)
+const neighborhoodStore =NeighborhoodStore()
+const { selectedData, neighbohoodReports, loading } = storeToRefs(neighborhoodStore)
 
 function fechar() {
-  bairroStore.clearBairro()
+  neighborhoodStore.clearNeighborhood()
 }
 </script>
 
 <template>
-  <div v-if="selectedData" class="detalhes-container">
-    <div class="detalhes-content">
+  <div v-if="selectedData" class="details-container">
+    <div class="details-content">
       <button class="close-button" @click="fechar">×</button>
       <h2>Reports do Bairro</h2>
 
@@ -22,7 +22,7 @@ function fechar() {
           >Bairro:
           {{
             [selectedData.nome, selectedData.name, selectedData.nome_bairro, selectedData.id].find(
-              (nameBairro) => nameBairro !== '' && nameBairro != null,
+              (neighborhoodName) => neighborhoodName !== '' && neighborhoodName != null,
             ) ?? 'Bairro não informado'
           }}
         </strong>
@@ -33,10 +33,10 @@ function fechar() {
 
       <!-- Exibir reports do bairro -->
       <div v-else class="reports-container">
-        <h3>Reports ({{ bairroReports.length }})</h3>
+        <h3>Reports ({{ neighbohoodReports.length }})</h3>
 
-        <div v-if="bairroReports.length">
-          <div v-for="report in bairroReports" :key="report.id" class="report-item">
+        <div v-if="neighbohoodReports.length">
+          <div v-for="report in neighbohoodReports" :key="report.id" class="report-item">
             <p class="report-user">
               <strong>{{ report.user.name }}</strong> —
               <span class="report-type">{{ report.type.name }}</span>
@@ -60,7 +60,7 @@ function fechar() {
 </template>
 
 <style scoped lang="scss">
-.detalhes-container {
+.details-container {
   position: fixed;
   top: 50%;
   right: 30px;
@@ -68,7 +68,7 @@ function fechar() {
   width: 340px;
   max-width: 90vw;
   height: 90vh;
-  background: var(--cinza);
+  background: var(--color-gray-dark);
   border-radius: 8px;
   box-shadow: 0 0 7px rgba(255, 255, 255, 0.2);
   z-index: 1000;
@@ -76,11 +76,11 @@ function fechar() {
   flex-direction: column;
   animation: slideIn 0.3s ease forwards;
 
-  .detalhes-content {
+  .details-content {
     flex: 1;
     padding: 16px;
     position: relative;
-    color: var(--branco);
+    color: var(--color-white);
     overflow-y: auto;
   }
 
@@ -92,10 +92,10 @@ function fechar() {
     border: none;
     font-size: 1.4rem;
     cursor: pointer;
-    color: var(--branco);
+    color: var(--color-white);
 
     &:hover {
-      color: var(--cinza-claro, #ddd);
+      color: var(--color-gray-light, #ddd);
     }
   }
 
@@ -107,7 +107,7 @@ function fechar() {
   h3 {
     font-size: 1.1rem;
     margin: 12px 0;
-    border-bottom: 1px solid var(--cinza-claro);
+    border-bottom: 1px solid var(--color-gray-light);
     padding-bottom: 4px;
   }
 
@@ -174,7 +174,7 @@ function fechar() {
 }
 
 @media (max-width: 992px) {
-  .detalhes-container {
+  .details-container {
     top: auto;
     bottom: 20px;
     right: 20px;

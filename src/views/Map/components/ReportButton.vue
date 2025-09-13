@@ -1,5 +1,5 @@
 <template>
-  <button class="botao-denuncia">
+  <button class="ocurrence-button">
     <p>Fazer denúncia</p>
     <svg xmlns="http://www.w3.org/2000/svg" width="45" height="45" viewBox="0 0 45 45" fill="none">
       <path
@@ -18,9 +18,9 @@ button {
   z-index: 5;
   bottom: 30%;
   right: 15px;
-  width: calc(var(--altura-componentes) * 1.1);
-  height: calc(var(--altura-componentes) * 1.1);
-  background-color: var(--vermelho);
+  width: calc(var(--component-width) * 1.1);
+  height: calc(var(--component-height) * 1.1);
+  background-color: var(--color-red);
   border: none;
   cursor: pointer;
   display: flex;
@@ -34,13 +34,13 @@ button {
 
   svg {
     stroke: var(--branco);
-    width: calc(var(--tamanho-icones) * 1.5);
-    height: calc(var(--tamanho-icones) * 1.5);
+    width: calc(var(--icon-size) * 1.5);
+    height: calc(var(--icon-size) * 1.5);
   }
 
   p {
     display: none;
-    font-size: var(--texto-m);
+    font-size: var(--text-md);
   }
 }
 
@@ -48,8 +48,8 @@ button {
   button {
     bottom: 3vh;
     right: 30px;
-    width: calc(var(--largura-componentes) / 2);
-    height: calc(var(--altura-componentes) * 1.3);
+    width: calc(var(--component-width) / 2);
+    height: calc(var(--component-height) * 1.3);
 
     p {
       display: block;
