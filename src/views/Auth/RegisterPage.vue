@@ -2,7 +2,7 @@
 import EmailInput from './components/inputs/EmailInput.vue'
 import BirthdayInput from './components/inputs/BirthdayInput.vue'
 import LinkAuth from './components/LinkAuth.vue'
-import AlertTExt from './components/AlertText.vue'
+import AlertText from './components/AlertText.vue'
 import BlackSide from './components/BlackSide.vue'
 import PasswordInput from './components/inputs/PasswordInput.vue'
 import NameInput from './components/inputs/NameInput.vue'
@@ -182,8 +182,7 @@ const progressPercent = computed(() => {
         ></div>
       </div>
     </div>
-
-    <ParteCima :route="'/mapa-de-denuncias'" :active="true" />
+   <BlackSide :route="'/mapa-de-denuncias'" :active="true" />
     <div class="form-inputs" :class="[{ anim: anims.animRegister }]">
       <h1>Crie sua conta</h1>
       <BirthdayInput v-if="registerSteps.three && !registerSteps.four" />
@@ -197,7 +196,7 @@ const progressPercent = computed(() => {
         <button v-if="registerSteps.two" @click="backStep">Voltar</button>
         <button>Avançar</button>
       </div>
-      <LinkForm
+      <LinkAuth
         :text="'Ja tem tem uma conta?'"
         :route="'/entrar'"
         v-if="!registerSteps.two"
