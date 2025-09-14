@@ -3,12 +3,12 @@ import { NeighborhoodStore } from '@/store/NeighborhoodStore'
 import { ocurrenceRequisitions } from '@/requisitions/Ocurrences'
 import { onMounted, nextTick, watch, onUnmounted } from 'vue'
 import { useRoute } from 'vue-router'
-import L from 'leaflet'
+import * as L from 'leaflet'
 import { markRaw } from 'vue'
 import 'leaflet/dist/leaflet.css'
 import NeighborhoodPanel from '@/views/Map/components/NeighborhoodPanel.vue'
 import SearchBar from '@/views/Map/views/OcurrenceForm.vue'
-import { findNeighborhoodByCoordinates } from '@/utils/geoCoding'
+import { findNeighborhoodByCoordinates } from '@/utils/geocoding'
 
 let map: L.Map | null = null
 let clickHandler: ((e: L.LeafletMouseEvent) => void) | null = null
@@ -20,8 +20,7 @@ const route = useRoute()
 
 const bounds: L.LatLngBoundsExpression = [
   [-26.4, -49.0],
-  [-26.1, -48.7],
-]
+  [-26.1, -48.7],]
 
 // Criar ícone personalizado para o marcador
 const createCustomIcon = () => {
@@ -182,7 +181,7 @@ onMounted(() => {
     },
   ).addTo(map)
 
-  fetch('/geo/bairros.json')
+  fetch('geojson/JoinvilleNeighborhoods.geojson')
     .then((res) => res.json())
     .then((data) => {
       L.geoJSON(data, {
