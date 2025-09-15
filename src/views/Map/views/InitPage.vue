@@ -8,7 +8,7 @@ import { markRaw } from 'vue'
 import 'leaflet/dist/leaflet.css'
 import NeighborhoodPanel from '@/views/Map/components/NeighborhoodPanel.vue'
 import SearchBar from '@/views/Map/views/OcurrenceForm.vue'
-import { findNeighborhoodByCoordinates } from '@/utils/geoCoding'
+import { findNeighborhoodByCoordinates } from '@/utils/geocoding'
 
 import { AnimsStore } from '@/store/AnimsStore'
 const anims = AnimsStore()
@@ -190,7 +190,7 @@ onMounted(() => {
     },
   ).addTo(map)
 
-  fetch('/geo/bairros.json')
+  fetch('/geojson/JoinvilleNeighborhoods.geojson')
     .then((res) => res.json())
     .then((data) => {
       L.geoJSON(data, {

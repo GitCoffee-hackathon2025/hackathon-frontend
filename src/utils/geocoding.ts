@@ -9,7 +9,7 @@ async function loadGeoJson(): Promise<FeatureCollection | null> {
     return cachedGeoJson
   }
 
-  const response = await fetch('./geojson/JoinvilleNeighborhoods.json')
+  const response = await fetch('/geojson/JoinvilleNeighborhoods.geojson')
   cachedGeoJson = await response.json()
   return cachedGeoJson
 }

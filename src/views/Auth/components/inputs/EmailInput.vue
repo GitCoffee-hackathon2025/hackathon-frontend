@@ -37,7 +37,7 @@ const { erro } = defineProps({
 </template>
 
 <style scoped lang="scss">
-@use '@/assets/inputs.scss';
+@use '@/assets/input.scss';
 
 div {
   grid-column: 1 / 31;
