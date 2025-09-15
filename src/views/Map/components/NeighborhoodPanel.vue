@@ -21,7 +21,7 @@ function fechar() {
         <strong
           >Bairro:
           {{
-            [selectedData.nome, selectedData.name, selectedData.nome_bairro, selectedData.id].find(
+            [selectedData.nome, selectedData.name, selectedData.nome_bairr, selectedData.id].find(
               (neighborhoodName) => neighborhoodName !== '' && neighborhoodName != null,
             ) ?? 'Bairro não informado'
           }}

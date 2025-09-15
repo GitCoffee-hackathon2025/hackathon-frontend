@@ -9,6 +9,7 @@ import 'leaflet/dist/leaflet.css'
 import NeighborhoodPanel from '@/views/Map/components/NeighborhoodPanel.vue'
 import SearchBar from '@/views/Map/views/OcurrenceForm.vue'
 import { findNeighborhoodByCoordinates } from '@/utils/geocoding'
+import   ReportButton  from '@/views/Map/components/ReportButton.vue'
 
 import { AnimsStore } from '@/store/AnimsStore'
 const anims = AnimsStore()
@@ -269,6 +270,7 @@ onUnmounted(() => {
 <template>
   <main>
     <SearchBar />
+    <ReportButton />
     <div class="map-container">
       <div id="map"></div>
       <NeighborhoodPanel />
