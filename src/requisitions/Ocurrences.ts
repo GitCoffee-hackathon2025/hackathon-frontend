@@ -24,42 +24,59 @@ export const ocurrenceRequisitions = defineStore('occurrence', () => {
   }
 
   // função para enviar relatório
-  const sendoccurrence = async () => {
-    try {
-      const res = await fetch(`${import.meta.env.VITE_REQ}/occurrences/register`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          content: occurrenceContent.value,
-          type: occurrenceType.value,
-          date: new Date(occurrenceDate.value).toISOString(),
-          local: occurrenceLocal.value,
-          coordinates: occurrenceCoordinates.value,
-          bairro: occurrenceNeighborhood.value,
-        }),
-      })
+ const sendoccurrence = async () => {
+  try {
+    const dateValue = occurrenceDate.value;
+    if (!dateValue) {
+      console.error("Data inválida:", dateValue);
+      return;
+    }
 
-      if (!res.ok) {
-        const errorData = await res.json()
-        return {
-          success: false,
-          errorText: errorData.error,
-          type: errorData.type,
-        }
-      }
+    const date = new Date(dateValue);
+    if (isNaN(date.getTime())) {
+      console.error("Data inválida:", date);
+      return;
+    }
 
-      const data = await res.json()
-      console.log('Relatório enviado com sucesso:', data)
-      return data
-    } catch (err) {
+    const isoDate = date.toISOString();
+
+    const res = await fetch(`${import.meta.env.VITE_REQ}/occurrences/register`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        content: occurrenceContent.value,
+        type: occurrenceType.value,
+        date: isoDate,
+        local: occurrenceLocal.value,
+        coordinates: occurrenceCoordinates.value,
+        bairro: occurrenceNeighborhood.value,
+      }),
+    });
+
+    if (!res.ok) {
+      const errorData = await res.json();
+      console.error("Erro na requisição:", errorData);
       return {
         success: false,
-        errorText: 'Erro de conexão. Tente novamente.',
-      }
+        errorText: errorData.error,
+        type: errorData.type,
+      };
     }
+
+    const data = await res.json();
+    console.log('Relatório enviado com sucesso:', data);
+    return data;
+  } catch (err) {
+    console.error("Erro de conexão ou outro erro inesperado:", err);
+    return {
+      success: false,
+      errorText: 'Erro de conexão. Tente novamente.',
+    };
   }
+};
+
 
   return {
     occurrenceContent,

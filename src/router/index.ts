@@ -25,11 +25,6 @@ const router = createRouter({
           name: ROUTES.occurrenceMap.init,
         },
         {
-          path: 'fazer-denuncia',
-          component: () => import('@/views/Map/views/OcurrenceForm.vue'),
-          name: ROUTES.occurrenceMap.report,
-        },
-        {
           path: 'selecionar-localizacao',
           component: MapaDenunciasInicial,
           name: ROUTES.occurrenceMap.select,

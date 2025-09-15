@@ -37,6 +37,14 @@ onMounted(() => {
 
 async function sendOcurrence() {
   try {
+    console.log('Enviando ocorrência:', {
+      type: ocurrenceReq.occurrenceType,
+      date: ocurrenceReq.occurrenceDate,
+      content: ocurrenceReq.occurrenceContent,
+      coordinates: ocurrenceReq.occurrenceCoordinates,
+      local: ocurrenceReq.occurrenceLocal,
+      neighborhood: ocurrenceReq.occurrenceNeighborhood
+    })
     const result = await ocurrenceReq.sendoccurrence()
     
     if (result.success) {
