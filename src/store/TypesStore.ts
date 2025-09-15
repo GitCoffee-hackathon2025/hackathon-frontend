@@ -29,15 +29,22 @@ export interface UpdateUserParams {
 }
 
 export class Option {
-  icon: string;
-  text: string;
-  link: string;
-  refKey: string;
+  icon: string
+  text: string
+  link: string
+  refKey: string
 
-  constructor(icon: string, text: string, link:string, refKey: string) {
+  constructor(icon: string, text: string, link: string, refKey: string) {
     this.icon = icon
     this.text = text
     this.link = link
     this.refKey = refKey
   }
+}
+
+export interface Steps {
+  two: boolean
+  three: boolean
+  four: boolean
+  five?: boolean
 }

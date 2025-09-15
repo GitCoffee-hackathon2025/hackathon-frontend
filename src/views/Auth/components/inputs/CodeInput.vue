@@ -91,23 +91,24 @@ function onFocus(index: number) {
 <style scoped lang="scss">
 .otp-container {
   max-width: var(--component-width);
-  height: calc(var(--component-height) * 1.6);
+  height: calc(var(--component-height) * 1.9);
   grid-column: 1 / 31;
-  grid-row: 1 / 27;
+  grid-row: 1 / 25;
   display: flex;
 
-  justify-content: space-between;
+  justify-content: space-evenly;
   justify-self: center;
   align-self: center;
+  flex-wrap: wrap;
 
   .otp-box {
-    font-size: var(--texto-xxl);
+    font-size: var(--text-xl);
     width: 15%;
     height: 100%;
     text-align: center;
     font-weight: bold;
     border-radius: 0.8rem;
-    background: var(--color-gray-dark);
+    background: var(--color-gray-light);
     outline: none;
     border: none;
     font-family: monospace;
@@ -131,7 +132,10 @@ function onFocus(index: number) {
 
 @media (min-width: 992px) {
   .otp-container {
-    height: calc(var(--component-height) * 1.8);
+    height: calc(var(--component-height) * 1.7);
+.otp-box{
+    width: 14%;
+}
   }
 }
 </style>

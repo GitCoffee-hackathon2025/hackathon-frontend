@@ -81,10 +81,13 @@ const { erro } = defineProps({
 div {
   grid-column: 1 / 31;
   &.login {
-    grid-row: 12 / 16;
+    grid-row: 13 / 17;
   }
   &.register {
     grid-row: 10 / 19;
+  }
+  &.recover{
+grid-row: 10 / 19;
   }
 }
 </style>

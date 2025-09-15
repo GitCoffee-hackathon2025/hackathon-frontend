@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { NeighborhoodStore } from '@/store/NeighborhoodStore'
 import { ocurrenceRequisitions } from '@/requisitions/Ocurrences'
-import { onMounted, nextTick, watch, onUnmounted } from 'vue'
+import { onMounted, nextTick, watch, onUnmounted, onBeforeMount } from 'vue'
 import { useRoute } from 'vue-router'
 import * as L from 'leaflet'
 import { markRaw } from 'vue'
@@ -9,6 +9,9 @@ import 'leaflet/dist/leaflet.css'
 import NeighborhoodPanel from '@/views/Map/components/NeighborhoodPanel.vue'
 import SearchBar from '@/views/Map/views/OcurrenceForm.vue'
 import { findNeighborhoodByCoordinates } from '@/utils/geocoding'
+
+import { AnimsStore } from '@/store/AnimsStore'
+const anims = AnimsStore()
 
 let map: L.Map | null = null
 let clickHandler: ((e: L.LeafletMouseEvent) => void) | null = null
@@ -20,7 +23,8 @@ const route = useRoute()
 
 const bounds: L.LatLngBoundsExpression = [
   [-26.4, -49.0],
-  [-26.1, -48.7],]
+  [-26.1, -48.7],
+]
 
 // Criar ícone personalizado para o marcador
 const createCustomIcon = () => {
@@ -158,7 +162,12 @@ watch(
   },
 )
 
+onBeforeMount(()=>{
+    anims.isLoading = true
+})
+
 onMounted(() => {
+  anims.isLoading = true
   map = L.map('map', {
     maxBounds: bounds,
     maxBoundsViscosity: 1.0,
@@ -242,6 +251,7 @@ onMounted(() => {
           })
         },
       }).addTo(map!)
+      anims.isLoading = false
     })
     .catch((err) => console.error('Erro ao carregar GeoJSON:', err))
 

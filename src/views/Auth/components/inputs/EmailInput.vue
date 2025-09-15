@@ -47,11 +47,11 @@ div {
   }
 
   &.login {
-    grid-row: 9 / 13;
+    grid-row: 10 / 14;
   }
 
   &.recover-password {
-    grid-row: 10 / 17;
+    grid-row: 10 / 19;
   }
 }
 </style>

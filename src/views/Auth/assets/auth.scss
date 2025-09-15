@@ -13,7 +13,7 @@ form {
     z-index: 2;
     border-top-left-radius: clamp(10px, 20vw, 120px);
     grid-column: 1 / 31;
-    grid-row: 6 / 31;
+    grid-row: 8 / 31;
     display: grid;
     grid-template-columns: repeat(30, 1fr);
     grid-template-rows: repeat(30, 1fr);
@@ -27,6 +27,22 @@ form {
       text-align: center;
       grid-column: 1 / 31;
       grid-row: 4 / 6;
+      white-space: normal;
+      word-wrap: break-word;
+      overflow-wrap: break-word;
+    }
+    h2 {
+      width: var(--component-width);
+      font-size: var(--text-lg);
+      color: var(--color-gray-dark);
+      justify-self: center;
+      align-self: center;
+      text-align: center;
+      grid-column: 1 / 31;
+      grid-row: 7 / 9;
+      white-space: normal;
+      word-wrap: break-word;
+      overflow-wrap: break-word;
     }
 
     p {
@@ -52,7 +68,7 @@ form {
 
       button,
       a {
-        font-size: var(--texto-lg);
+        font-size: var(--text-md);
         text-decoration: none;
         display: flex;
         align-items: center;
@@ -71,7 +87,7 @@ form {
 
 @media (min-width: 576px) {
   form {
-    grid-template-rows: repeat(30, clamp(15px, 20%, 35px));
+    grid-template-rows: repeat(30, clamp(15px, 20%, 40px));
   }
 }
 
@@ -84,12 +100,11 @@ form {
       z-index: 2;
       min-height: 0;
       width: 50vw;
-      max-height: 720px;
       height: 100vh;
       border-radius: 0;
     }
 
-    &.login{
+    &.login {
       flex-direction: row-reverse;
     }
   }
@@ -100,7 +115,6 @@ form {
     grid-template-rows: repeat(30, clamp(15px, 20%, 50px));
     div.form-inputs {
       width: 50vw;
-      max-height: 900px;
       height: 100vh;
       border-radius: 0;
     }
