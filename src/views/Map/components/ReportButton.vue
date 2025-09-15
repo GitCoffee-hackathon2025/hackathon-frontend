@@ -1,5 +1,15 @@
+<script setup lang="ts">
+import { useRouter } from 'vue-router'
+
+const router = useRouter()
+
+const goToSelectLocation = () => {
+  router.push('mapa-de-denuncias/selecionar-localizacao')
+}
+</script>
+
 <template>
-  <button class="ocurrence-button">
+  <button class="ocurrence-button" @click="goToSelectLocation">
     <p>Fazer denúncia</p>
     <svg xmlns="http://www.w3.org/2000/svg" width="45" height="45" viewBox="0 0 45 45" fill="none">
       <path
@@ -11,7 +21,6 @@
     </svg>
   </button>
 </template>
-
 <style scoped lang="scss">
 button {
   position: fixed;

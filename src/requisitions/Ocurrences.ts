@@ -19,12 +19,12 @@ export const ocurrenceRequisitions = defineStore('occurrence', () => {
     const neighborhoodName = await findNeighborhoodByCoordinates(coords.lat, coords.lng)
     if (neighborhoodName) {
       occurrenceNeighborhood.value = neighborhoodName
-      occurrenceLocal.value = neighborhoodName // Opcional: preencher também o local com o nome do bairro
+      occurrenceLocal.value = neighborhoodName
     }
   }
 
   // função para enviar relatório
-  const sendoccurrence = async (userId: number) => {
+  const sendoccurrence = async () => {
     try {
       const res = await fetch(`${import.meta.env.VITE_REQ}/occurrences/register`, {
         method: 'POST',
@@ -32,13 +32,12 @@ export const ocurrenceRequisitions = defineStore('occurrence', () => {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          userId,
           content: occurrenceContent.value,
           type: occurrenceType.value,
           date: new Date(occurrenceDate.value).toISOString(),
           local: occurrenceLocal.value,
           coordinates: occurrenceCoordinates.value,
-          bairro: occurrenceNeighborhood.value, // Incluir nome do bairro no envio
+          bairro: occurrenceNeighborhood.value,
         }),
       })
 
