@@ -66,8 +66,8 @@ const emit = defineEmits<{
   overflow-wrap: break-word;
   hyphens: auto;
   text-align: center;
+  white-space: wrap;
   
-  /* Garantir que o texto quebre corretamente */
   max-width: 100%;
   
   
