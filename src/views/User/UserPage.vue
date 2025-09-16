@@ -1,7 +1,9 @@
 <script setup lang="ts">
-import PanelView from '@/components/PanelView.vue';
+import PanelView from '@/components/PanelView.vue'
 
 import type { Option } from '@/store/TypesStore'
+
+import { ROUTES } from '@/router/routes'
 
 const panelViewItems: Option[] = [
   {
@@ -10,7 +12,17 @@ const panelViewItems: Option[] = [
 `,
     refKey: 'conta',
     text: 'Conta',
-    link: '/usuario/conta',
+    link: ROUTES.user.account,
+  },
+
+  {
+    icon: `
+  <path d="M9.72677 27.6066C12.1808 30.0607 15.4099 31.5879 18.8638 31.9279C22.3177 32.268 25.7826 31.3997 28.668 29.4713C31.5535 27.5428 33.681 24.6734 34.6879 21.3521C35.6948 18.0308 35.5189 14.463 34.1901 11.2569C32.8612 8.05076 30.4618 5.40462 27.4006 3.76941C24.3394 2.13421 20.8058 1.61113 17.4022 2.28932C13.9985 2.96751 10.9354 4.805 8.73467 7.48865C6.53399 10.1723 5.33198 13.5361 5.3335 17.0067V20.3333" stroke-width="2" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="M2 17.0003L5.33329 20.3336L8.66657 17.0003M18.6664 10.3336V18.6669H26.9996" stroke="currentColor"  stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+`,
+    refKey: 'historico',
+    text: 'Histórico de denúncias',
+    link: ROUTES.user.historic,
   },
   {
     icon: `
@@ -19,20 +31,17 @@ const panelViewItems: Option[] = [
 `,
     refKey: 'termo',
     text: 'Termos e Privacidade',
-    link: '/usuario/termos-e-privacidade',
-  },
-  {
-    icon: `
-  <path d="M9.72677 27.6066C12.1808 30.0607 15.4099 31.5879 18.8638 31.9279C22.3177 32.268 25.7826 31.3997 28.668 29.4713C31.5535 27.5428 33.681 24.6734 34.6879 21.3521C35.6948 18.0308 35.5189 14.463 34.1901 11.2569C32.8612 8.05076 30.4618 5.40462 27.4006 3.76941C24.3394 2.13421 20.8058 1.61113 17.4022 2.28932C13.9985 2.96751 10.9354 4.805 8.73467 7.48865C6.53399 10.1723 5.33198 13.5361 5.3335 17.0067V20.3333" stroke-width="2" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"/>
-  <path d="M2 17.0003L5.33329 20.3336L8.66657 17.0003M18.6664 10.3336V18.6669H26.9996" stroke="currentColor"  stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-`,
-    refKey: 'historico',
-    text: 'Histórico de denúncias',
-    link: '/usuario/historico-de-denuncias',
+    link: ROUTES.user.termAndPrivacy,
   },
 ]
 </script>
 
 <template>
-  <main><PanelView :options="panelViewItems" /></main>
+  <main>
+    <PanelView
+      :options="panelViewItems"
+      :route="ROUTES.user.init"
+      :default-route="ROUTES.user.account"
+    />
+  </main>
 </template>

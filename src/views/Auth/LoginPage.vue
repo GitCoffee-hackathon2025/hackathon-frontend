@@ -1,13 +1,15 @@
 <script setup lang="ts">
-import { ref, onMounted } from 'vue'
+import { ref } from 'vue'
 import PasswordInput from './components/inputs/PasswordInput.vue'
 import EmailInput from './components/inputs/EmailInput.vue'
 import LinkAuth from './components/LinkAuth.vue'
 import AlertText from './components/AlertText.vue'
 import BlackSide from './components/BlackSide.vue'
 
-import { AnimsStore } from '@/store/AnimsStore'
-const anims = AnimsStore()
+import { ROUTES } from '@/router/routes'
+
+import { AnimStore } from '@/store/AnimStore'
+const anim = AnimStore()
 
 import resetData from '@/utils/resetData'
 resetData.setup()
@@ -27,6 +29,7 @@ const errorText = ref<string>('')
 const loginFailed = ref(false)
 
 async function login() {
+  anim.isLoading = true
   const req: LoginUser = {
     email: user.email,
     password: user.password,
@@ -36,19 +39,27 @@ async function login() {
   if (!res.success) {
     errorText.value = res.message
     loginFailed.value = !res.success
+    anim.isLoading = false
     return
   }
 
-  router.push('/mapa-de-denuncias')
+  anim.isLoading = false
+  router.push({ name: ROUTES.occurrenceMap.init })
 }
 
-onMounted(() => {})
+const windowWidth = ref(typeof window !== 'undefined' ? window.innerWidth : 0)
 </script>
 <template>
   <form @submit.prevent="login" novalidate class="login">
-    <BlackSide :route="'/mapa-de-denuncias'" :active="true" />
-    <div class="form-inputs" :class="[{ anim: anims.animLogin }]">
-      <h1>Entre com sua conta</h1>
+    <BlackSide
+      :route="ROUTES.occurrenceMap.init"
+      message="Bem-vindo de volta!"
+      father="login"
+    />
+
+    <div class="form-inputs" :class="[{ anim: anim.animLogin }]">
+      <h1 v-if="windowWidth < 992">Bem-vindo!</h1>
+      <h2>Insira suas credênciais</h2>
       <EmailInput class="login" :erro="loginFailed" />
       <PasswordInput class="login" :erro="loginFailed" />
       <AlertText :position="'login'" :texto="errorText" />
@@ -65,8 +76,8 @@ onMounted(() => {})
         <button>Entrar</button>
       </div>
 
-      <LinkAuth class="recover-password" :route="'/recuperar-conta'" :text="'Esqueceu a senha?'" />
-      <LinkAuth :route="'/cadastro'" :text="'Não tem uma conta?'" anim="register" />
+      <LinkAuth class="recover-password" :route="ROUTES.auth.recover" :text="'Esqueceu a senha?'" />
+      <LinkAuth :route="ROUTES.auth.register" :text="'Não tem uma conta?'" anim="register" />
     </div>
   </form>
 </template>
@@ -75,7 +86,7 @@ onMounted(() => {})
 @use './assets/auth.scss';
 
 .remember-container {
-  grid-row: 15 / 18;
+  grid-row: 16 / 19;
   grid-column: 1 / 31;
   width: var(--component-width);
   justify-self: center;
@@ -85,7 +96,7 @@ onMounted(() => {})
   align-items: center;
 
   .remember-label {
-    font-size: var(--text-lg);
+    font-size: var(--text-md);
     user-select: none;
     color: var(--color-gray-dark);
     cursor: pointer;
@@ -136,7 +147,7 @@ onMounted(() => {})
     }
 
     .remember-text {
-      font-size: var(--text-lg);
+      font-size: var(--text-md);
       color: var(--color-gray-dark);
     }
   }
@@ -144,7 +155,7 @@ onMounted(() => {})
 
 @media (min-width: 576px) {
   .remember-container {
-    grid-row: 16 / 17;
+    grid-row: 17 / 18;
     grid-column: 1 / 31;
 
     .remember-label {
@@ -166,7 +177,7 @@ onMounted(() => {})
     }
   }
   .anim {
-    animation: rightToLeft 1s;
+    animation: rightToLeft 1s ease;
   }
 
   @keyframes rightToLeft {

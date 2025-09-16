@@ -12,7 +12,7 @@
   --text-xxl: clamp(2rem, 2rem + 0.5vw, 2.1rem);
 
   --component-height: clamp(2.75rem, 2.75rem + 0.5vw, 3.5rem);
-  --component-width: clamp(17.5rem, 85vw, 25rem);
+  --component-width: clamp(19rem, 95vw, 25rem);
   --icon-size: clamp(1.3rem, 1.3rem + 0.8vw, 2rem);
 }
 
@@ -48,9 +48,9 @@
   :root {
     --text-sm: clamp(0.8rem, 0.8rem + 0.3vw, 0.87rem);
     --text-md: clamp(1rem, 1rem + 0.3vw, 1rem);
-    --text-lg: clamp(2rem, 2rem + 0.3vw, 2rem);
-    --text-xl: clamp(1.6rem, 1.5rem + 0.3vw, 1.8rem);
-    --text-xxl: clamp(2.2rem, 2.2rem + 0.3vw, 3rem);
+    --text-lg: clamp(1.5rem, 1.5rem + 0.3vw, 1.8rem);
+    --text-xl: clamp(2rem, 2rem + 0.3vw, 3rem);
+    --text-xxl: clamp(2.5rem, 2.5rem + 0.3vw, 4rem);
 
     --component-height: clamp(2.8rem, 2.7rem + 0.3vw, 3rem);
     --component-width: clamp(17.5rem, 85vw, 25rem);
@@ -63,6 +63,7 @@
   padding: 0;
   list-style: none;
   white-space: nowrap;
+  font-weight: normal;
 }
 
 html {

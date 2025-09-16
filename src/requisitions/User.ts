@@ -1,63 +1,40 @@
 import { defineStore } from 'pinia'
-import type {
-  CreateUserDTO,
-  LoginUser,
-  UpdateUserBody,
-  UpdateUserParams,
-  UpdateType,
-} from '@/store/TypesStore'
+import type { LoginUser, UpdateUserBody, UpdateType, UpdateUserParams } from '@/store/TypesStore'
+
+import { UserStore } from '@/store/UserStore'
+const user = UserStore()
+
+import { SecurityClient } from '@/security/cryptoEngine/SecurityClient'
 
 export const UserRequisitions = defineStore('User requisitions', () => {
-  async function register(req: CreateUserDTO) {
-    try {
-      const res = await fetch(`${import.meta.env.VITE_REQ}/auth/register`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(req),
-        credentials: 'include',
-      })
-
-      if (!res.ok) {
-        const errorData = await res.json()
-        return {
-          success: false,
-          errorText: errorData.error,
-          type: errorData.type,
-        }
-      }
-      return {
-        success: true,
-      }
-    } catch (err) {
-      return {
-        success: false,
-        errorText: 'Erro de conexão. Tente novamente.',
-      }
-    }
-  }
-
   async function login(req: LoginUser) {
     try {
+      const securityClient = new SecurityClient()
+      await securityClient.init()
       const res = await fetch(`${import.meta.env.VITE_REQ}/auth/login`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify(req),
+        body: JSON.stringify(await securityClient.encode(req, true)),
       })
 
+      const json = await res.json()
+
       if (!res.ok) {
-        const errorData = await res.json()
+        const errorData = json
         return {
           success: false,
           message: errorData.message,
         }
       }
 
-      //Processo de salvar informações de usuário nas informações user.*Logged,
-      //Autenticação e etc.
+      const data = await securityClient.decode(json)
+
+      user.emailLogged = data.email
+      user.birthdayLogged = data.birthday
+      user.nameLogged = data.name
+      user.isLogged = true
 
       return {
         success: true,
@@ -72,38 +49,13 @@ export const UserRequisitions = defineStore('User requisitions', () => {
     }
   }
 
-  async function update(req: {
+  async function register(req: {
     params: UpdateUserParams
     body: { user: UpdateUserBody; type: UpdateType }
   }) {
     try {
-      const res = await fetch(`${import.meta.env.VITE_REQ}/auth/update`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(req.body),
-        credentials: 'include',
-      })
-
-      if (!res.ok) {
-        const errorData = await res.json()
-        return {
-          success: false,
-          errorText: errorData.error,
-          type: errorData.type,
-        }
-      }
-      return {
-        success: true,
-      }
-    } catch (err) {
-      return {
-        success: false,
-        errorText: 'Erro de conexão. Tente novamente.',
-      }
-    }
+    } catch (err) {}
   }
 
-  return { register, login, update }
+  return { login, register }
 })

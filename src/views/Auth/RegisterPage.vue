@@ -1,206 +1,132 @@
 <script setup lang="ts">
-import EmailInput from './components/inputs/EmailInput.vue'
-import BirthdayInput from './components/inputs/BirthdayInput.vue'
-import LinkAuth from './components/LinkAuth.vue'
-import AlertTExt from './components/AlertText.vue'
-import BlackSide from './components/BlackSide.vue'
-import PasswordInput from './components/inputs/PasswordInput.vue'
-import NameInput from './components/inputs/NameInput.vue'
-import CodeInput from '@/views/Auth/components/inputs/CodeInput.vue'
-
-import resetData from '@/utils/resetData'
-resetData.setup()
-
-import { UserStore } from '@/store/UserStore'
-const user = UserStore()
-
-import { reactive, ref, computed } from 'vue'
-
+// Vue / reatividade / router
+import { reactive, ref, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
-const router = useRouter()
 
+// Componentes
+import EmailInput from '@/views/Auth/components/inputs/EmailInput.vue'
+import BirthdayInput from '@/views/Auth/components/inputs/BirthdayInput.vue'
+import LinkAuth from '@/views/Auth/components/LinkAuth.vue'
+import AlertText from '@/views/Auth/components/AlertText.vue'
+import BlackSide from '@/views/Auth/components/BlackSide.vue'
+import PasswordInput from '@/views/Auth/components/inputs/PasswordInput.vue'
+import NameInput from '@/views/Auth/components/inputs/NameInput.vue'
+import CodeInput from '@/views/Auth/components/inputs/CodeInput.vue'
+import StepBar from '@/views/Auth/components/StepBar.vue'
+import OperationSuccess from '@/views/Auth/components/OperationSuccess.vue'
+
+// Rotas
+import { ROUTES } from '@/router/routes'
+
+// Stores / requisitions / animações
+import { UserStore } from '@/store/UserStore'
+import { AnimStore } from '@/store/AnimStore'
 import { TokenRequisitions } from '@/requisitions/Token'
-const tokenReq = TokenRequisitions()
 import { UserRequisitions } from '@/requisitions/User'
-const userReq = UserRequisitions()
 
-import type { CreateUserDTO, tokenSendOrVerify } from '@/store/TypesStore'
+// Classe (a versão refatorada que lhe enviei anteriormente)
+import { RegisterProgress } from '@/views/Auth/utils/ProceedRegister'
 
-import { AnimsStore } from '@/store/AnimsStore'
-const anims = AnimsStore()
+// resetData: chamar dentro do ciclo de vida (não no topo do módulo)
+import resetData from '@/utils/resetData'
+import type { Steps } from '@/store/TypesStore'
 
-const registerSteps = reactive({
-  two: false,
-  three: false,
-  four: false,
+// --- Estado reativo local (assegure que os tipos TypesStore concordem)
+const registerSteps = reactive<Steps>({
+  current: 4,
+  qtd: 5,
 })
 
 const errors = reactive({
-  email: true,
   date: true,
-  password: true,
   digits: true,
+  email: true,
+  password: true,
   name: true,
-})
+} as { date: boolean; digits: boolean; email: boolean; password: boolean; name: boolean })
 
+// Mentemos erro de exibição como ref para a template
 const errorText = ref('')
 
-async function nextStep() {
-  if (registerSteps.four) {
-    if (!user.birthday) {
-      errorText.value = 'Data de nascimento obrigatória.'
-      errors.date = false
-      return
-    }
-    const req: CreateUserDTO = {
-      dateBirth: user.birthday,
-      email: user.email,
-      name: user.name,
-      password: user.password,
-    }
+// obter stores e requisitions dentro do setup
+const router = useRouter()
+const user = UserStore()
+const anim = AnimStore()
+const tokenReq = TokenRequisitions()
+const userReq = UserRequisitions()
 
-    const res = await userReq.register(req)
-
-    if (res.success) {
-      registerSteps.three = true
-      errorText.value = 'Conta criada com sucesso.'
-      errors.date = true
-      errors.digits = true
-      errors.email = true
-      errors.password = true
-      router.push('/entrar')
-    } else {
-      errorText.value = res.errorText
-      errors.digits = res.success
-    }
-    return
-  } else if (registerSteps.three) {
-    if (!user.birthday) {
-      errorText.value = 'Data de nascimento obrigatória.'
-      errors.date = false
-      return
-    }
-    if (!user.name) {
-      errorText.value = 'Nome completo obrigatório.'
-      errors.name = false
-      return
-    }
-    registerSteps.four = true
-    errorText.value = ''
-    return
-  } else if (registerSteps.two) {
-    const req: tokenSendOrVerify = {
-      email: user.email,
-      type: 'EMAIL_VERIFICATION',
-      code: user.emailToken,
-    }
-
-    const res = await tokenReq.toVerify(req)
-
-    if (res.success) {
-      registerSteps.three = true
-      errorText.value = ''
-      errors.date = true
-      errors.digits = true
-      errors.email = true
-      errors.password = true
-    } else {
-      errorText.value = res.errorText
-      errors.digits = res.success
-    }
-    return
-  } else {
-    const req: tokenSendOrVerify = {
-      email: user.email,
-      code: user.emailToken,
-      type: 'EMAIL_VERIFICATION',
-    }
-    const res = await tokenReq.send(req)
-
-    if (res.success) {
-      registerSteps.two = true
-      errorText.value = ''
-      errors.date = true
-      errors.digits = true
-      errors.email = true
-      errors.password = true
-    } else {
-      errorText.value = res.errorText
-      errors.email = res.success
-    }
-    return
-  }
-}
-
-function backStep() {
-  if (registerSteps.four) {
-    errorText.value = ''
-    registerSteps.four = false
-    return
-  } else if (registerSteps.three) {
-    errorText.value = ''
-    registerSteps.two = false
-    registerSteps.three = false
-    return
-  } else if (registerSteps.two) {
-    errorText.value = ''
-    registerSteps.two = false
-    return
-  }
-}
-
-const totalSteps = 4
-
-const currentStep = computed(() => {
-  if (registerSteps.four) return 4
-  if (registerSteps.three) return 3
-  if (registerSteps.two) return 2
-  return 1
+// Instanciar a classe passando DEPENDÊNCIAS (injeção) — evita chamadas fora do contexto
+const register = new RegisterProgress(registerSteps, errors, '', {
+  router,
+  userStore: user,
+  tokenReq,
+  userReq,
+  animStore: anim,
 })
 
-const stepPercent = (i: number) => {
-  if (totalSteps <= 1) return 100
-  return ((i - 1) / (totalSteps - 1)) * 100
+// subtitle exposto diretamente da instância (ComputedRef)
+const subtitle = register.subtitle
+
+// Funções que a template consome (sincronizam errorText com a instância)
+const nextStep = async () => {
+  await register.nextStep()
+  // sincronizar mensagem de erro que a classe mantém
+  errorText.value = register.errorText
 }
 
-const progressPercent = computed(() => {
-  if (totalSteps <= 1) return 100
-  return Math.round(((currentStep.value - 1) / (totalSteps - 1)) * 100 * 10) / 10 + 1
+const backStep = () => {
+  register.backStep()
+  errorText.value = register.errorText
+}
+
+// resetData: garantir execução em mount e limpar ao desmontar
+onMounted(() => {
+  // se resetData.setup() altera estado global, execute aqui
+  if (typeof resetData.setup === 'function') resetData.setup()
 })
 </script>
 
 <template>
   <form @submit.prevent="nextStep" novalidate>
-    <div class="progress-simple">
-      <div class="progress-track"></div>
-      <div class="progress-fill" :style="{ height: progressPercent + '%' }"></div>
-      <div class="progress-steps">
-        <div
-          v-for="i in totalSteps"
-          :key="i"
-          :class="['green-circle', { active: progressPercent >= stepPercent(i) }]"
-        ></div>
-      </div>
-    </div>
+    <BlackSide
+      :route="ROUTES.occurrenceMap.init"
+      message="Cadastre-se e contribua!"
+      father="register"
+    />
+    <StepBar :steps="registerSteps" class="register-bar" />
+    <div class="form-inputs" :class="[{ anim: anim.animRegister }]">
+      <h2>{{ subtitle }}</h2>
+      <BirthdayInput v-if="registerSteps.current == 3" />
+      <EmailInput class="register" v-if="registerSteps.current == 1" :error="!errors.email" />
+      <CodeInput
+       :error="errors.digits"
+        v-if="
+          registerSteps.current == 2
+        "
+      />
+      <PasswordInput v-if="registerSteps.current == 4" class="register" :error="!errors.password"/>
 
-    <ParteCima :route="'/mapa-de-denuncias'" :active="true" />
-    <div class="form-inputs" :class="[{ anim: anims.animRegister }]">
-      <h1>Crie sua conta</h1>
-      <BirthdayInput v-if="registerSteps.three && !registerSteps.four" />
-      <EmailInput class="register" v-if="!registerSteps.two" :erro="!errors.email" />
-      <CodeInput v-if="registerSteps.two && !registerSteps.three && !registerSteps.four" />
-      <PasswordInput v-if="registerSteps.four" class="register" />
-      <PasswordInput v-if="registerSteps.four" class="register" />
-      <NameInput v-if="registerSteps.three && !registerSteps.four" class="register" />
+      <NameInput
+        v-if="registerSteps.current == 3"
+        class="register"
+      />
       <AlertText :text="errorText" />
+      <OperationSuccess message="Cadastro realizado com sucesso!" v-if="registerSteps.current == 5" />
       <div class="form-actions">
-        <button v-if="registerSteps.two" @click="backStep">Voltar</button>
-        <button>Avançar</button>
+        <button v-if="registerSteps.current != 1" @click="backStep" type="button">
+          Voltar
+        </button>
+        <button
+          @click="anim.animLogin = true"
+          :style="registerSteps.current == 5 ? { backgroundColor: 'var(--color-green)' } : {}"
+        >
+          {{ registerSteps.current == 5 ? 'Confirmar' : 'Avançar' }}
+        </button>
       </div>
-      <LinkForm
+      <LinkAuth
         :text="'Ja tem tem uma conta?'"
-        :route="'/entrar'"
-        v-if="!registerSteps.two"
+        :route="ROUTES.auth.login"
+        v-if="registerSteps.current == 1"
         anim="login"
       />
     </div>
@@ -210,11 +136,11 @@ const progressPercent = computed(() => {
 <style lang="scss">
 @use './assets/auth.scss';
 
+//
 @media (min-width: 992px) {
   .anim {
-    animation: leftToRight 1s;
+    animation: leftToRight 1s ease;
   }
-
   @keyframes leftToRight {
     0% {
       transform: translateX(-100%);
@@ -225,59 +151,7 @@ const progressPercent = computed(() => {
   }
 }
 
-.progress-simple {
-  position: fixed;
-  top: 50%;
-  transform: translateY(-50%);
-  left: 45%;
-  width: 6px;
-  height: 80%;
-  z-index: 2000;
-  pointer-events: none;
-  .progress-track {
-    position: absolute;
-    inset: 0;
-    background: var(--color-white);
-    border-radius: 4px;
-  }
-  .progress-fill {
-    position: absolute;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    height: 0%;
-    transition: height 300ms ease;
-    background: var(--color-green);
-    border-radius: 4px;
-    z-index: 1;
-  }
-  .progress-steps {
-    position: absolute;
-    inset: 0;
-    display: flex;
-    flex-direction: column-reverse;
-    justify-content: space-between;
-    align-items: center;
-    z-index: 2;
-    pointer-events: none;
-
-    .green-circle {
-      width: var(--icon-size);
-      height: var(--icon-size);
-      border-radius: 50%;
-      box-sizing: border-box;
-      transition:
-        background-color 180ms ease,
-        border-color 180ms ease,
-        transform 180ms ease;
-      transform: translateZ(0);
-      background: var(--color-white);
-      &.active {
-        background: var(--color-green);
-        border-color: var(--color-green);
-        transform: scale(1.05);
-      }
-    }
-  }
+form {
+  position: relative;
 }
 </style>

@@ -41,8 +41,8 @@ export async function findNeighborhoodByCoordinates(
   try {
     const geoJson = await loadGeoJson()
 
-    console.log('Procurando bairro para coordenadas:', lat, lng)
-    console.log('Total de features no GeoJSON:', geoJson.features.length)
+    //console.log('Procurando bairro para coordenadas:', lat, lng)
+    //console.log('Total de features no GeoJSON:', geoJson.features.length)
 
     if (geoJson) {
       // Procurar o bairro que contém as coordenadas
@@ -51,14 +51,14 @@ export async function findNeighborhoodByCoordinates(
           const polygon = feature.geometry.coordinates
           if (pointInPolygon([lng, lat], polygon)) {
             const nomeBairro = feature.properties?.nome_bairr || null
-            console.log('Bairro encontrado:', nomeBairro)
+            //console.log('Bairro encontrado:', nomeBairro)
             return nomeBairro
           }
         } else if (feature.geometry.type === 'MultiPolygon') {
           for (const polygon of feature.geometry.coordinates) {
             if (pointInPolygon([lng, lat], polygon)) {
               const nomeBairro = feature.properties?.nome_bairr || null
-              console.log('Bairro encontrado:', nomeBairro)
+              //console.log('Bairro encontrado:', nomeBairro)
               return nomeBairro
             }
           }
@@ -66,7 +66,7 @@ export async function findNeighborhoodByCoordinates(
       }
     }
 
-    console.log('Nenhum bairro encontrado para as coordenadas')
+    //console.log('Nenhum bairro encontrado para as coordenadas')
     return null
   } catch (error) {
     console.error('Erro ao buscar bairro:', error)

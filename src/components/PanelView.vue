@@ -15,13 +15,21 @@ import { useRoute, useRouter } from 'vue-router'
 const router = useRouter()
 const routeInfo = useRoute()
 
-const currentRoute = computed(() => routeInfo.path.split('/')[2]) //Se não tiver rota, significa que está na página principal e aparecerá a lista da class "opcoes"
+const currentRoute = computed(() => routeInfo.name) //Se não tiver rota, significa que está na página principal e aparecerá a lista da class "opcoes"
 
 //Lista de opcôes como as de 'Conta', 'Termos e Privacidade' e 'Histórico de denúncias'. Cada objeto dentrodo array tem, os ícones, link e texto que aparece no link.
 const props = defineProps({
   options: {
     type: Array<Option>,
     require: true,
+  },
+  route: {
+    type: String,
+    required: true,
+  },
+  defaultRoute: {
+    type: String,
+    requeired: true,
   },
 })
 
@@ -37,21 +45,27 @@ const screenWidth = ref(typeof window !== 'undefined' ? window.innerWidth : 0)
 function updateScreenWidth() {
   screenWidth.value = window.innerWidth
 
-  //Se a tela for maior que 992px e for a rota principal de usuário, muda para a rota "/usuario/conta" por padrão para que quando a tela redimensione não fique vazio abaixo da navegação de "opcoes"
-  if (screenWidth.value >= 992 && !routeInfo.path.split('/')[2]) {
-    router.push('/usuario/conta')
+  //Se a tela for maior que 992px e for a rota principal de usuário, muda para a rota 'defaultRoute' por padrão para que quando a tela redimensione não fique vazio abaixo da navegação de "opcoes"
+  if (screenWidth.value >= 992 && currentRoute.value == props.route) {
+    router.push({ name: props.defaultRoute })
   }
-  //*Vamos ter que fazer isso para "configuracoes" e "informacoes"👆
 }
 //Atualizar os componentes quando a tela redimensionar durante o uso do site
 onMounted(() => {
   window.addEventListener('resize', updateScreenWidth)
+  if (screenWidth.value >= 992 && currentRoute.value == props.route) {
+    router.push({ name: props.defaultRoute })
+  }
 })
+
+watch(currentRoute, () => {
+  if (screenWidth.value >= 992 && routeInfo.name == props.route) {
+    router.push({ name: props.defaultRoute })
+  }
+})
+
 onBeforeUnmount(() => window.removeEventListener('resize', updateScreenWidth))
 
-if (screenWidth.value >= 992 && !routeInfo.path.split('/')[2]) {
-  router.push('/usuario/conta')
-}
 //Scroll dentro do painel quando está em alguma página como "/usuario/conta"
 const scrollRef = ref<HTMLElement | null>(null) //Div que tem o scroll mais pro final do template
 const scrollPosition = ref(0)
@@ -69,7 +83,6 @@ const updateScroll = () => {
   }
 }
 
-//Lógica começa aqui
 type ListItem = {
   element: HTMLElement | null
   route: string
@@ -120,14 +133,32 @@ watch(
 )
 
 //Atualiza a classe do item quando a rota muda
-const routeClass = (name: string) =>
-  currentRoute.value === name.split('/')[2] ? 'currentRouteLi' : 'hiddenRouteLi'
+const routeClass = (link: string) => {
+  const current = String(currentRoute.value ?? '')
+  const target = String(link ?? '')
+  return current === target ? 'currentRouteLi' : 'hiddenRouteLi'
+}
+
+import { UserStore } from '@/store/UserStore'
+const user = UserStore()
+
+const rediretLogin = computed(() => {
+  if (currentRoute.value == 'user.account' || currentRoute.value == 'user.historic') {
+    if (!user.isLogged) {
+      return true
+    } else {
+      return false
+    }
+  } else {
+    return false
+  }
+})
 </script>
 
 <template>
   <div class="panel">
     <!-- Caso for um disposotivo móvel e estiver na página principal de qualquer que seja a rota, as opções ficam ocultas-->
-    <nav v-if="!currentRoute || screenWidth >= 992">
+    <nav v-if="currentRoute == props.route || screenWidth >= 992">
       <!--  -->
       <div
         class="currentRoute"
@@ -144,12 +175,12 @@ const routeClass = (name: string) =>
             (el) =>
               (refs[option.refKey] = {
                 element: el as HTMLElement | null,
-                route: (option.link || '').split('/')[2] || '',
+                route: option.link,
               })
           "
           :class="routeClass(option.link)"
         >
-          <router-link :to="option.link">
+          <router-link :to="{ name: option.link }">
             <svg
               xmlns="http://www.w3.org/2000/svg"
               viewBox="0 0 38 38"
@@ -179,9 +210,9 @@ const routeClass = (name: string) =>
       </ul>
     </nav>
     <!-- Div da rota aparece apenas se estiver em alguma rota, pra não poluir página principal -->
-    <div class="route" v-if="currentRoute">
+    <div class="route" v-if="currentRoute != props.route">
       <!-- Caso for um desktop, o link com flecha e título da rota ficam ocultos, ja que a navegação de opções vai estar visivel -->
-      <router-link v-if="currentRoute && screenWidth <= 992" to="/usuario" class="back">
+      <router-link v-if="screenWidth <= 992" :to="{ name: props.route }" class="back">
         <svg
           xmlns="http://www.w3.org/2000/svg"
           width="35"
@@ -195,33 +226,68 @@ const routeClass = (name: string) =>
             d="M6.27812 10.2101L10.5875 14.4613C10.7487 14.6095 10.878 14.7882 10.9676 14.9867C11.0573 15.1852 11.1055 15.3995 11.1094 15.6169C11.1133 15.8342 11.0728 16.05 10.9903 16.2516C10.9078 16.4531 10.7849 16.6362 10.6291 16.7899C10.4734 16.9435 10.2878 17.0647 10.0835 17.1461C9.87921 17.2275 9.66039 17.2675 9.44011 17.2636C9.21982 17.2598 9.00257 17.2122 8.80132 17.1238C8.60007 17.0353 8.41895 16.9078 8.26875 16.7488L1.15937 9.73531L0 8.59158L1.15937 7.44784L8.26875 0.434385C8.57976 0.148495 8.99111 -0.00714589 9.41614 0.000252154C9.84118 0.0076502 10.2467 0.17751 10.5473 0.474045C10.8479 0.770581 11.0201 1.17064 11.0276 1.58994C11.0351 2.00924 10.8773 2.41504 10.5875 2.72185L6.27812 6.97309H27.8906C29.7761 6.97309 31.5844 7.712 32.9177 9.02728C34.251 10.3426 35 12.1265 35 13.9865C35 15.8466 34.251 17.6305 32.9177 18.9458C31.5844 20.2611 29.7761 21 27.8906 21H23.5156C23.0805 21 22.6632 20.8295 22.3555 20.526C22.0479 20.2224 21.875 19.8108 21.875 19.3815C21.875 18.9523 22.0479 18.5406 22.3555 18.2371C22.6632 17.9335 23.0805 17.763 23.5156 17.763H27.8906C28.9059 17.763 29.8796 17.3651 30.5975 16.6569C31.3154 15.9487 31.7188 14.9881 31.7188 13.9865C31.7188 12.985 31.3154 12.0244 30.5975 11.3162C29.8796 10.6079 28.9059 10.2101 27.8906 10.2101H6.27812Z"
           />
         </svg>
-        <h1>{{ title }}</h1> </router-link
-      ><button v-if="currentRoute == 'conta'">
+        <h1>{{ title }}</h1>
+      </router-link>
+      <button v-if="currentRoute == 'user.account' && !rediretLogin">
         <svg xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid meet" fill="none">
           <path
             d="M2.77778 25C2.01389 25 1.36019 24.7282 0.816667 24.1847C0.273148 23.6412 0.000925926 22.987 0 22.2222V2.77778C0 2.01389 0.272222 1.36019 0.816667 0.816667C1.36111 0.273148 2.01481 0.000925926 2.77778 0H12.5V2.77778H2.77778V22.2222H12.5V25H2.77778ZM18.0556 19.4444L16.1458 17.4306L19.6875 13.8889H8.33333V11.1111H19.6875L16.1458 7.56944L18.0556 5.55556L25 12.5L18.0556 19.4444Z"
           />
         </svg>
       </button>
-      <div class="scroll" ref="scrollRef" @scroll="updateScroll">
-        <div class="limit top"> <Transition name="slide-top" appear>
+      <Transition name="slide-top" v-if="!rediretLogin" appear>
         <div v-if="topLimitVisible" class="slide-top">
-          <svg xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid meet">
+          <!-- Reutilização do svg de seta apenas rotacionando ele para que a seta direcione para cima-->
+          <svg
+            style="transform: rotate(180deg)"
+            xmlns="http://www.w3.org/2000/svg"
+            preserveAspectRatio="xMidYMid meet"
+            viewBox="0 0 23 23"
+          >
             <path
               fill="currentColor"
-              d=""
+              d="M11 4h2v12l5.5-5.5l1.42 1.42L12 19.84l-7.92-7.92L5.5 10.5L11 16z"
             />
           </svg>
         </div>
-      </Transition></div>
-
-        <router-view></router-view>
-
-        <div class="limit bottom"></div>
+      </Transition>
+      <div class="scroll" ref="scrollRef" @scroll="updateScroll">
+        <div class="limit top" v-if="!rediretLogin">
+          <Transition name="slide-top" appear>
+            <div v-if="topLimitVisible" class="slide-top">
+              <svg xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid meet">
+                <path fill="currentColor" d="" />
+              </svg>
+            </div>
+          </Transition>
+        </div>
+        <router-view v-if="!rediretLogin"></router-view>
+        <div class="redirect" v-else>
+          <router-link :to="{ name: 'auth.login' }">Entre com uma conta.</router-link>
+          <div class="user-notLogged">
+            <p>?</p>
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              viewBox="-0.5 -0.5 25 25"
+              fill="none"
+              width="25"
+              height="25"
+              preserveAspectRatio="xMidYMid meet"
+            >
+              <path
+                d="M4.47222 6.325C4.47222 4.64751 5.21265 3.03872 6.53061 1.85255C7.84857 0.666382 9.63612 0 11.5 0C13.3639 0 15.1514 0.666382 16.4694 1.85255C17.7874 3.03872 18.5278 4.64751 18.5278 6.325C18.5278 8.00249 17.7874 9.61128 16.4694 10.7975C15.1514 11.9836 13.3639 12.65 11.5 12.65C9.63612 12.65 7.84857 11.9836 6.53061 10.7975C5.21265 9.61128 4.47222 8.00249 4.47222 6.325ZM0 19.55C0 18.025 0.673113 16.5625 1.87126 15.4841C3.06941 14.4058 4.69445 13.8 6.38889 13.8H16.6111C18.3055 13.8 19.9306 14.4058 21.1287 15.4841C22.3269 16.5625 23 18.025 23 19.55V23H0L0 19.55Z"
+              />
+            </svg>
+          </div>
+        </div>
       </div>
-      <Transition name="slide-down" appear>
+      <Transition name="slide-down" v-if="!rediretLogin" appear>
         <div v-if="bottomLimitVisible" class="slide-down">
-          <svg xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid meet">
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            preserveAspectRatio="xMidYMid meet"
+            viewBox="0 0 23 23"
+          >
             <path
               fill="currentColor"
               d="M11 4h2v12l5.5-5.5l1.42 1.42L12 19.84l-7.92-7.92L5.5 10.5L11 16z"
@@ -369,8 +435,8 @@ div.panel {
       }
     }
 
-    .slide-top{
-        position: absolute;
+    .slide-top {
+      position: absolute;
       top: calc(var(--component-height) - 20px);
       left: 50%;
       transform: translateX(-50%);
@@ -409,8 +475,6 @@ div.panel {
         opacity 100ms ease-out;
     }
 
-
-
     .slide-top-enter-from,
     .slide-top-leave-to {
       transform: translateX(-50%) translateY(-140%);
@@ -442,6 +506,47 @@ div.panel {
       position: relative;
       &::-webkit-scrollbar {
         display: none;
+      }
+
+      div.redirect {
+        height: 100%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-direction: column-reverse;
+        gap: 20px;
+
+        div.user-notLogged {
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          flex-direction: column;
+          position: relative;
+          width: fit-content; // para centralizar corretamente
+
+          p {
+            position: absolute;
+            top: 28%; // centraliza verticalmente
+            left: 48%; // centraliza horizontalmente
+            transform: translate(-50%, -50%);
+            color: white;
+            font-size: var(--text-xxl);
+            margin: 0;
+            pointer-events: none;
+          }
+
+          svg {
+            fill: var(--color-gray-dark); // interior preto
+            stroke: var(--color-white); // contorno branco
+            stroke-width: 1px; // espessura da borda
+            width: calc(var(--icon-size) * 4);
+            height: calc(var(--icon-size) * 4);
+          }
+        }
+
+        a {
+          color: var(--color-white);
+        }
       }
 
       div.limit {

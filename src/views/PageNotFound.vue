@@ -1,5 +1,9 @@
+<script setup lang="ts">
+import { ROUTES } from '@/router/routes'
+</script>
+
 <template>
-  <div>
+  <div class="not-found">
     <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16">
       <path
         fill="currentColor"
@@ -9,23 +13,24 @@
     </svg>
     <div class="link">
       <p>Página não encontrada!</p>
-      <router-link to="/">Volte à página inicial.</router-link>
+      <router-link :to="{ name: ROUTES.occurrenceMap.init }">Volte à página inicial.</router-link>
     </div>
   </div>
 </template>
 
 <style scoped lang="scss">
-div {
+div.not-found {
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
   gap: 20px;
+  height: 100%;
 
   svg {
     fill: var(--color-white);
-    width: 50px;
-    height: 50px;
+    width: 100px;
+    height: 100px;
   }
   div.link {
     display: flex;
@@ -34,12 +39,12 @@ div {
     justify-content: center;
     gap: 6px;
     a {
-      font-size: var(--text-xxl);
+      font-size: var(--text-lg);
       color: var(--color-white);
     }
 
     p {
-      font-size: var(--text-xxl);
+      font-size: var(--text-lg);
       color: var(--color-white);
     }
   }

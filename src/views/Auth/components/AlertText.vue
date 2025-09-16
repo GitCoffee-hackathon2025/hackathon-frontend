@@ -1,6 +1,4 @@
 <script setup lang="ts">
-import { defineProps } from 'vue'
-
 const { text, position } = defineProps({
   text: String,
   position: String,
@@ -14,9 +12,9 @@ const { text, position } = defineProps({
 <style scoped lang="scss">
 p.alert {
   grid-column: 1 / 31;
-  grid-row: 10 / 20;
+  grid-row: 11 / 20;
   width: var(--component-width);
-  font-size: var(--texto-lg);
+  font-size: var(--text-md);
   text-align: left;
   margin-top: 3rem;
 
@@ -29,7 +27,7 @@ p.alert {
   }
 
   &.recover-password {
-    grid-row: 12 / 20;
+    grid-row: 14 / 20;
   }
 }
 

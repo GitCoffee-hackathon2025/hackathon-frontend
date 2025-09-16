@@ -1,7 +1,7 @@
 // stores/occurrence.ts
 import { defineStore } from 'pinia'
 import { ref } from 'vue'
-import { findNeighborhoodByCoordinates } from '@/utils/geoCoding'
+import { findNeighborhoodByCoordinates } from '@/utils/geocoding'
 
 export const ocurrenceRequisitions = defineStore('occurrence', () => {
   const occurrenceContent = ref<string>('')
@@ -52,7 +52,7 @@ export const ocurrenceRequisitions = defineStore('occurrence', () => {
       }
 
       const data = await res.json()
-      console.log('Relatório enviado com sucesso:', data)
+      //console.log('Relatório enviado com sucesso:', data)
       return data
     } catch (err) {
       return {

@@ -1,7 +1,6 @@
 <script setup lang="ts">
-import { defineProps } from 'vue'
-import {AnimsStore } from '@/store/AnimsStore'
-const anims = AnimsStore()
+import { AnimStore } from '@/store/AnimStore'
+const animation = AnimStore()
 
 const props = defineProps({
   text: {
@@ -21,24 +20,26 @@ function validAnim(a: string | undefined) {
   if (!a) return
 
   if (a == 'login') {
-    anims.animLogin = true
+    animation.animLogin = true
   }
   if (a == 'register') {
-    anims.animRegister = true
+    animation.animRegister = true
   }
 }
 </script>
 
 <template>
-  <router-link @click="validAnim(props.anim)" :to="props.route">{{ props.text }}</router-link>
+  <router-link @click="validAnim(props.anim)" :to="{ name: props.route }">{{
+    props.text
+  }}</router-link>
 </template>
 
 <style scoped lang="scss">
 a {
-  font-size: var(--texto-p);
+  font-size: var(--text-sm);
   grid-column: 1 / 31;
   grid-row: 27 / 29;
-  color: var(--cinza);
+  color: var(--color-gray-dark);
   text-decoration: underline;
   text-align: center;
   align-self: center;
