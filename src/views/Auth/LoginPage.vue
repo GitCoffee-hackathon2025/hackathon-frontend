@@ -8,8 +8,8 @@ import BlackSide from './components/BlackSide.vue'
 
 import { ROUTES } from '@/router/routes'
 
-import { AnimsStore } from '@/store/AnimsStore'
-const anims = AnimsStore()
+import { AnimStore } from '@/store/AnimStore'
+const anim = AnimStore()
 
 import resetData from '@/utils/resetData'
 resetData.setup()
@@ -29,7 +29,7 @@ const errorText = ref<string>('')
 const loginFailed = ref(false)
 
 async function login() {
-  anims.isLoading = true
+  anim.isLoading = true
   const req: LoginUser = {
     email: user.email,
     password: user.password,
@@ -39,11 +39,11 @@ async function login() {
   if (!res.success) {
     errorText.value = res.message
     loginFailed.value = !res.success
-    anims.isLoading = false
+    anim.isLoading = false
     return
   }
 
-  anims.isLoading = false
+  anim.isLoading = false
   router.push({ name: ROUTES.occurrenceMap.init })
 }
 
@@ -53,12 +53,11 @@ const windowWidth = ref(typeof window !== 'undefined' ? window.innerWidth : 0)
   <form @submit.prevent="login" novalidate class="login">
     <BlackSide
       :route="ROUTES.occurrenceMap.init"
-      :active="true"
       message="Bem-vindo de volta!"
       father="login"
     />
 
-    <div class="form-inputs" :class="[{ anim: anims.animLogin }]">
+    <div class="form-inputs" :class="[{ anim: anim.animLogin }]">
       <h1 v-if="windowWidth < 992">Bem-vindo!</h1>
       <h2>Insira suas credênciais</h2>
       <EmailInput class="login" :erro="loginFailed" />

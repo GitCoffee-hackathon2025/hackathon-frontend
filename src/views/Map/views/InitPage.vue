@@ -12,8 +12,8 @@ import ReportButton from '@/views/Map/components/ReportButton.vue'
 import LocationModal from '../components/LocationModal.vue'
 import OcurrenceForm from '@/views/Map/components/OcurrenceForm.vue'
 
-import { AnimsStore } from '@/store/AnimsStore'
-const anims = AnimsStore()
+import { AnimStore } from '@/store/AnimStore'
+const anims = AnimStore()
 
 // Tornar o mapa globalmente acessível
 declare global {
@@ -228,6 +228,7 @@ const enableLocationSelection = () => {
     }).addTo(map!)
 
     showLocationButtons.value = true
+
   }
 
   map.on('click', clickHandler)

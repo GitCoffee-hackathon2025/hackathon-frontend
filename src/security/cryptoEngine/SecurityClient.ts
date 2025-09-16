@@ -8,7 +8,7 @@ import webcrypto from '@/config/aesConfig';
 import CryptoClient from './CryptoClient';
 import KeysClient from './KeysClient';
 
-class SecurityClient {
+export class SecurityClient {
   private keysClient = new KeysClient();
 
   public async init(): Promise<void> {
@@ -51,7 +51,5 @@ class SecurityClient {
     }
   }
 }
-
-
-
 export default SecurityClient;
+

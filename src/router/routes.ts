@@ -17,8 +17,10 @@ export const ROUTES = {
   },
   config: {
     init: 'config.init',
+    theme: 'config.theme',
+    accessibility: 'config.accessibility',
   },
-  about: { init: 'misc.about' },
+  about: { init: 'about.init', team: 'about.team', project: 'about.project' },
   misc: {
     notFound: 'misc.notFound',
   },

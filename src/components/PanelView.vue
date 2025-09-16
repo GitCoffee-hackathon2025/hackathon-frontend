@@ -53,12 +53,19 @@ function updateScreenWidth() {
 //Atualizar os componentes quando a tela redimensionar durante o uso do site
 onMounted(() => {
   window.addEventListener('resize', updateScreenWidth)
+  if (screenWidth.value >= 992 && currentRoute.value == props.route) {
+    router.push({ name: props.defaultRoute })
+  }
 })
+
+watch(currentRoute, () => {
+  if (screenWidth.value >= 992 && routeInfo.name == props.route) {
+    router.push({ name: props.defaultRoute })
+  }
+})
+
 onBeforeUnmount(() => window.removeEventListener('resize', updateScreenWidth))
 
-if (screenWidth.value >= 992 && routeInfo.name == props.route) {
-  router.push({ name: props.defaultRoute })
-}
 //Scroll dentro do painel quando está em alguma página como "/usuario/conta"
 const scrollRef = ref<HTMLElement | null>(null) //Div que tem o scroll mais pro final do template
 const scrollPosition = ref(0)
@@ -537,7 +544,7 @@ div.panel {
           }
         }
 
-        a{
+        a {
           color: var(--color-white);
         }
       }

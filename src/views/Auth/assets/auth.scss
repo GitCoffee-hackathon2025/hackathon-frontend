@@ -46,7 +46,7 @@ form {
     }
 
     p {
-      font-size: var(--text-lg);
+      font-size: var(--text-md);
       color: var(--color-gray-dark);
       grid-column: 1 / 31;
       grid-row: 14 / 16;
@@ -106,17 +106,6 @@ form {
 
     &.login {
       flex-direction: row-reverse;
-    }
-  }
-}
-
-@media (min-width: 1440px) {
-  form {
-    grid-template-rows: repeat(30, clamp(15px, 20%, 50px));
-    div.form-inputs {
-      width: 50vw;
-      height: 100vh;
-      border-radius: 0;
     }
   }
 }

@@ -1,14 +1,10 @@
 <script setup lang="ts">
-import { computed, defineProps } from 'vue'
+import { computed } from 'vue'
 
 const props = defineProps({
   route: {
     type: String,
-    required: true,
-  },
-  active: {
-    type: Boolean,
-    required: true,
+    required: false,
   },
   message: {
     type: String,
@@ -24,7 +20,7 @@ const componentClass = computed(() => {
   switch (props.father) {
     case 'register':
       return 'animRight'
-      case 'login':
+    case 'login':
       return 'animLeft'
   }
   return ''
@@ -33,7 +29,10 @@ const componentClass = computed(() => {
 
 <template>
   <div>
-    <router-link :to="{ name: props.route }" v-if="props.active" :class="componentClass">
+    <router-link
+      :to="{ name: props.route }"
+      :class="[{ componentClass }, props.father == 'recover' ? 'hide' : 'show']"
+    >
       <svg
         class="back"
         xmlns="http://www.w3.org/2000/svg"
@@ -117,6 +116,10 @@ div {
         width: calc(var(--icon-size) * 1.8);
       }
     }
+
+    &.hide{
+      display: none;
+    }
   }
 
   svg {
@@ -135,8 +138,8 @@ div {
       top: clamp(0px, 30%, 5px);
       left: 50%;
       transform: translateX(-50%);
-      width: clamp(250px ,58vw, 350px);
-      height: clamp(250px ,58vw, 350px);
+      width: clamp(250px, 58vw, 350px);
+      height: clamp(250px, 58vw, 350px);
     }
     &.svg-recover {
       position: absolute;
@@ -186,8 +189,8 @@ div {
         top: 60%;
         left: 50%;
         transform: translateX(-50%);
-width: clamp(300px, 40vw, 500px );
-height: clamp(300px, 40vw, 500px );
+        width: clamp(300px, 40vw, 500px);
+        height: clamp(300px, 40vw, 500px);
       }
       &.svg-recover {
         position: absolute;

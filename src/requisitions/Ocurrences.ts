@@ -179,9 +179,11 @@ export const ocurrenceRequisitions = defineStore('occurrence', () => {
         return { success: false, errorText: 'Erro ao processar a resposta' }
       }
 
+
       if (!res.ok) {
         console.error('Resposta HTTP não OK:', decoded)
         return { success: false, errorText: decoded.message || 'Erro desconhecido' }
+
       }
 
       console.log('Relatório decodificado final:', decoded)

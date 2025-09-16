@@ -16,7 +16,6 @@ onMounted(() => {
 
 watch(otp.value, () => {
   user.emailToken = Number(otp.value.join(''))
-  console.log(user.emailToken)
 })
 
 function onInput(index: number, event: Event) {
@@ -58,7 +57,6 @@ function onKeyDown(index: number, event: KeyboardEvent) {
 }
 function onPaste(e: ClipboardEvent) {
   const text = e.clipboardData?.getData('text') ?? ''
-  console.log(text)
   const nums = text.replace(/\D/g, '').slice(0, digits).split('')
   nums.forEach((n, i) => (otp.value[i] = n))
   const next = nums.length < digits ? nums.length : digits - 1
@@ -68,6 +66,13 @@ function onPaste(e: ClipboardEvent) {
 function onFocus(index: number) {
   setTimeout(() => inputs.value[index]?.select(), 0)
 }
+
+const props = defineProps({
+  error: {
+    type: Boolean,
+    required: true,
+  },
+})
 </script>
 <template>
   <div class="otp-container">
@@ -132,10 +137,11 @@ function onFocus(index: number) {
 
 @media (min-width: 992px) {
   .otp-container {
+    grid-row: 1 / 27;
     height: calc(var(--component-height) * 1.7);
-.otp-box{
-    width: 14%;
-}
+    .otp-box {
+      width: 14%;
+    }
   }
 }
 </style>

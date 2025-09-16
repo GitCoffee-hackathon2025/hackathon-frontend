@@ -6,11 +6,18 @@ import { ROUTES } from '@/router/routes'
 //Atualiza dinâmcamente a rota
 const routeInfo = useRoute()
 //Ajuda o v-for ser renderizado sempre que a rota mudar por conta da função classeDaRota
-const currentRoute = computed(() => routeInfo.name)
+const currentRoute = computed(() => routeInfo.name?.toString())
 
 //Atualiza a classe do item quando a rota muda
-const routeClass = (name: string) =>
-  currentRoute.value === name ? 'current-route' : 'hidden-route'
+const routeClass = (name: string) => {
+  if (currentRoute.value) {
+    const currentBase = currentRoute.value.split('.')[0]
+    const nameBase = name.split('.')[0]
+    //console.log(currentBase, nameBase)
+    return currentBase === nameBase ? 'current-route' : 'hidden-route'
+  }
+  return 'hidden-route'
+}
 
 //Atualizar os componentes quando a tela redimensionar durante o uso do site
 const windowWidth = ref(typeof window !== 'undefined' ? window.innerWidth : 0)
