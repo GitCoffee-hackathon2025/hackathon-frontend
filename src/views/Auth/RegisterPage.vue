@@ -1,221 +1,132 @@
 <script setup lang="ts">
-import EmailInput from './components/inputs/EmailInput.vue'
-import BirthdayInput from './components/inputs/BirthdayInput.vue'
-import LinkAuth from './components/LinkAuth.vue'
-import AlertText from './components/AlertText.vue'
-import BlackSide from './components/BlackSide.vue'
-import PasswordInput from './components/inputs/PasswordInput.vue'
-import NameInput from './components/inputs/NameInput.vue'
+// Vue / reatividade / router
+import { reactive, ref, onMounted } from 'vue'
+import { useRouter } from 'vue-router'
+
+// Componentes
+import EmailInput from '@/views/Auth/components/inputs/EmailInput.vue'
+import BirthdayInput from '@/views/Auth/components/inputs/BirthdayInput.vue'
+import LinkAuth from '@/views/Auth/components/LinkAuth.vue'
+import AlertText from '@/views/Auth/components/AlertText.vue'
+import BlackSide from '@/views/Auth/components/BlackSide.vue'
+import PasswordInput from '@/views/Auth/components/inputs/PasswordInput.vue'
+import NameInput from '@/views/Auth/components/inputs/NameInput.vue'
 import CodeInput from '@/views/Auth/components/inputs/CodeInput.vue'
-
 import StepBar from '@/views/Auth/components/StepBar.vue'
+import OperationSuccess from '@/views/Auth/components/OperationSuccess.vue'
 
+// Rotas
 import { ROUTES } from '@/router/routes'
 
-import resetData from '@/utils/resetData'
-resetData.setup()
-
+// Stores / requisitions / animações
 import { UserStore } from '@/store/UserStore'
-const user = UserStore()
-
-import { computed, reactive, ref } from 'vue'
-
+import { AnimStore } from '@/store/AnimStore'
 import { TokenRequisitions } from '@/requisitions/Token'
-const tokenReq = TokenRequisitions()
 import { UserRequisitions } from '@/requisitions/User'
-const userReq = UserRequisitions()
 
-import type { CreateUserDTO, tokenSendOrVerify } from '@/store/TypesStore'
+// Classe (a versão refatorada que lhe enviei anteriormente)
+import { RegisterProgress } from '@/views/Auth/utils/ProceedRegister'
 
-import { AnimsStore } from '@/store/AnimsStore'
-const anims = AnimsStore()
-
+// resetData: chamar dentro do ciclo de vida (não no topo do módulo)
+import resetData from '@/utils/resetData'
 import type { Steps } from '@/store/TypesStore'
 
-import OperationSuccess from '@/views/Auth/components/OperationSuccess.vue'
-import { useRouter } from 'vue-router'
-const router = useRouter()
-
+// --- Estado reativo local (assegure que os tipos TypesStore concordem)
 const registerSteps = reactive<Steps>({
-  two: true,
-  three: true,
-  four: true,
-  five: false,
+  current: 4,
+  qtd: 5,
 })
 
 const errors = reactive({
-  email: true,
   date: true,
-  password: true,
   digits: true,
+  email: true,
+  password: true,
   name: true,
-})
+} as { date: boolean; digits: boolean; email: boolean; password: boolean; name: boolean })
 
+// Mentemos erro de exibição como ref para a template
 const errorText = ref('')
 
-async function nextStep() {
-  anims.isLoading = true
-  if (registerSteps.five) {
-    anims.isLoading = false
-    router.push({ name: ROUTES.auth.login })
-  } else if (registerSteps.four) {
-    if (!user.birthday) {
-      errorText.value = 'Data de nascimento obrigatória.'
-      errors.date = false
-      return
-    }
-    const req: CreateUserDTO = {
-      dateBirth: user.birthday,
-      email: user.email,
-      name: user.name,
-      password: user.password,
-    }
+// obter stores e requisitions dentro do setup
+const router = useRouter()
+const user = UserStore()
+const anim = AnimStore()
+const tokenReq = TokenRequisitions()
+const userReq = UserRequisitions()
 
-    const res = await userReq.register(req)
-
-    if (res.success) {
-      errors.date = true
-      errors.digits = true
-      errors.email = true
-      errors.password = true
-      registerSteps.five = true
-    } else {
-      errorText.value = res.errorText
-      errors.digits = res.success
-    }
-    anims.isLoading = false
-    return
-  } else if (registerSteps.three) {
-    if (!user.birthday) {
-      errorText.value = 'Data de nascimento obrigatória.'
-      errors.date = false
-      anims.isLoading = false
-      return
-    }
-    if (!user.name) {
-      errorText.value = 'Nome completo obrigatório.'
-      errors.name = false
-      anims.isLoading = false
-      return
-    }
-    registerSteps.four = true
-    errorText.value = ''
-    anims.isLoading = false
-    return
-  } else if (registerSteps.two) {
-    const req: tokenSendOrVerify = {
-      email: user.email,
-      type: 'EMAIL_VERIFICATION',
-      code: user.emailToken,
-    }
-
-    const res = await tokenReq.toVerify(req)
-
-    if (res.success) {
-      registerSteps.three = true
-      errorText.value = ''
-      errors.date = true
-      errors.digits = true
-      errors.email = true
-      errors.password = true
-    } else {
-      errorText.value = res.errorText
-      errors.digits = res.success
-    }
-    anims.isLoading = false
-    return
-  } else {
-    const req: tokenSendOrVerify = {
-      email: user.email,
-      code: user.emailToken,
-      type: 'EMAIL_VERIFICATION',
-    }
-    const res = await tokenReq.send(req)
-
-    if (res.success) {
-      registerSteps.two = true
-      errorText.value = ''
-      errors.date = true
-      errors.digits = true
-      errors.email = true
-      errors.password = true
-    } else {
-      errorText.value = res.errorText
-      errors.email = res.success
-    }
-    anims.isLoading = false
-    return
-  }
-}
-
-function backStep() {
-  if (registerSteps.four) {
-    errorText.value = ''
-    registerSteps.four = false
-    return
-  } else if (registerSteps.three) {
-    errorText.value = ''
-    registerSteps.two = false
-    registerSteps.three = false
-    return
-  } else if (registerSteps.two) {
-    errorText.value = ''
-    registerSteps.two = false
-    return
-  }
-}
-
-const subtitle = computed(() => {
-  if (registerSteps.five) return ''
-  if (registerSteps.four) return 'Insira uma senha forte'
-  if (registerSteps.three) return 'Preencha todos os campos'
-  if (registerSteps.two) return 'Digite o código enviado ao seu email'
-  return 'Insira seu email'
+// Instanciar a classe passando DEPENDÊNCIAS (injeção) — evita chamadas fora do contexto
+const register = new RegisterProgress(registerSteps, errors, '', {
+  router,
+  userStore: user,
+  tokenReq,
+  userReq,
+  animStore: anim,
 })
 
-const windowWidth = ref(typeof window !== 'undefined' ? window.innerWidth : 0)
+// subtitle exposto diretamente da instância (ComputedRef)
+const subtitle = register.subtitle
+
+// Funções que a template consome (sincronizam errorText com a instância)
+const nextStep = async () => {
+  await register.nextStep()
+  // sincronizar mensagem de erro que a classe mantém
+  errorText.value = register.errorText
+}
+
+const backStep = () => {
+  register.backStep()
+  errorText.value = register.errorText
+}
+
+// resetData: garantir execução em mount e limpar ao desmontar
+onMounted(() => {
+  // se resetData.setup() altera estado global, execute aqui
+  if (typeof resetData.setup === 'function') resetData.setup()
+})
 </script>
 
 <template>
   <form @submit.prevent="nextStep" novalidate>
     <BlackSide
       :route="ROUTES.occurrenceMap.init"
-      :active="true"
       message="Cadastre-se e contribua!"
       father="register"
     />
     <StepBar :steps="registerSteps" class="register-bar" />
-    <div class="form-inputs" :class="[{ anim: anims.animRegister }]">
-      <h1 v-if="windowWidth < 992">Cadastre-se e contribua!</h1>
+    <div class="form-inputs" :class="[{ anim: anim.animRegister }]">
       <h2>{{ subtitle }}</h2>
-      <BirthdayInput v-if="registerSteps.three && !registerSteps.four && !registerSteps.five" />
-      <EmailInput class="register" v-if="!registerSteps.two" :erro="!errors.email" />
+      <BirthdayInput v-if="registerSteps.current == 3" />
+      <EmailInput class="register" v-if="registerSteps.current == 1" :error="!errors.email" />
       <CodeInput
+       :error="errors.digits"
         v-if="
-          registerSteps.two && !registerSteps.three && !registerSteps.four && !registerSteps.five
+          registerSteps.current == 2
         "
       />
-      <PasswordInput v-if="registerSteps.four && !registerSteps.five" class="register" />
-      <PasswordInput v-if="registerSteps.four && !registerSteps.five" class="register" />
+      <PasswordInput v-if="registerSteps.current == 4" class="register" :error="!errors.password"/>
+
       <NameInput
-        v-if="registerSteps.three && !registerSteps.four && !registerSteps.five"
+        v-if="registerSteps.current == 3"
         class="register"
       />
       <AlertText :text="errorText" />
-      <OperationSuccess message="Cadastro realizado com sucesso!" v-if="registerSteps.five" />
+      <OperationSuccess message="Cadastro realizado com sucesso!" v-if="registerSteps.current == 5" />
       <div class="form-actions">
-        <button v-if="registerSteps.two && !registerSteps.five" @click="backStep">Voltar</button>
+        <button v-if="registerSteps.current != 1" @click="backStep" type="button">
+          Voltar
+        </button>
         <button
-          @click="anims.animLogin = true"
-          :style="registerSteps.five ? { backgroundColor: 'var(--color-green)' } : {}"
+          @click="anim.animLogin = true"
+          :style="registerSteps.current == 5 ? { backgroundColor: 'var(--color-green)' } : {}"
         >
-          {{ registerSteps.five ? 'Confirmar' : 'Avançar' }}
+          {{ registerSteps.current == 5 ? 'Confirmar' : 'Avançar' }}
         </button>
       </div>
       <LinkAuth
         :text="'Ja tem tem uma conta?'"
         :route="ROUTES.auth.login"
-        v-if="!registerSteps.two"
+        v-if="registerSteps.current == 1"
         anim="login"
       />
     </div>
@@ -225,11 +136,11 @@ const windowWidth = ref(typeof window !== 'undefined' ? window.innerWidth : 0)
 <style lang="scss">
 @use './assets/auth.scss';
 
+//
 @media (min-width: 992px) {
   .anim {
     animation: leftToRight 1s ease;
   }
-
   @keyframes leftToRight {
     0% {
       transform: translateX(-100%);

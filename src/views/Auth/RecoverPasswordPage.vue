@@ -1,184 +1,120 @@
 <script setup lang="ts">
-import { onMounted, reactive, ref, computed } from 'vue'
-import BlackSide from './components/BlackSide.vue'
-import CodeInput from './components/inputs/CodeInput.vue'
-import PasswordInput from './components/inputs/PasswordInput.vue'
-import AlertText from './components/AlertText.vue'
-import EmailInput from './components/inputs/EmailInput.vue'
-import OperationSuccess from './components/OperationSuccess.vue'
-
+// Vue / reatividade / router
+import { reactive, ref, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
-const router = useRouter()
 
+// Componentes
+import EmailInput from '@/views/Auth/components/inputs/EmailInput.vue'
+import AlertText from '@/views/Auth/components/AlertText.vue'
+import BlackSide from '@/views/Auth/components/BlackSide.vue'
+import PasswordInput from '@/views/Auth/components/inputs/PasswordInput.vue'
+import CodeInput from '@/views/Auth/components/inputs/CodeInput.vue'
+import StepBar from '@/views/Auth/components/StepBar.vue'
+import OperationSuccess from '@/views/Auth/components/OperationSuccess.vue'
+
+// Rotas
 import { ROUTES } from '@/router/routes'
 
-import resetData from '@/utils/resetData'
-resetData.setup()
-
-import type {
-  tokenSendOrVerify,
-  UpdateType,
-  UpdateUserBody,
-  UpdateUserParams,
-} from '@/store/TypesStore'
-
+// Stores / requisitions / animações
 import { UserStore } from '@/store/UserStore'
-const user = UserStore()
-
+import { AnimStore } from '@/store/AnimStore'
 import { TokenRequisitions } from '@/requisitions/Token'
-const tokenReq = TokenRequisitions()
 import { UserRequisitions } from '@/requisitions/User'
-const userReq = UserRequisitions()
 
-import { AnimsStore } from '@/store/AnimsStore'
-const anims = AnimsStore()
+// Classe (a versão refatorada que lhe enviei anteriormente)
+import { RecoverProgress } from '@/views/Auth/utils/ProceedRecover'
 
-import StepBar from '@/views/Auth/components/StepBar.vue'
-
+// resetData: chamar dentro do ciclo de vida (não no topo do módulo)
+import resetData from '@/utils/resetData'
 import type { Steps } from '@/store/TypesStore'
 
-onMounted(() => {
-  anims.animLogin = false
+// --- Estado reativo local (assegure que os tipos TypesStore concordem)
+const recoverPasswordSteps = reactive<Steps>({
+  current: 2,
+  qtd: 4,
 })
-
-const recoverPasswordSteps: Steps = reactive({
-  two: true,
-  three: true,
-  four: true,
-})
-
-const errorText = ref('')
 
 const errors = reactive({
-  email: true,
   date: true,
-  password: true,
   digits: true,
+  email: true,
+  password: true,
   name: true,
+} as { date: boolean; digits: boolean; email: boolean; password: boolean; name: boolean })
+
+// Mentemos erro de exibição como ref para a template
+const errorText = ref('')
+
+// obter stores e requisitions dentro do setup
+const router = useRouter()
+const user = UserStore()
+const anim = AnimStore()
+const tokenReq = TokenRequisitions()
+const userReq = UserRequisitions()
+
+// Instanciar a classe passando DEPENDÊNCIAS (injeção) — evita chamadas fora do contexto
+const register = new RecoverProgress(recoverPasswordSteps, errors, '', {
+  router,
+  userStore: user,
+  tokenReq,
+  userReq,
+  animStore: anim,
 })
 
-async function nextStep() {
-  anims.isLoading = true
-  if (recoverPasswordSteps.four) {
-    anims.isLoading = false
-    router.push({ name: ROUTES.auth.login })
-  } else if (recoverPasswordSteps.three) {
-    const req: {
-      params: UpdateUserParams
-      body: { user: UpdateUserBody; type: UpdateType }
-    } = {
-      params: { id: '1' },
-      body: { user: { password: '' }, type: 'PASSWORD' },
-    }
+// subtitle exposto diretamente da instância (ComputedRef)
+const subtitle = register.subtitle
 
-    const res = await userReq.update(req)
-    if (res.success) {
-      errorText.value = ''
-      errors.date = true
-      errors.digits = true
-      errors.email = true
-      errors.password = true
-    } else {
-      errorText.value = res.errorText
-      errors.digits = res.success
-    }
-    return
-  } else if (recoverPasswordSteps.two) {
-    const req: tokenSendOrVerify = {
-      email: user.email,
-      type: 'PASSWORD_RESET',
-      code: user.emailToken,
-    }
-
-    const res = await tokenReq.toVerify(req)
-
-    if (res.success) {
-      recoverPasswordSteps.three = true
-      errorText.value = ''
-      errors.date = true
-      errors.digits = true
-      errors.email = true
-      errors.password = true
-    } else {
-      errorText.value = res.errorText
-      errors.digits = res.success
-    }
-    return
-  } else {
-    const req: tokenSendOrVerify = {
-      email: user.email,
-      code: user.emailToken,
-      type: 'PASSWORD_RESET',
-    }
-    const res = await tokenReq.send(req)
-
-    if (res.success) {
-      recoverPasswordSteps.two = true
-      errorText.value = ''
-      errors.date = true
-      errors.digits = true
-      errors.email = true
-      errors.password = true
-    } else {
-      errorText.value = res.errorText
-      errors.email = res.success
-    }
-    return
-  }
+// Funções que a template consome (sincronizam errorText com a instância)
+const nextStep = async () => {
+  await register.nextStep()
+  // sincronizar mensagem de erro que a classe mantém
+  errorText.value = register.errorText
 }
 
-function backStep() {
-  if (recoverPasswordSteps.three) {
-    errorText.value = ''
-    recoverPasswordSteps.two = false
-    recoverPasswordSteps.three = false
-    return
-  } else if (recoverPasswordSteps.two) {
-    errorText.value = ''
-    recoverPasswordSteps.two = false
-    return
-  }
+const backStep = () => {
+  register.backStep()
+  errorText.value = register.errorText
 }
 
-const subtitle = computed(() => {
-  if (recoverPasswordSteps.five) return ''
-  if (recoverPasswordSteps.four) return 'Insira uma senha forte'
-  if (recoverPasswordSteps.three) return 'Preencha todos os campos'
-  if (recoverPasswordSteps.two) return 'Digite o código enviado ao seu email'
-  return 'Insira seu email'
+// resetData: garantir execução em mount e limpar ao desmontar
+onMounted(() => {
+  // se resetData.setup() altera estado global, execute aqui
+  if (typeof resetData.setup === 'function') resetData.setup()
 })
-
-const windowWidth = ref(typeof window !== 'undefined' ? window.innerWidth : 0)
 </script>
+
 <template>
   <form @submit.prevent="nextStep" novalidate class="login">
     <BlackSide
-      :route="'/mapa-de-denuncias'"
-      :active="false"
       message="Recupere seu acesso!"
       father="recover"
     />
     <StepBar :steps="recoverPasswordSteps" class="recover-bar" />
     <div class="form-inputs">
-      <h1 v-if="windowWidth < 992">Recupere seu acesso!</h1>
-      <h2 v-if="!recoverPasswordSteps.four">{{ subtitle }}</h2>
-      <OperationSuccess message="Senha recuperada com sucesso!" v-if="recoverPasswordSteps.four"/>
-      <EmailInput class="recover-password" v-if="!recoverPasswordSteps.two" />
-      <CodeInput v-if="recoverPasswordSteps.two && !recoverPasswordSteps.three" />
-      <PasswordInput v-if="recoverPasswordSteps.three && !recoverPasswordSteps.four" class="recover" />
+      <h2 v-if="recoverPasswordSteps.current != 4">{{ subtitle }}</h2>
+      <OperationSuccess
+        message="Senha recuperada com sucesso!"
+        v-if="recoverPasswordSteps.current == 4"
+      />
+      <EmailInput class="recover-password" v-if="recoverPasswordSteps.current == 1" />
+      <CodeInput v-if="recoverPasswordSteps.current == 2" :error="errors.digits" />
+      <PasswordInput v-if="recoverPasswordSteps.current == 3" class="recover" />
       <AlertText :text="errorText" :position="'recover-password'" />
       <div class="form-actions">
-        <router-link :to="{ name: ROUTES.auth.login }" v-if="!recoverPasswordSteps.two"
+        <router-link
+          @click="anim.animLogin = false"
+          :to="{ name: ROUTES.auth.login }"
+          v-if="recoverPasswordSteps.current == 1"
           >Cancelar</router-link
-        ><button
-          type="button"
-          v-if="recoverPasswordSteps.two && !recoverPasswordSteps.four"
-          @click="backStep"
-        >
+        ><button type="button" v-if="recoverPasswordSteps.current == 2" @click="backStep">
           Voltar
         </button>
-        <button :style="recoverPasswordSteps.four ? { backgroundColor: 'var(--color-green)' } : {}">
-          {{ recoverPasswordSteps.four ? 'Confirmar' : 'Avançar' }}
+        <button
+          :style="
+            recoverPasswordSteps.current == 4 ? { backgroundColor: 'var(--color-green)' } : {}
+          "
+        >
+          {{ recoverPasswordSteps.current == 4 ? 'Confirmar' : 'Avançar' }}
         </button>
       </div>
     </div>
@@ -187,19 +123,4 @@ const windowWidth = ref(typeof window !== 'undefined' ? window.innerWidth : 0)
 
 <style scoped lang="scss">
 @use './assets/auth.scss';
-
-.email {
-  grid-column: 2 / 10;
-  grid-row: 3 / 7;
-}
-
-p {
-  margin: 0.3rem;
-  color: var(--color-gray-dark);
-  font-size: var(--text-md);
-  grid-column: 2 / 10;
-  grid-row: 5 / 6;
-  justify-self: center;
-  align-self: end;
-}
 </style>

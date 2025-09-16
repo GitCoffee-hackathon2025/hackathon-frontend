@@ -52,7 +52,7 @@ export const ocurrenceRequisitions = defineStore('occurrence', () => {
       }
 
       const data = await res.json()
-      console.log('Relatório enviado com sucesso:', data)
+      //console.log('Relatório enviado com sucesso:', data)
       return data
     } catch (err) {
       return {

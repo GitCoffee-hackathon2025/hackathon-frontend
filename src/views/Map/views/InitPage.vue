@@ -10,8 +10,8 @@ import NeighborhoodPanel from '@/views/Map/components/NeighborhoodPanel.vue'
 import SearchBar from '@/views/Map/views/OcurrenceForm.vue'
 import { findNeighborhoodByCoordinates } from '@/utils/geocoding'
 
-import { AnimsStore } from '@/store/AnimsStore'
-const anims = AnimsStore()
+import { AnimStore } from '@/store/AnimStore'
+const anims = AnimStore()
 
 let map: L.Map | null = null
 let clickHandler: ((e: L.LeafletMouseEvent) => void) | null = null
@@ -115,8 +115,8 @@ const enableLocationSelection = () => {
 
     selectionMarker.bindPopup(popupContent).openPopup()
 
-    console.log('Coordenadas salvas:', ocurrenceReq.occurrenceCoordinates)
-    console.log('Bairro identificado:', ocurrenceReq.occurrenceNeighborhood)
+    //console.log('Coordenadas salvas:', ocurrenceReq.occurrenceCoordinates)
+    //console.log('Bairro identificado:', ocurrenceReq.occurrenceNeighborhood)
   }
 
   map.on('click', clickHandler)
@@ -162,8 +162,8 @@ watch(
   },
 )
 
-onBeforeMount(()=>{
-    anims.isLoading = true
+onBeforeMount(() => {
+  anims.isLoading = true
 })
 
 onMounted(() => {

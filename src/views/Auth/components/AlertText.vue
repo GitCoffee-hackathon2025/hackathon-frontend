@@ -1,6 +1,4 @@
 <script setup lang="ts">
-import { defineProps } from 'vue'
-
 const { text, position } = defineProps({
   text: String,
   position: String,

@@ -13,26 +13,14 @@ const props = defineProps({
 
 const { steps } = props
 
-const totalSteps = Object.keys(steps).length + 1
-
-console.log(totalSteps)
-
-const currentStep = computed(() => {
-  if (steps.five) return 5
-  if (steps.four) return 4
-  if (steps.three) return 3
-  if (steps.two) return 2
-  return 1
-})
-
 const stepPercent = (i: number) => {
-  if (totalSteps <= 1) return 100
-  return ((i - 1) / (totalSteps - 1)) * 100
+  if (steps.qtd <= 1) return 100
+  return ((i - 1) / (steps.qtd - 1)) * 100
 }
 
 const progressPercent = computed(() => {
-  if (totalSteps <= 1) return 100
-  return Math.round(((currentStep.value - 1) / (totalSteps - 1)) * 100 * 10) / 10 + 0.1
+  if (steps.qtd <= 1) return 100
+  return Math.round(((steps.current - 1) / (steps.qtd - 1)) * 100 * 10) / 10 + 0.1
 })
 </script>
 
@@ -42,7 +30,7 @@ const progressPercent = computed(() => {
     <div class="progress-fill" :style="{ width: progressPercent + '%' }"></div>
     <div class="progress-steps">
       <div
-        v-for="i in totalSteps"
+        v-for="i in steps.qtd"
         :key="i"
         :class="['green-circle', { active: progressPercent >= stepPercent(i) }]"
       ></div>
@@ -115,12 +103,11 @@ const progressPercent = computed(() => {
     z-index: 1;
     &.register-bar {
       left: 2.5vw;
-      transform:  translateX(0);
+      transform: translateX(0);
     }
-    &.recover-bar{
+    &.recover-bar {
       left: 52.5vw;
       transform: translateX(0);
-
     }
 
     &.anim {

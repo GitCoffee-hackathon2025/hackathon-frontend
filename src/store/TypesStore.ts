@@ -33,6 +33,7 @@ export class Option {
   text: string
   link: string
   refKey: string
+  icon2?: string
 
   constructor(icon: string, text: string, link: string, refKey: string) {
     this.icon = icon
@@ -43,8 +44,14 @@ export class Option {
 }
 
 export interface Steps {
-  two: boolean
-  three: boolean
-  four: boolean
-  five?: boolean
+  current: number,
+  qtd: number
+}
+
+export interface InputsInError {
+  email: boolean
+  date: boolean
+  password: boolean
+  digits: boolean
+  name: boolean
 }
