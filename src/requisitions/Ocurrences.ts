@@ -39,7 +39,7 @@ export const ocurrenceRequisitions = defineStore('occurrence', () => {
     }
 
     const isoDate = date.toISOString();
-
+    
     const res = await fetch(`${import.meta.env.VITE_REQ}/occurrences/register`, {
       method: 'POST',
       headers: {
