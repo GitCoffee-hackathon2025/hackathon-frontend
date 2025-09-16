@@ -39,7 +39,7 @@ const occurrenceMarkers = ref<L.Marker[]>([])
 
 // Computed property para determinar se o botão deve ser mostrado
 const shouldShowReportButton = computed(() => {
-  return !route.path.includes('selecionar-localizacao') && 
+  return !route.path.includes('report-occurrence') && 
          !showFormSidebar.value && 
          !neighborhoodStore.selectedData
 })
@@ -316,7 +316,7 @@ const backToHome = () => {
 watch(
   () => route.path,
   (newPath) => {
-    if (newPath.includes('selecionar-localizacao')) {
+    if (newPath.includes('report-occurrence')) {
       showLocationModal.value = true
     } else {
       disableLocationSelection()
@@ -426,7 +426,7 @@ onMounted(() => {
     })
     .catch((err) => console.error('Erro ao carregar GeoJSON:', err))
 
-  if (route.path.includes('selecionar-localizacao')) {
+  if (route.path.includes('report-occurrence')) {
     enableLocationSelection()
   }
 })
@@ -444,7 +444,7 @@ onUnmounted(() => {
     
     <!-- Botão de Voltar (só aparece na rota de seleção) -->
     <button 
-      v-if="route.path.includes('selecionar-localizacao') && !showLocationButtons && !showFormSidebar" 
+      v-if="route.path.includes('report-occurrence') && !showLocationButtons && !showFormSidebar" 
       class="back-button"
       @click="backToHome"
     >

@@ -4,7 +4,7 @@ import { useRouter } from 'vue-router'
 const router = useRouter()
 
 const goToSelectLocation = () => {
-  router.push('mapa-de-denuncias/selecionar-localizacao')
+  router.push({ name: 'map.select' })
 }
 </script>
 
