@@ -88,6 +88,8 @@ onMounted(() => {
 
 <template>
   <form @submit.prevent="nextStep" novalidate>
+
+
     <BlackSide
       :route="ROUTES.occurrenceMap.init"
       message="Cadastre-se e contribua!"

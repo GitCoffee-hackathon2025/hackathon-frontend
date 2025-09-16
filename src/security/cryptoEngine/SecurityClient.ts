@@ -51,3 +51,5 @@ export class SecurityClient {
     }
   }
 }
+export default SecurityClient;
+

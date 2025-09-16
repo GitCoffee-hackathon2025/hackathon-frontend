@@ -21,7 +21,7 @@ function fechar() {
         <strong
           >Bairro:
           {{
-            [selectedData.nome, selectedData.name, selectedData.nome_bairro, selectedData.id].find(
+            [selectedData.nome, selectedData.name, selectedData.nome_bairr, selectedData.id].find(
               (neighborhoodName) => neighborhoodName !== '' && neighborhoodName != null,
             ) ?? 'Bairro não informado'
           }}
@@ -42,7 +42,7 @@ function fechar() {
             class="occurrence-item"
           >
             <p class="occurrence-user">
-              <strong>{{ occurrence.user.name }}</strong> —
+              <strong>Anonimo</strong> —
               <span class="occurrence-type">{{ occurrence.type.name }}</span>
             </p>
             <p class="occurrence-content">
