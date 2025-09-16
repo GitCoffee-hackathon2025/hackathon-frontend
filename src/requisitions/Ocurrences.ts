@@ -3,13 +3,72 @@ import { defineStore } from 'pinia'
 import { ref } from 'vue'
 import { findNeighborhoodByCoordinates } from '@/utils/geocoding'
 
+// Tipos de ocorrência baseados na imagem
+export const OCCURRENCE_TYPES = [
+  { id: 1, name: 'Acidente de trânsito' },
+  { id: 2, name: 'Assalto' },
+  { id: 3, name: 'Roubo' },
+  { id: 4, name: 'Furto' },
+  { id: 5, name: 'Perturbação da paz' },
+  { id: 6, name: 'Vandalismo' },
+  { id: 7, name: 'Incêndio' },
+  { id: 8, name: 'Acidente doméstico' },
+  { id: 9, name: 'Assédio' },
+  { id: 10, name: 'Desaparecimento' },
+  { id: 11, name: 'Problema de infraestrutura' },
+  { id: 12, name: 'Animal solto' },
+  { id: 13, name: 'Outro' }
+]
+
 export const ocurrenceRequisitions = defineStore('occurrence', () => {
   const occurrenceContent = ref<string>('')
-  const occurrenceType = ref<number | null>(null) // agora é número
+  const occurrenceType = ref<number | null>(null)
   const occurrenceDate = ref<string>('')
   const occurrenceLocal = ref<string>('')
   const occurrenceCoordinates = ref<{ lat: number; lng: number } | null>(null)
-  const occurrenceNeighborhood = ref<number | null>(null) // ID do bairro, se tiver
+  const occurrenceNeighborhood = ref<number | null>(null)
+
+  // Função para buscar coordenadas das ocorrências
+  const fetchOccurrencesCoordinates = async () => {
+    try {
+      const securityClient = new SecurityClient()
+      await securityClient.init()
+      
+      const response = await fetch('http://localhost:3000/occurrences/coordenates', {
+        method: 'GET',
+        headers: { 'Content-Type': 'application/json' },
+      })
+      
+      if (!response.ok) {
+        throw new Error('Erro ao buscar coordenadas')
+      }
+      
+      const data = await response.json()
+      
+      // Decodificar se necessário
+      let decodedData
+      if (data.header && data.data) {
+        decodedData = await securityClient.decode(data)
+      } else {
+        decodedData = data
+      }
+      
+      // Processar os dados para extrair o id_type_occurrence do objeto type
+      if (decodedData && decodedData.success && decodedData.data) {
+        decodedData.data = decodedData.data.map((occurrence: any) => ({
+          id_occurrence: occurrence.id_occurrence,
+          coordenadas: occurrence.coordenadas,
+          // Extrair id_type_occurrence do objeto type, se existir
+          id_type_occurrence: occurrence.type?.id_type_occurrence || null
+        }))
+      }
+      
+      return decodedData
+    } catch (error) {
+      console.error('Erro ao buscar coordenadas:', error)
+      return null
+    }
+  }
 
   // Define coordenadas e busca bairro
   const setOccurrenceCoordinates = async (coords: { lat: number; lng: number }, neighborhoodId?: number) => {
@@ -35,12 +94,12 @@ export const ocurrenceRequisitions = defineStore('occurrence', () => {
     console.log('=== sendOccurrence chamado ===')
 
     try {
-      console.log('Valores iniciais:')
-      console.log('occurrenceContent:', occurrenceContent.value)
-      console.log('occurrenceType:', occurrenceType.value)
-      console.log('occurrenceDate:', occurrenceDate.value)
-      console.log('occurrenceCoordinates:', occurrenceCoordinates.value)
-      console.log('occurrenceNeighborhood:', occurrenceNeighborhood.value)
+      console.log('Valores atuais:')
+      console.log('Tipo:', occurrenceType.value)
+      console.log('Conteúdo:', occurrenceContent.value)
+      console.log('Data:', occurrenceDate.value)
+      console.log('Coordenadas:', occurrenceCoordinates.value)
+      console.log('Bairro ID:', occurrenceNeighborhood.value)
 
       if (!occurrenceType.value) {
         console.error('Tipo de ocorrência não selecionado.')
@@ -134,6 +193,16 @@ export const ocurrenceRequisitions = defineStore('occurrence', () => {
     }
   }
 
+  // Limpar dados do formulário
+  const clearFormData = () => {
+    occurrenceContent.value = ''
+    occurrenceType.value = null
+    occurrenceDate.value = ''
+    occurrenceLocal.value = ''
+    occurrenceCoordinates.value = null
+    occurrenceNeighborhood.value = null
+  }
+
   return {
     occurrenceContent,
     occurrenceType,
@@ -143,5 +212,7 @@ export const ocurrenceRequisitions = defineStore('occurrence', () => {
     occurrenceNeighborhood,
     setOccurrenceCoordinates,
     sendOccurrence,
+    fetchOccurrencesCoordinates,
+    clearFormData
   }
 })

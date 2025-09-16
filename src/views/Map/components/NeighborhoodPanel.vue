@@ -42,7 +42,7 @@ function fechar() {
             class="occurrence-item"
           >
             <p class="occurrence-user">
-              <strong>{{ occurrence.user.name }}</strong> —
+              <strong>Anonimo</strong> —
               <span class="occurrence-type">{{ occurrence.type.name }}</span>
             </p>
             <p class="occurrence-content">

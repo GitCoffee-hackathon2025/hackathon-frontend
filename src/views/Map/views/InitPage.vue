@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { NeighborhoodStore } from '@/store/NeighborhoodStore'
-import { ocurrenceRequisitions } from '@/requisitions/Ocurrences'
+import { ocurrenceRequisitions, OCCURRENCE_TYPES } from '@/requisitions/Ocurrences'
 import { onMounted, nextTick, watch, onUnmounted, onBeforeMount, ref, computed } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import L from 'leaflet'
@@ -34,6 +34,9 @@ const showLocationModal = ref(false)
 const showLocationButtons = ref(false)
 const showFormSidebar = ref(false)
 
+// Referência para armazenar os marcadores das ocorrências
+const occurrenceMarkers = ref<L.Marker[]>([])
+
 // Computed property para determinar se o botão deve ser mostrado
 const shouldShowReportButton = computed(() => {
   return !route.path.includes('selecionar-localizacao') && 
@@ -63,6 +66,105 @@ const createCustomIcon = () => {
     iconSize: [30, 30],
     iconAnchor: [15, 15],
   })
+}
+
+/// Função para criar ícone personalizado para ocorrências - POR CATEGORIAS
+const createOccurrenceIcon = (occurrenceTypeId: number) => {
+  // Cores por categorias
+  const colors: Record<number, string> = {
+    // Emergências (vermelho)
+    1: '#e74c3c',  // Acidente de trânsito
+    2: '#c0392b',  // Assalto
+    3: '#e74c3c',  // Roubo
+    7: '#c0392b',  // Incêndio
+    9: '#c0392b',  // Assédio
+    
+    // Alertas (laranja/amarelo)
+    4: '#f39c12',  // Furto
+    5: '#f1c40f',  // Perturbação da paz
+    6: '#e67e22',  // Vandalismo
+    8: '#e67e22',  // Acidente doméstico
+    
+    // Informativos (azul/verde)
+    10: '#3498db', // Desaparecimento
+    11: '#2980b9', // Problema de infraestrutura
+    12: '#27ae60', // Animal solto
+    
+    // Outros (cinza)
+    13: '#95a5a6'  // Outro
+  }
+
+  const color = colors[occurrenceTypeId] || '#95a5a6' // cinza padrão
+
+  return L.divIcon({
+    className: 'occurrence-marker',
+    html: `
+      <div style="
+        background-color: ${color};
+        width: 20px;
+        height: 20px;
+        border-radius: 50%;
+        border: 3px solid white;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+      "></div>
+    `,
+    iconSize: [20, 20],
+    iconAnchor: [10, 10],
+  })
+}
+
+// Função para obter nome do tipo de ocorrência
+const getOccurrenceTypeName = (typeId: number): string => {
+  const type = OCCURRENCE_TYPES.find(t => t.id === typeId)
+  return type ? type.name : 'Desconhecido'
+}
+
+// Função para carregar e exibir ocorrências no mapa
+const loadOccurrencesOnMap = async () => {
+  if (!map) return
+
+  // Limpar marcadores existentes
+  occurrenceMarkers.value.forEach(marker => {
+    map?.removeLayer(marker)
+  })
+  occurrenceMarkers.value = []
+
+  // Buscar coordenadas das ocorrências
+  const occurrencesData = await ocurrenceReq.fetchOccurrencesCoordinates()
+  
+  if (occurrencesData && occurrencesData.success && occurrencesData.data) {
+    occurrencesData.data.forEach((occurrence: any) => {
+      try {
+        // Parse das coordenadas (que estão como string JSON)
+        const coords = JSON.parse(occurrence.coordenadas)
+        
+        const marker = L.marker([coords.lat, coords.lng], {
+          icon: createOccurrenceIcon(occurrence.id_type_occurrence)
+        })
+          .addTo(map!)
+          .bindPopup(`
+            <div style="padding: 10px; min-width: 200px;">
+              <h4 style="margin: 0 0 10px 0; color: #333;">Ocorrência #${occurrence.id_occurrence}</h4>
+              <p style="margin: 5px 0;"><strong>Tipo:</strong> ${getOccurrenceTypeName(occurrence.id_type_occurrence)}</p>
+              ${occurrence.content_occurrence ? `<p style="margin: 5px 0;"><strong>Descrição:</strong> ${occurrence.content_occurrence}</p>` : ''}
+              ${occurrence.date_occurrence ? `<p style="margin: 5px 0;"><strong>Data:</strong> ${new Date(occurrence.date_occurrence).toLocaleString()}</p>` : ''}
+            </div>
+          `)
+        
+        occurrenceMarkers.value.push(marker)
+      } catch (error) {
+        console.error('Erro ao processar ocorrência:', error, occurrence)
+      }
+    })
+
+    console.log(`Carregadas ${occurrenceMarkers.value.length} ocorrências no mapa`)
+
+    // Se houver ocorrências, ajustar a visualização do mapa para mostrar todas
+    if (occurrenceMarkers.value.length > 0) {
+      const group = new L.featureGroup(occurrenceMarkers.value)
+      map.fitBounds(group.getBounds().pad(0.1))
+    }
+  }
 }
 
 // Função para focar no marcador selecionado
@@ -317,6 +419,9 @@ onMounted(() => {
         },
       }).addTo(map!)
       anims.isLoading = false
+      
+      // Carregar ocorrências após o mapa estar pronto
+      loadOccurrencesOnMap()
     })
     .catch((err) => console.error('Erro ao carregar GeoJSON:', err))
 
@@ -431,6 +536,17 @@ onUnmounted(() => {
     }
   }
 
+  :deep(.occurrence-marker) {
+    .leaflet-popup-content {
+      margin: 10px;
+    }
+    
+    .leaflet-popup-content-wrapper {
+      border-radius: 8px;
+      background: white;
+    }
+  }
+
   @keyframes pulse {
     0% {
       transform: translate(-50%, -50%) scale(0.8);
@@ -449,7 +565,7 @@ onUnmounted(() => {
 
 .back-button {
   position: fixed;
-  bottom: 100px; // mobile first
+  bottom: 100px;
   right: 15px;
   padding: 12px 24px;
   border: none;
@@ -471,7 +587,7 @@ onUnmounted(() => {
 
 .location-buttons {
   position: fixed;
-  bottom: 100px; // mobile first
+  bottom: 100px;
   left: 50%;
   transform: translateX(-50%);
   display: flex;
@@ -562,20 +678,20 @@ onUnmounted(() => {
   .back-button {
     bottom: 40px;
     right: 30px;
-    padding: 16px 28px; // aumenta o tamanho
-    font-size: 1.1rem;  // texto maior
+    padding: 16px 28px;
+    font-size: 1.1rem;
   }
 
   .location-buttons {
     bottom: 40px;
-    gap: 20px; // aumenta espaço entre os botões
+    gap: 20px;
   }
 
   .btn-continue,
   .btn-back {
-    padding: 16px 28px; // aumenta os botões
+    padding: 16px 28px;
     font-size: 1rem;
-    min-width: 140px; // mais largo
+    min-width: 140px;
   }
 }
 
@@ -584,13 +700,13 @@ onUnmounted(() => {
   .back-button {
     bottom: 50px;
     right: 50px;
-    padding: 18px 32px; // ainda maior
+    padding: 18px 32px;
     font-size: 1rem;
   }
 
   .location-buttons {
     bottom: 50px;
-    gap: 75px; // mais espaçamento
+    gap: 75px;
   }
 
   .btn-continue,
