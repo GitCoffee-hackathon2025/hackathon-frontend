@@ -13,16 +13,17 @@ class KeysClient {
   public static rsa: { key: JsonWebKey; kid: `${number}v` };
 
   public async init(): Promise<void> {
+    if (!this._init) {
+      const rsa = await fetch(`http://localhost:3000/connect/get`);
+      if (!rsa.ok) throw new Error('Error fetching RSA key');
+      const rsaJson = (await rsa.json()) as { rsaPublicKey: JsonWebKey; kidRsa: `${number}v` };
+      console.log(rsaJson);
+      KeysClient.rsa = { key: rsaJson.rsaPublicKey, kid: rsaJson.kidRsa };
+      
+    }
     // verificando se já foi iniciado
     if (this._init) return;
     this._init = true;
-    if(!this.init){ const rsa = await fetch(`${import.meta.env.VITE_API_URL}/connect/get`)
-    if (!rsa.ok) throw new Error('Error fetching RSA key');
-    const rsaJson = await rsa.json() as { rsaPublicKey: JsonWebKey; kidRsa: `${number}v` };
-    console.log(rsaJson);
-    KeysClient.rsa = { key: rsaJson.rsaPublicKey, kid: rsaJson.kidRsa };}
-
-  
    
     // gerando chave
     const key = await crypto.subtle.generateKey(webcrypto.aes.alg, true, webcrypto.aes.keyUsages);

@@ -108,7 +108,7 @@ const enableLocationSelection = () => {
       return
     }
 
-    await ocurrenceReq.setoccurrenceCoordinates({ lat, lng })
+    await ocurrenceReq.setOccurrenceCoordinates({ lat, lng })
 
     if (selectionMarker) {
       map?.removeLayer(selectionMarker)

@@ -9,19 +9,19 @@ const message = ref('')
 
 // Tipos de ocorrência mais completos
 const occurrenceTypes = [
-  'Acidente de trânsito',
-  'Assalto',
-  'Roubo',
-  'Furto',
-  'Perturbação da paz',
-  'Vandalismo',
-  'Incêndio',
-  'Acidente doméstico',
-  'Assédio',
-  'Desaparecimento',
-  'Problema de infraestrutura',
-  'Animal solto',
-  'Outro'
+  { id: 1, name: 'Acidente de trânsito' },
+  { id: 2, name: 'Assalto' },
+  { id: 3, name: 'Roubo' },
+  { id: 4, name: 'Furto' },
+  { id: 5, name: 'Perturbação da paz' },
+  { id: 6, name: 'Vandalismo' },
+  { id: 7, name: 'Incêndio' },
+  { id: 8, name: 'Acidente doméstico' },
+  { id: 9, name: 'Assédio' },
+  { id: 10, name: 'Desaparecimento' },
+  { id: 11, name: 'Problema de infraestrutura' },
+  { id: 12, name: 'Animal solto' },
+  { id: 13, name: 'Outro' }
 ]
 
 // Focar no marcador quando o componente for montado
@@ -42,10 +42,10 @@ async function sendOcurrence() {
       date: ocurrenceReq.occurrenceDate,
       content: ocurrenceReq.occurrenceContent,
       coordinates: ocurrenceReq.occurrenceCoordinates,
-      local: ocurrenceReq.occurrenceLocal,
+      
       neighborhood: ocurrenceReq.occurrenceNeighborhood
     })
-    const result = await ocurrenceReq.sendoccurrence()
+    const result = await ocurrenceReq.sendOccurrence()
     
     if (result.success) {
       message.value = 'Relatório enviado com sucesso!'
@@ -79,23 +79,24 @@ function handleClose() {
       <div class="form-group">
         <label>Bairro:</label>
         <input
-          type="text" 
-          v-model="ocurrenceReq.occurrenceLocal" 
-          class="form-input"
-          :placeholder="ocurrenceReq.occurrenceNeighborhood || 'Local não identificado'"
-          readonly
-        >
+  type="text" 
+  v-model="ocurrenceReq.occurrenceLocal" 
+  class="form-input"
+  :placeholder="ocurrenceReq.occurrenceNeighborhood?.toString() || 'Local não identificado'"
+  readonly
+>
       </div>
 
       <!-- Tipo de Ocorrência -->
       <div class="form-group">
         <label>Tipo de Ocorrência:</label>
-        <select v-model="ocurrenceReq.occurrenceType" class="form-input">
-          <option value="" disabled selected>Escolha o tipo de ocorrência</option>
-          <option v-for="type in occurrenceTypes" :key="type" :value="type">
-            {{ type }}
-          </option>
-        </select>
+        <select v-model.number="ocurrenceReq.occurrenceType" class="form-input">
+  <option value="" disabled selected>Escolha o tipo de ocorrência</option>
+  <option v-for="type in occurrenceTypes" :key="type.id" :value="type.id">
+    {{ type.name }}
+  </option>
+</select>
+
       </div>
 
       <!-- Data -->
