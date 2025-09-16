@@ -100,9 +100,9 @@ function handleClose() {
 
       <!-- Data -->
       <div class="form-group">
-        <label>Data e Hora:</label>
+        <label>Data do ocorrido:</label>
         <input 
-          type="datetime-local" 
+          type="date" 
           v-model="ocurrenceReq.occurrenceDate" 
           class="form-input" 
         />
