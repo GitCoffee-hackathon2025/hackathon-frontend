@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { NeighborhoodStore } from '@/store/NeighborhoodStore'
 import { ocurrenceRequisitions } from '@/requisitions/Ocurrences'
-import { onMounted, nextTick, watch, onUnmounted, onBeforeMount, ref } from 'vue'
+import { onMounted, nextTick, watch, onUnmounted, onBeforeMount, ref, computed } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import L from 'leaflet'
 import { markRaw } from 'vue'
@@ -33,6 +33,13 @@ const router = useRouter()
 const showLocationModal = ref(false)
 const showLocationButtons = ref(false)
 const showFormSidebar = ref(false)
+
+// Computed property para determinar se o botão deve ser mostrado
+const shouldShowReportButton = computed(() => {
+  return !route.path.includes('selecionar-localizacao') && 
+         !showFormSidebar.value && 
+         !neighborhoodStore.selectedData
+})
 
 const bounds: L.LatLngBoundsExpression = [
   [-26.4, -49.0],
@@ -102,7 +109,7 @@ const enableLocationSelection = () => {
       L.popup()
         .setLatLng(e.latlng)
         .setContent(
-          'Localização fora da área coberta. Selecione um local dentro dos bairros disponíveis.',
+          'Selecione um local dentro dos bairros disponíveis.',
         )
         .openOn(map!)
       return
@@ -118,7 +125,7 @@ const enableLocationSelection = () => {
       icon: createCustomIcon(),
     }).addTo(map!)
 
-        showLocationButtons.value = true
+    showLocationButtons.value = true
   }
 
   map.on('click', clickHandler)
@@ -244,8 +251,6 @@ onMounted(() => {
 
   neighborhoodStore.setMap(markRaw(map))
 
-  L.control.zoom({ position: 'topright' }).addTo(map)
-
   L.tileLayer(
     'https://tile.jawg.io/jawg-dark/{z}/{x}/{y}{r}.png?access-token=HlsnsLtJMqieYXmvcLv4imuKCeL2kbOnsAhQZKOI7rH5lqBaXSdme8VeUr9gDuGe',
     {
@@ -328,8 +333,8 @@ onUnmounted(() => {
 
 <template>
   <main>
-    <!-- Botão de Reportar (só aparece fora da rota de seleção) -->
-    <ReportButton v-if="!route.path.includes('selecionar-localizacao') && !showFormSidebar" />
+    <!-- Botão de Reportar (agora controlado pela computed property) -->
+    <ReportButton v-if="shouldShowReportButton" />
     
     <!-- Botão de Voltar (só aparece na rota de seleção) -->
     <button 
@@ -369,7 +374,6 @@ onUnmounted(() => {
   </main>
 </template>
 
-
 <style scoped lang="scss">
 .map-container {
   width: 100%;
@@ -393,39 +397,39 @@ onUnmounted(() => {
   }
 
   :deep(.pulsating-marker) {
-  .pulse-container {
-    position: relative;
-    width: 30px;
-    height: 30px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-  }
+    .pulse-container {
+      position: relative;
+      width: 30px;
+      height: 30px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
 
-  .marker-center {
-    width: 18px;
-    height: 18px;
-    background-color: #3498db;
-    border: 3px solid white;
-    border-radius: 50%;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
-    z-index: 10;
-    position: relative;
-  }
+    .marker-center {
+      width: 18px;
+      height: 18px;
+      background-color: #3498db;
+      border: 3px solid white;
+      border-radius: 50%;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+      z-index: 10;
+      position: relative;
+    }
 
-  .pulse-ring {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    width: 30px;
-    height: 30px;
-    border: 2px solid #3498db;
-    border-radius: 50%;
-    opacity: 0;
-    animation: pulse 2s infinite;
+    .pulse-ring {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      width: 30px;
+      height: 30px;
+      border: 2px solid #3498db;
+      border-radius: 50%;
+      opacity: 0;
+      animation: pulse 2s infinite;
+    }
   }
-}
 
   @keyframes pulse {
     0% {
@@ -445,8 +449,8 @@ onUnmounted(() => {
 
 .back-button {
   position: fixed;
-  bottom: 20px;
-  right: 20px;
+  bottom: 100px; // mobile first
+  right: 15px;
   padding: 12px 24px;
   border: none;
   border-radius: 8px;
@@ -457,7 +461,7 @@ onUnmounted(() => {
   color: white;
   z-index: 1000;
   transition: all 0.2s ease;
-  
+
   &:hover {
     background: #636e72;
     transform: translateY(-2px);
@@ -467,7 +471,7 @@ onUnmounted(() => {
 
 .location-buttons {
   position: fixed;
-  bottom: 20px;
+  bottom: 100px; // mobile first
   left: 50%;
   transform: translateX(-50%);
   display: flex;
@@ -535,32 +539,65 @@ onUnmounted(() => {
   }
 }
 
+// -------- MEDIA QUERIES --------
+
+// Tablet
 @media (min-width: 768px) {
   #map {
     border-radius: 8px;
   }
-  
+
+  .back-button {
+    bottom: 100px;
+    right: 20px;
+  }
+
   .location-buttons {
-    bottom: 30px;
+    bottom: 100px;
   }
 }
 
-@media (max-width: 480px) {
+// Desktop
+@media (min-width: 992px) {
   .back-button {
-    top: 10px;
-    right: 10px;
-    padding: 10px 16px;
-    font-size: 0.9rem;
+    bottom: 40px;
+    right: 30px;
+    padding: 16px 28px; // aumenta o tamanho
+    font-size: 1.1rem;  // texto maior
   }
-  
+
   .location-buttons {
-    flex-direction: column;
-    width: 80%;
+    bottom: 40px;
+    gap: 20px; // aumenta espaço entre os botões
   }
-  
+
   .btn-continue,
   .btn-back {
-    width: 100%;
+    padding: 16px 28px; // aumenta os botões
+    font-size: 1rem;
+    min-width: 140px; // mais largo
+  }
+}
+
+// Telas muito grandes
+@media (min-width: 1200px) {
+  .back-button {
+    bottom: 50px;
+    right: 50px;
+    padding: 18px 32px; // ainda maior
+    font-size: 1rem;
+  }
+
+  .location-buttons {
+    bottom: 50px;
+    gap: 75px; // mais espaçamento
+  }
+
+  .btn-continue,
+  .btn-back {
+    padding: 18px 32px;
+    font-size: 1.2rem;
+    min-width: 180px;
   }
 }
 </style>
