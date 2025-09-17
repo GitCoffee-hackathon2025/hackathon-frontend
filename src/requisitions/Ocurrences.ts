@@ -34,7 +34,7 @@
         const securityClient = new SecurityClient()
         await securityClient.init()
         
-        const response = await fetch('http://localhost:3000/occurrences', {
+        const response = await fetch('http://localhost:3000/occurrences/coordenates', {
           method: 'GET',
           headers: { 'Content-Type': 'application/json' },
         })
@@ -44,6 +44,7 @@
         }
         
         const data = await response.json()
+        
         
         // Decodificar se necessário
         let decodedData
