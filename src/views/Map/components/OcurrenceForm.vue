@@ -1,8 +1,12 @@
 <script setup lang="ts">
 import { ref, onMounted } from 'vue'
+import { useRouter } from 'vue-router'
+
 import { ocurrenceRequisitions } from '@/requisitions/Ocurrences' // Ajuste o caminho conforme necessário
 
 const emit = defineEmits(['close'])
+const router = useRouter()
+
 
 const ocurrenceReq = ocurrenceRequisitions()
 const message = ref('')
@@ -53,6 +57,7 @@ async function sendOcurrence() {
       // Fechar o formulário após envio bem-sucedido
       setTimeout(() => {
         emit('close')
+        router.push('/')
       }, 1000)
     } else {
       message.value = result.errorText || 'Ocorreu um erro ao enviar.'

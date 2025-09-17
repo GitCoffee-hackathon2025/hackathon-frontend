@@ -179,14 +179,25 @@ function fechar() {
 
 @media (max-width: 992px) {
   .details-container {
-    top: auto;
-    bottom: 20px;
+    top: 45%; /* centraliza verticalmente */
+    bottom: (auto); /* deixa o bottom livre */
     right: 20px;
-    transform: none;
-    height: auto;
-    max-height: 80vh;
-    width: 90%;
-    max-width: 500px;
+    left: 20px;
+    width: auto;
+    height: 85vh; /* corrigido de hv → vh */
+    animation: slideInMobile 0.3s ease forwards;
+  }
+
+  @keyframes slideInMobile {
+    from {
+      transform: translateY(120%);
+      opacity: 0;
+    }
+    to {
+      transform: translateY(-50%);
+      opacity: 1;
+    }
   }
 }
+
 </style>
