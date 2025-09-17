@@ -14,7 +14,7 @@ export const TokenRequisitions = defineStore('Token requisitions', () => {
       const encode = await securityClient.encode({ email: req.email }, true)
 
 
-      const res = await fetch(`${import.meta.env.VITE_REQ}/auth/send-registration-code`, {
+      const res = await fetch(`http://localhost:3000/auth/send-registration-code`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -52,7 +52,7 @@ const encode = await securityClient.encode({ email: req.email, code: req.code },
     console.log('Encoded object:', encode);
 
 
-const res = await fetch(`${import.meta.env.VITE_REQ}/auth/verify-registration-code`, {
+const res = await fetch(`http://localhost:3000/auth/verify-registration-code`, {
   method: 'POST',
   headers: { 'Content-Type': 'application/json' },
   body: JSON.stringify(encode),

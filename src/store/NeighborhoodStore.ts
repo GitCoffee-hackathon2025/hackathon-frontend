@@ -30,7 +30,7 @@ export const NeighborhoodStore = defineStore('bairro', () => {
     neighborhoodoccurrences.value = []
 
     try {
-      const response = await fetch(`http://localhost:3000/occurrencesByNeighborhood/${idData}`, {
+      const response = await fetch(`http://localhost:3000/occurrences/neighborhood${idData}`, {
         method: 'GET',
       })
 

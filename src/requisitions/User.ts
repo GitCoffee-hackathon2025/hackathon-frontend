@@ -50,7 +50,7 @@ export const UserRequisitions = defineStore('User requisitions', () => {
       console.log('Register request:', req)
       const encoded = await securityClient.encode(req)
       console.log('Encoded object:', encoded)
-      const res = await fetch(`${import.meta.env.VITE_REQ}/auth/register`, {
+      const res = await fetch(`http://localhost:3000/auth/register`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(encoded),
