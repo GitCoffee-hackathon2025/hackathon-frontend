@@ -41,8 +41,8 @@ export const UserRequisitions = defineStore('User requisitions', () => {
     console.log('🔓 Dados descriptografados:', decodedData)
     
      try {
-      await AuthClient.setAccessToken(decodedData.tokens.access);
-      await AuthClient.setRefreshTokenCookie(decodedData.tokens.refresh);
+      await AuthClient.setAccessToken(json.tokens.access);
+      await AuthClient.setRefreshTokenCookie(json.tokens.refresh);
       console.log('✅ Tokens armazenados com sucesso no AuthClient');
     } catch (tokenError) {
       console.error('❌ Erro ao armazenar tokens:', tokenError);

@@ -15,7 +15,9 @@ class AuthClient {
 
   public static async getAccessToken() {
     if (!this.access) throw new Error('No token');
+    console.log('token', this.access)
     await verifyExp(this.access);
+    console.log('token', this.access)
     return this.access;
   }
 

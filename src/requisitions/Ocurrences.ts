@@ -1,4 +1,5 @@
   import SecurityClient from '@/security/cryptoEngine/SecurityClient'
+  import AuthClient from '@/security/cryptoEngine/AuthClient'
   import { defineStore } from 'pinia'
   import { ref } from 'vue'
   import { findNeighborhoodByCoordinates } from '@/utils/geocoding'
@@ -145,7 +146,7 @@
 
         const res = await fetch(fetchUrl, {
           method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
+          headers: { 'Content-Type': 'application/json', 'Authorization': await AuthClient.getAccessToken()},
           body: JSON.stringify(encoded),
         })
 
