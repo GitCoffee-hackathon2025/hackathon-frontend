@@ -38,6 +38,7 @@ export const UserRequisitions = defineStore('User requisitions', () => {
       }
     }
     const decodedData = await securityClient.decode(json.data)
+
     console.log('🔓 Dados descriptografados:', decodedData)
     
      try {
@@ -52,12 +53,18 @@ export const UserRequisitions = defineStore('User requisitions', () => {
       }
     }
     
-    // ✅ Agora acesse os dados corretamente
+    // ✅ Agora acesse os dados corretamente 
+    
     user.emailLogged = decodedData.dataUser.email
     user.birthdayLogged = decodedData.dataUser.dateBirth // ← Note: dateBirth, não birthday
     user.nameLogged = decodedData.dataUser.name
     user.isLogged = true
-
+    console.log('👤 Dados do usuário atualizados no store:',{
+      email: user.emailLogged,
+      birthday: user.birthdayLogged,
+      name: user.nameLogged,
+      isLogged: user.isLogged
+    })
     
     console.log('✅ Login realizado com sucesso')
     return { 
