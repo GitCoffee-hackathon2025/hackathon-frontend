@@ -15,7 +15,9 @@ class AuthClient {
 
   public static async getAccessToken() {
     if (!this.access) throw new Error('No token');
+    console.log('token', this.access)
     await verifyExp(this.access);
+    console.log('token', this.access)
     return this.access;
   }
 
@@ -24,7 +26,7 @@ class AuthClient {
     for (const cookie of cookies) {
       const [key, value] = cookie.split('=');
       if (key === this.cookieName) {
-        const token = decodeURIComponent(value);
+          const token = decodeURIComponent(value);
         await verifyExp(token);
         return token;
       }
