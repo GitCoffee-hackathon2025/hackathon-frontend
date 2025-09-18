@@ -11,7 +11,8 @@ import { findNeighborhoodByCoordinates } from '@/utils/geocoding'
 import ReportButton from '@/views/Map/components/ReportButton.vue'
 import LocationModal from '../components/LocationModal.vue'
 import OcurrenceForm from '@/views/Map/components/OcurrenceForm.vue'
-
+import { UserRequisitions } from '@/requisitions/User'
+const user = UserRequisitions()
 import { AnimStore } from '@/store/AnimStore'
 const anims = AnimStore()
 
@@ -339,7 +340,8 @@ onBeforeMount(() => {
   anims.isLoading = true
 })
 
-onMounted(() => {
+onMounted(async() => {
+  await user.recover()
   anims.isLoading = true
   map = L.map('map', {
     maxBounds: bounds,

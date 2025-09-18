@@ -26,7 +26,7 @@ class AuthClient {
     for (const cookie of cookies) {
       const [key, value] = cookie.split('=');
       if (key === this.cookieName) {
-        const token = decodeURIComponent(value);
+          const token = decodeURIComponent(value);
         await verifyExp(token);
         return token;
       }

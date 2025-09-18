@@ -1,5 +1,6 @@
   import SecurityClient from '@/security/cryptoEngine/SecurityClient'
   import AuthClient from '@/security/cryptoEngine/AuthClient'
+import { UserRequisitions } from './User'
   import { defineStore } from 'pinia'
   import { ref } from 'vue'
   import { findNeighborhoodByCoordinates } from '@/utils/geocoding'
@@ -22,6 +23,7 @@
   ]
 
   export const ocurrenceRequisitions = defineStore('occurrence', () => {
+      const user = UserRequisitions()
     const occurrenceContent = ref<string>('')
     const occurrenceType = ref<number | null>(null)
     const occurrenceDate = ref<string>('')
@@ -149,7 +151,7 @@
           headers: { 'Content-Type': 'application/json', 'Authorization': await AuthClient.getAccessToken()},
           body: JSON.stringify(encoded),
         })
-
+        
         console.log('Fetch enviado. Status HTTP:', res.status)
         const text = await res.text()
         console.log('Resposta bruta do backend:', text)
@@ -184,8 +186,9 @@
 
         if (!res.ok) {
           console.error('Resposta HTTP não OK:', decoded)
+          if (await user.recover(await res.json())) return await sendOccurrence()
           return { success: false, errorText: decoded.message || 'Erro desconhecido' }
-
+          
         }
 
         console.log('Relatório decodificado final:', decoded)
