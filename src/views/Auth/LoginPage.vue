@@ -5,65 +5,111 @@ import EmailInput from './components/inputs/EmailInput.vue'
 import LinkAuth from './components/LinkAuth.vue'
 import AlertText from './components/AlertText.vue'
 import BlackSide from './components/BlackSide.vue'
-
 import { ROUTES } from '@/router/routes'
-
 import { AnimStore } from '@/store/AnimStore'
 const anim = AnimStore()
-
 import resetData from '@/utils/resetData'
 resetData.setup()
-
 import { useRouter } from 'vue-router'
 const router = useRouter()
-
 import { UserRequisitions } from '@/requisitions/User'
 const userReq = UserRequisitions()
-
 import { UserStore } from '@/store/UserStore'
 const user = UserStore()
-
 import type { LoginUser } from '@/store/TypesStore'
 
 const errorText = ref<string>('')
 const loginFailed = ref(false)
+const showAlert = ref(false)
 
 async function login() {
+  console.log('=== INICIANDO LOGIN ===')
+  console.log('Email:', user.email)
+  console.log('Password:', user.password)
+  
   anim.isLoading = true
+  errorText.value = ''
+  loginFailed.value = false
+  showAlert.value = false
+
   const req: LoginUser = {
     email: user.email,
     password: user.password,
   }
 
-  const res = await userReq.login(req)
-  if (!res.success) {
-    errorText.value = res.message
-    loginFailed.value = !res.success
-    anim.isLoading = false
-    return
-  }
+  console.log('Enviando requisição:', req)
+  
+  try {
+    const res = await userReq.login(req)
+    console.log('Resposta recebida:', res)
+    
+    if (!res.success) {
+      console.log('❌ Login falhou. errorText:', res.errorText)
+      errorText.value = res.errorText || 'Erro desconhecido'
+      loginFailed.value = true
+      showAlert.value = true
+      anim.isLoading = false
+      
+      console.log('💾 errorText após definir:', errorText.value)
+      console.log('💾 showAlert após definir:', showAlert.value)
+      return
+    }
 
-  anim.isLoading = false
-  router.push({ name: ROUTES.occurrenceMap.init })
+    console.log('✅ Login bem-sucedido')
+    anim.isLoading = false
+    router.push({ name: ROUTES.occurrenceMap.init })
+  } catch (error) {
+    console.error('💥 Erro inesperado no login:', error)
+    errorText.value = 'Erro inesperado. Tente novamente.'
+    loginFailed.value = true
+    showAlert.value = true
+    anim.isLoading = false
+  }
+}
+
+function closeAlert() {
+  console.log('Fechando alerta')
+  showAlert.value = false
+  loginFailed.value = false
 }
 
 const windowWidth = ref(typeof window !== 'undefined' ? window.innerWidth : 0)
+
+// Log inicial
+console.log('Componente Login carregado')
+console.log('UserStore:', user)
+console.log('UserRequisitions:', userReq)
 </script>
+
 <template>
   <form @submit.prevent="login" novalidate class="login">
-    <BlackSide
-      :route="ROUTES.occurrenceMap.init"
-      message="Bem-vindo de volta!"
-      father="login"
+    <BlackSide 
+      :route="ROUTES.occurrenceMap.init" 
+      message="Bem-vindo de volta!" 
+      father="login" 
     />
-
+    
     <div class="form-inputs" :class="[{ anim: anim.animLogin }]">
       <h1 v-if="windowWidth < 992">Bem-vindo!</h1>
       <h2>Insira suas credênciais</h2>
+      
       <EmailInput class="login" :erro="loginFailed" />
       <PasswordInput class="login" :erro="loginFailed" />
-      <AlertText :position="'login'" :texto="errorText" />
-
+      
+      <!-- ✅ AlertText com log -->
+      <div v-if="showAlert" class="debug-info">
+        <p>DEBUG: showAlert = {{ showAlert }}</p>
+        <p>DEBUG: errorText = "{{ errorText }}"</p>
+      </div>
+      
+      <AlertText 
+        v-if="showAlert"
+        :position="'login'" 
+        :texto="errorText"
+        :type="'error'"
+        @close="closeAlert"
+      />
+      
       <div class="remember-container">
         <label class="remember-label">
           <input type="checkbox" />
@@ -71,19 +117,43 @@ const windowWidth = ref(typeof window !== 'undefined' ? window.innerWidth : 0)
           <span class="remember-text">Lembre de mim</span>
         </label>
       </div>
-
+      
       <div class="form-actions">
         <button>Entrar</button>
       </div>
-
-      <LinkAuth class="recover-password" :route="ROUTES.auth.recover" :text="'Esqueceu a senha?'" />
-      <LinkAuth :route="ROUTES.auth.register" :text="'Não tem uma conta?'" anim="register" />
+      
+      <LinkAuth 
+        class="recover-password" 
+        :route="ROUTES.auth.recover" 
+        :text="'Esqueceu a senha?'" 
+      />
+      <LinkAuth 
+        :route="ROUTES.auth.register" 
+        :text="'Não tem uma conta?'" 
+        anim="register" 
+      />
     </div>
   </form>
 </template>
 
 <style scoped lang="scss">
 @use './assets/auth.scss';
+
+/* Estilos de debug */
+.debug-info {
+  grid-column: 1 / 31;
+  background: #ffeb3b;
+  color: #000;
+  padding: 10px;
+  border-radius: 5px;
+  margin: 10px 0;
+  font-size: 12px;
+  border: 2px solid #ff9800;
+  
+  p {
+    margin: 5px 0;
+  }
+}
 
 .remember-container {
   grid-row: 16 / 19;
