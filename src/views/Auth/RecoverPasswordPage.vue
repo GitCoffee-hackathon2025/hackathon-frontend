@@ -30,7 +30,7 @@ import type { Steps } from '@/store/TypesStore'
 
 // --- Estado reativo local (assegure que os tipos TypesStore concordem)
 const recoverPasswordSteps = reactive<Steps>({
-  current: 2,
+  current: 1,
   qtd: 4,
 })
 

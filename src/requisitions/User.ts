@@ -10,6 +10,32 @@ import type { CreateUserDTO, LoginUser } from '@/store/TypesStore'
 
 export const UserRequisitions = defineStore('User requisitions', () => {
 
+ 
+  async function login(req: LoginUser) {
+    try {
+      const securityClient = new SecurityClient()
+      await securityClient.init()
+
+      const encoded = await securityClient.encode(req, true)
+     
+      const res = await fetch(`${import.meta.env.VITE_REQ}/auth/login`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(encoded),
+      })
+     
+      const json = await res.json()
+      if (!res.ok) {
+        return { success: false, errorText: json.message || json.error }
+      }
+     
+      const data = await securityClient.decode(json)
+      user.emailLogged = data.email
+      user.birthdayLogged = data.birthday
+      user.nameLogged = data.name
+      user.isLogged = true
+
+
     const user = UserStore()
     async function recover(dataError?: { inputErro?: Uppercase<string>[] }) {
       try {
@@ -165,6 +191,7 @@ console.log('AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA');
     }
   }
 }
+
 
 
   async function register(req: CreateUserDTO) {

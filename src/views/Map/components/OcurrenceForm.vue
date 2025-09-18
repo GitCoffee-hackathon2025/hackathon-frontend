@@ -1,11 +1,9 @@
 <script setup lang="ts">
 import { ref, onMounted } from 'vue'
-import { useRouter } from 'vue-router'
 
 import { ocurrenceRequisitions } from '@/requisitions/Ocurrences' // Ajuste o caminho conforme necessário
 
 const emit = defineEmits(['close'])
-const router = useRouter()
 
 
 const ocurrenceReq = ocurrenceRequisitions()
@@ -57,8 +55,8 @@ async function sendOcurrence() {
       // Fechar o formulário após envio bem-sucedido
       setTimeout(() => {
         emit('close')
-        router.push('/')
-      }, 1000)
+        window.location.reload()        
+      }, 1500)
     } else {
       message.value = result.errorText || 'Ocorreu um erro ao enviar.'
     }
@@ -250,6 +248,11 @@ select {
   background: #2c3e50;
   color: white;
   font-size: 1rem;
+
+  white-space: pre-wrap;       /* respeita quebra de linha */
+  overflow-wrap: break-word;   /* quebra palavras muito longas */
+  word-wrap: break-word;       /* fallback */
+
 }
 
 .form-input:focus,
