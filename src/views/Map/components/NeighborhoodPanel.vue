@@ -2,11 +2,19 @@
 import { NeighborhoodStore } from '@/store/NeighborhoodStore'
 import { storeToRefs } from 'pinia'
 
+// Adicione a emissão de evento aqui
+const emit = defineEmits(['view-occurrence-details'])
+
 const neighborhoodStore = NeighborhoodStore()
 const { selectedData, neighborhoodoccurrences, loading } = storeToRefs(neighborhoodStore)
 
 function fechar() {
   neighborhoodStore.clearNeighborhood()
+}
+
+// Nova função para emitir o evento
+function handleOccurrenceClick(occurrenceId: number) {
+  emit('view-occurrence-details', occurrenceId)
 }
 </script>
 
@@ -14,35 +22,22 @@ function fechar() {
   <div v-if="selectedData" class="details-container">
     <div class="details-content">
       <button class="close-button" @click="fechar">×</button>
-      <h2>occurrences do Bairro</h2>
+      <h2>Ocorrências do Bairro</h2>
 
-      <!-- Use campos genéricos ou ajuste conforme sua API -->
-      <p>
-        <strong
-          >Bairro:
-          {{
-            [selectedData.nome, selectedData.name, selectedData.nome_bairr, selectedData.id].find(
-              (neighborhoodName) => neighborhoodName !== '' && neighborhoodName != null,
-            ) ?? 'Bairro não informado'
-          }}
-        </strong>
-      </p>
+      <div v-if="loading" class="loading">Carregando ocorrências...</div>
 
-      <!-- Loading state -->
-      <div v-if="loading" class="loading">Carregando occurrences...</div>
-
-      <!-- Exibir occurrences do bairro -->
       <div v-else class="occurrences-container">
-        <h3>occurrences ({{ neighborhoodoccurrences.length }})</h3>
+        <h3>Ocorrências ({{ neighborhoodoccurrences.length }})</h3>
 
         <div v-if="neighborhoodoccurrences.length">
           <div
             v-for="occurrence in neighborhoodoccurrences"
             :key="occurrence.id"
             class="occurrence-item"
+            @click="handleOccurrenceClick(occurrence.id)"
           >
             <p class="occurrence-user">
-              <strong>Anonimo</strong> —
+              <strong>Anônimo</strong> —
               <span class="occurrence-type">{{ occurrence.type.name }}</span>
             </p>
             <p class="occurrence-content">
@@ -56,13 +51,11 @@ function fechar() {
             </p>
           </div>
         </div>
-
-        <div v-else class="no-data">Nenhum occurrence disponível para este bairro.</div>
+        <div v-else class="no-data">Nenhuma ocorrência disponível para este bairro.</div>
       </div>
     </div>
   </div>
 </template>
-
 <style scoped lang="scss">
 .details-container {
   position: fixed;
@@ -125,38 +118,55 @@ function fechar() {
     margin-top: 10px;
   }
 
-  .occurrence-item {
-    background: rgba(255, 255, 255, 0.05);
-    border-radius: 6px;
-    padding: 10px;
-    margin-bottom: 12px;
+.occurrence-item {
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 6px;
+  padding: 10px;
+  margin-bottom: 12px;
+  cursor: pointer; 
+  transition: background 0.2s ease;
 
-    .occurrence-user {
-      font-size: 0.9rem;
-      margin-bottom: 6px;
-      color: var(--cinza-claro);
-    }
-
-    .occurrence-type {
-      font-style: italic;
-      font-size: 0.85rem;
-      color: #bbb;
-    }
-
-    .occurrence-content {
-      font-size: 0.95rem;
-      line-height: 1.4;
-      color: #f1f1f1;
-      margin-bottom: 8px;
-    }
-
-    .occurrence-coords,
-    .occurrence-date {
-      font-size: 0.8rem;
-      color: #888;
-      margin: 2px 0;
-    }
+  &:hover {
+    background: rgba(255, 255, 255, 0.1);
   }
+
+  .occurrence-user {
+    font-size: 0.9rem;
+    margin-bottom: 6px;
+    color: var(--cinza-claro);
+  }
+
+  .occurrence-type {
+    font-style: italic;
+    font-size: 0.85rem;
+    color: #bbb;
+  }
+
+  .occurrence-content {
+    font-size: 0.95rem;
+    line-height: 1.4;
+    color: #f1f1f1;
+    margin-bottom: 8px;
+
+    display: -webkit-box;
+    -webkit-line-clamp: 3;  
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    text-overflow: ellipsis;
+
+    
+    white-space: pre-wrap;
+    overflow-wrap: break-word;
+    word-wrap: break-word;
+  }
+
+  .occurrence-coords,
+  .occurrence-date {
+    font-size: 0.8rem;
+    color: #888;
+    margin: 2px 0;
+  }
+}
 
   .no-data {
     text-align: center;
@@ -179,14 +189,25 @@ function fechar() {
 
 @media (max-width: 992px) {
   .details-container {
-    top: auto;
-    bottom: 20px;
+    top: 45%; /* centraliza verticalmente */
+    bottom: (auto); /* deixa o bottom livre */
     right: 20px;
-    transform: none;
-    height: auto;
-    max-height: 80vh;
-    width: 90%;
-    max-width: 500px;
+    left: 20px;
+    width: auto;
+    height: 85vh; /* corrigido de hv → vh */
+    animation: slideInMobile 0.3s ease forwards;
+  }
+
+  @keyframes slideInMobile {
+    from {
+      transform: translateY(120%);
+      opacity: 0;
+    }
+    to {
+      transform: translateY(-50%);
+      opacity: 1;
+    }
   }
 }
+
 </style>

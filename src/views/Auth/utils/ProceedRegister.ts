@@ -1,9 +1,10 @@
 // RegisterProgress.ts
 import { computed, type ComputedRef } from 'vue'
+import { UserRequisitions } from '@/requisitions/User'
 import type { Router } from 'vue-router'
 import type { CreateUserDTO, tokenSendOrVerify, Steps, InputsInError } from '@/store/TypesStore'
 import { ROUTES } from '@/router/routes'
-
+const userRequistions = UserRequisitions()
 export interface RegisterProgressDeps {
   router: Router
   userStore: any
@@ -11,6 +12,7 @@ export interface RegisterProgressDeps {
   userReq: any
   animStore: any
 }
+
 
 /**
  * Classe que encapsula a máquina de passos do registro.
@@ -23,6 +25,7 @@ export class RegisterProgress {
   subtitle: ComputedRef<string>
   private deps: RegisterProgressDeps
 
+
   constructor(
     registerSteps: Steps,
     errors: InputsInError,
@@ -34,35 +37,40 @@ export class RegisterProgress {
     this.errorText = errorText
     this.deps = deps
 
-    // computed: só vai atualizar se registerSteps for REATIVO (reactive / store)
+
     this.subtitle = computed(() => {
-      if (this.registerSteps.current == 5) return ''
-      if (this.registerSteps.current == 4) return 'Insira uma senha forte'
-      if (this.registerSteps.current == 3) return 'Preencha todos os campos'
-      if (this.registerSteps.current == 2) return 'Digite o código enviado ao seu email'
-      return 'Insira seu email'
+      switch (this.registerSteps.current) {
+        case 5: return ''
+        case 4: return 'Insira uma senha forte'
+        case 3: return 'Preencha todos os campos'
+        case 2: return 'Digite o código enviado ao seu email'
+        default: return 'Insira seu email'
+      }
     })
   }
 
-  // nextStep agora usa `this.` e tratamento de erros adequado
+
   public nextStep = async (): Promise<void> => {
     const { animStore, tokenReq, userReq, router } = this.deps
     animStore.isLoading = true
 
+
     try {
-      // passo final: redireciona para login
-      if (this.registerSteps.current == 5) {
-        router.push({ name: ROUTES.auth.login }) // ou ROUTES.auth.login se preferir constante
+      // PASSO 5: redireciona para login
+      if (this.registerSteps.current === 5) {
+        router.push({ name: ROUTES.auth.login })
         return
       }
 
-      // passo 4: criar usuário no backend
-      if (this.registerSteps.current == 4) {
+
+      // PASSO 4: criar usuário no backend
+      if (this.registerSteps.current === 4) {
         if (!this.deps.userStore.birthday) {
           this.errorText = 'Data de nascimento obrigatória.'
           this.errors.date = false
           return
         }
+
 
         const req: CreateUserDTO = {
           dateBirth: this.deps.userStore.birthday,
@@ -71,7 +79,9 @@ export class RegisterProgress {
           password: this.deps.userStore.password,
         }
 
-        const res = await userReq.register(req)
+
+        const res = await userRequistions.register(req) || { success: false, errorText: 'Erro inesperado.' }
+
 
         if (res.success) {
           this.errors.date = true
@@ -84,12 +94,12 @@ export class RegisterProgress {
           this.errorText = res.errorText || 'Erro ao registrar usuário.'
           this.errors.digits = !!res.success
         }
-
         return
       }
 
-      // passo 3: validações locais antes de avançar ao passo 4
-      if (this.registerSteps.current == 3) {
+
+      // PASSO 3: validação local antes de avançar
+      if (this.registerSteps.current === 3) {
         if (!this.deps.userStore.birthday) {
           this.errorText = 'Data de nascimento obrigatória.'
           this.errors.date = false
@@ -105,14 +115,18 @@ export class RegisterProgress {
         return
       }
 
-      // passo 2: verificar token enviado por email
-      if (this.registerSteps.current == 2) {
+
+      // PASSO 2: verificar token enviado por email
+      if (this.registerSteps.current === 2) {
         const req: tokenSendOrVerify = {
           email: this.deps.userStore.email,
           type: 'EMAIL_VERIFICATION',
           code: this.deps.userStore.emailToken,
         }
-        const res = await tokenReq.toVerify(req)
+
+
+        const res = await tokenReq.toVerify(req) || { success: false, errorText: 'Erro inesperado.' }
+
 
         if (res.success) {
           this.registerSteps.current = 3
@@ -128,26 +142,34 @@ export class RegisterProgress {
         return
       }
 
-      // passo 1: enviar token para o email
-      const req: tokenSendOrVerify = {
-        email: this.deps.userStore.email,
-        code: this.deps.userStore.emailToken,
-        type: 'EMAIL_VERIFICATION',
+
+      // PASSO 1: enviar apenas o email
+      if (this.registerSteps.current === 1) {
+        const req: Omit<tokenSendOrVerify, 'code'> = {
+          email: this.deps.userStore.email,
+          type: 'EMAIL_VERIFICATION',
+        }
+
+
+        const res = await tokenReq.send(req) || { success: false, errorText: 'Erro inesperado.' }
+
+
+        if (res.success) {
+          this.registerSteps.current = 2
+          this.errorText = ''
+          this.errors.date = true
+          this.errors.digits = true
+          this.errors.email = true
+          this.errors.password = true
+        } else {
+          this.errorText = res.errorText || 'Erro ao enviar código.'
+          this.errors.email = !!res.success
+        }
+        return
       }
-      const res = await tokenReq.send(req)
-      if (res.success) {
-        this.registerSteps.current = 2
-        this.errorText = ''
-        this.errors.date = true
-        this.errors.digits = true
-        this.errors.email = true
-        this.errors.password = true
-      } else {
-        this.errorText = res.errorText || 'Erro ao enviar código.'
-        this.errors.email = !!res.success
-      }
+
+
     } catch (err) {
-      // log e mensagem genérica sem vazar detalhes do erro do backend
       console.error('RegisterProgress.nextStep error:', err)
       this.errorText = 'Erro inesperado. Tente novamente.'
     } finally {
@@ -155,18 +177,13 @@ export class RegisterProgress {
     }
   }
 
+
   public backStep = (): void => {
-    // usar this.registerSteps para consistência
-    if (this.registerSteps.current == 4) {
+    if (this.registerSteps.current === 4) {
       this.errorText = ''
       this.registerSteps.current = 3
       return
-    } else if (this.registerSteps.current == 3) {
-      this.errorText = ''
-      this.registerSteps.current = 1
-
-      return
-    } else if (this.registerSteps.current == 2) {
+    } else if (this.registerSteps.current === 3 || this.registerSteps.current === 2) {
       this.errorText = ''
       this.registerSteps.current = 1
       return
