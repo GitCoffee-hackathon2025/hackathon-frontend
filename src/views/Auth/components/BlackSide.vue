@@ -17,12 +17,10 @@ const props = defineProps({
 })
 
 const componentClass = computed(() => {
-  switch (props.father) {
-    case 'register':
-      return 'animRight'
-    case 'login':
-      return 'animLeft'
-  }
+  console.log(props.father)
+    if (props.father == 'register') return 'animRight'
+    if (props.father == 'login') return 'animLeft'
+
   return ''
 })
 </script>
@@ -31,7 +29,7 @@ const componentClass = computed(() => {
   <div>
     <router-link
       :to="{ name: props.route }"
-      :class="[{ componentClass }, props.father == 'recover' ? 'hide' : 'show']"
+      :class="[ componentClass , props.father == 'recover' ? 'hide' : 'show']"
     >
       <svg
         class="back"
@@ -117,8 +115,11 @@ div {
       }
     }
 
-    &.hide{
+    &.hide {
       display: none;
+    }
+    &.show {
+      display: block;
     }
   }
 

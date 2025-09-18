@@ -33,7 +33,7 @@ import type { Steps } from '@/store/TypesStore'
 
 // --- Estado reativo local (assegure que os tipos TypesStore concordem)
 const registerSteps = reactive<Steps>({
-  current: 4,
+  current: 1,
   qtd: 5,
 })
 
