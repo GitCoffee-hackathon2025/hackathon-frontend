@@ -38,6 +38,9 @@ const selectedOccurrenceId = ref<number | null>(null)
 
 const occurrenceMarkers = ref<L.Marker[]>([])
 
+// Variável para controlar a interatividade do mapa
+const isMapInteractive = ref(true)
+
 const shouldShowReportButton = computed(() => {
   return !route.path.includes('report-occurrence') &&
     !showFormSidebar.value &&
@@ -99,13 +102,27 @@ const getOccurrenceTypeName = (typeId: number): string => {
   return type ? type.name : 'Desconhecido'
 }
 
+// Função modificada para permitir interação com outros marcadores
 const openOccurrenceDetails = (occurrenceId: number) => {
-  selectedOccurrenceId.value = occurrenceId
-  showOccurrenceDetails.value = true
+  selectedOccurrenceId.value = occurrenceId;
+  showOccurrenceDetails.value = true;
+  
+  // Mantenha o mapa interativo mesmo com o painel aberto
+  if (map) {
+    map.getContainer().style.cursor = '';
+    map.dragging.enable();
+    map.touchZoom.enable();
+    map.doubleClickZoom.enable();
+    map.scrollWheelZoom.enable();
+    map.boxZoom.enable();
+    map.keyboard.enable();
+    isMapInteractive.value = true;
+  }
   
   // Opcional: Fechar o painel do bairro quando o detalhe é aberto
-  neighborhoodStore.clearNeighborhood()
-}
+  neighborhoodStore.clearNeighborhood();
+};
+
 
 const loadOccurrencesOnMap = async () => {
   if (!map) return
@@ -172,12 +189,12 @@ const enableLocationSelection = () => {
   map.eachLayer((layer) => {
     if (layer instanceof L.GeoJSON) {
       layer.on('mouseover', () => {
-        if (clickHandler && !showFormSidebar.value && !showOccurrenceDetails.value) {
+        if (clickHandler && !showFormSidebar.value) {
           map!.getContainer().style.cursor = 'crosshair'
         }
       })
       layer.on('mouseout', () => {
-        if (clickHandler && !showFormSidebar.value && !showOccurrenceDetails.value) {
+        if (clickHandler && !showFormSidebar.value) {
           map!.getContainer().style.cursor = 'default'
         }
       })
@@ -185,7 +202,7 @@ const enableLocationSelection = () => {
   })
 
   clickHandler = async (e: L.LeafletMouseEvent) => {
-    if (showFormSidebar.value || showOccurrenceDetails.value) return
+    if (showFormSidebar.value) return
 
     const { lat, lng } = e.latlng
     const neighborhoodName = await findNeighborhoodByCoordinates(lat, lng)
@@ -252,6 +269,7 @@ const continueToForm = () => {
     map.scrollWheelZoom.disable()
     map.boxZoom.disable()
     map.keyboard.disable()
+    isMapInteractive.value = false
   }
 }
 
@@ -273,6 +291,7 @@ const closeForm = () => {
     map.scrollWheelZoom.enable()
     map.boxZoom.enable()
     map.keyboard.enable()
+    isMapInteractive.value = true
   }
   
   if (selectionMarker) {
@@ -360,7 +379,7 @@ onMounted(() => {
         },
         onEachFeature: (feature, layer) => {
           layer.on('mouseover', function () {
-            if (clickHandler && !showFormSidebar.value && !showOccurrenceDetails.value) {
+            if (clickHandler && !showFormSidebar.value) {
               map!.getContainer().style.cursor = 'crosshair'
             }
             this.setStyle({
@@ -371,7 +390,7 @@ onMounted(() => {
           })
 
           layer.on('mouseout', function () {
-            if (clickHandler && !showFormSidebar.value && !showOccurrenceDetails.value) {
+            if (clickHandler && !showFormSidebar.value) {
               map!.getContainer().style.cursor = 'default'
             }
             this.setStyle({
@@ -383,7 +402,7 @@ onMounted(() => {
           })
 
           layer.on('click', async (e) => {
-            if (clickHandler || showFormSidebar.value || showOccurrenceDetails.value) return
+            if (clickHandler || showFormSidebar.value) return
 
             map?.flyToBounds(e.target.getBounds(), {
               padding: [50, 50],
@@ -456,6 +475,7 @@ onUnmounted(() => {
     <OccurrenceDetails
       v-if="showOccurrenceDetails"
       :occurrenceId="selectedOccurrenceId"
+      :key="selectedOccurrenceId"
       @close="closeOccurrenceDetails"
       @focusLocation="focusOnLocation"
     />

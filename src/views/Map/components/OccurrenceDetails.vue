@@ -23,7 +23,7 @@
         </div>
 
         <div class="info-item" v-if="occurrence.created_at">
-          <h3>Data e Hora</h3>
+          <h3>Data</h3>
           <p>{{ formatDate(occurrence.created_at) }}</p>
         </div>
 
@@ -83,7 +83,11 @@ const getTypeColor = (typeId: number): string => {
 
 const formatDate = (dateString: string): string => {
   const date = new Date(dateString);
-  return date.toLocaleString('pt-BR');
+  return date.toLocaleDateString('pt-BR', {
+    day: '2-digit',
+    month: 'long',
+    year: 'numeric',
+  });
 };
 
 const formatCoordinates = (coordsString: string): string => {
@@ -235,6 +239,10 @@ onMounted(() => {
   font-size: 0.95rem;
   line-height: 1.4;
   color: #f1f1f1;
+
+  white-space: pre-wrap;  /* respeita quebras de linha do texto */
+  word-wrap: break-word;  /* quebra palavras muito grandes */
+  overflow-wrap: break-word
 }
 
 .view-location-btn {

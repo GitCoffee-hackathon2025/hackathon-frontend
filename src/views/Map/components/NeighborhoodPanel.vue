@@ -118,38 +118,55 @@ function handleOccurrenceClick(occurrenceId: number) {
     margin-top: 10px;
   }
 
-  .occurrence-item {
-    background: rgba(255, 255, 255, 0.05);
-    border-radius: 6px;
-    padding: 10px;
-    margin-bottom: 12px;
+.occurrence-item {
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 6px;
+  padding: 10px;
+  margin-bottom: 12px;
+  cursor: pointer; 
+  transition: background 0.2s ease;
 
-    .occurrence-user {
-      font-size: 0.9rem;
-      margin-bottom: 6px;
-      color: var(--cinza-claro);
-    }
-
-    .occurrence-type {
-      font-style: italic;
-      font-size: 0.85rem;
-      color: #bbb;
-    }
-
-    .occurrence-content {
-      font-size: 0.95rem;
-      line-height: 1.4;
-      color: #f1f1f1;
-      margin-bottom: 8px;
-    }
-
-    .occurrence-coords,
-    .occurrence-date {
-      font-size: 0.8rem;
-      color: #888;
-      margin: 2px 0;
-    }
+  &:hover {
+    background: rgba(255, 255, 255, 0.1);
   }
+
+  .occurrence-user {
+    font-size: 0.9rem;
+    margin-bottom: 6px;
+    color: var(--cinza-claro);
+  }
+
+  .occurrence-type {
+    font-style: italic;
+    font-size: 0.85rem;
+    color: #bbb;
+  }
+
+  .occurrence-content {
+    font-size: 0.95rem;
+    line-height: 1.4;
+    color: #f1f1f1;
+    margin-bottom: 8px;
+
+    display: -webkit-box;
+    -webkit-line-clamp: 3;  
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    text-overflow: ellipsis;
+
+    
+    white-space: pre-wrap;
+    overflow-wrap: break-word;
+    word-wrap: break-word;
+  }
+
+  .occurrence-coords,
+  .occurrence-date {
+    font-size: 0.8rem;
+    color: #888;
+    margin: 2px 0;
+  }
+}
 
   .no-data {
     text-align: center;
