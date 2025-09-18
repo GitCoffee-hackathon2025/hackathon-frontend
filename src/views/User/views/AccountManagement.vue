@@ -119,8 +119,6 @@ function cancelarEditacao(refKey: string) {
 </template>
 
 <style scoped lang="scss">
-@use '@/assets/input.scss';
-
 div.account {
   width: 100%;
   display: flex;
@@ -175,7 +173,7 @@ div.account {
               background-color: var(--color-red);
             }
             &:last-child {
-              background-color: var(--color-red);
+              background-color: var(--color-green);
             }
           }
         }
@@ -201,7 +199,7 @@ div.account {
 
           input,
           select {
-            color: var(--branco);
+            color: var(--color-white);
             box-sizing: border-box;
             background-color: var(--color-input);
 
@@ -233,6 +231,10 @@ div.account {
   div.actions {
     div {
       div.item {
+        display: flex;
+        flex-direction: column;
+        align-items: flex-end;
+        justify-content: space-between;
         &:first-child {
           div.field {
             input {
@@ -250,6 +252,37 @@ div.account {
         div.field {
           input {
             padding-right: 0;
+          }
+        }
+      }
+    }
+  }
+}
+
+@media (min-width: 992px) {
+  div.account {
+    div {
+      div.items {
+        width: auto;
+        display: flex;
+        flex-direction: column;
+        align-items: flex-start;
+        justify-content: flex-start;
+
+        div.item {
+          display: flex;
+          flex-direction: column;
+          align-items: left;
+          justify-content: left;
+          .field {
+            max-width: 300px;
+            svg {
+              &.show {
+              }
+              input,
+              select {
+              }
+            }
           }
         }
       }

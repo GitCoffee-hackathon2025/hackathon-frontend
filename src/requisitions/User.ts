@@ -14,6 +14,7 @@ export const UserRequisitions = defineStore('User requisitions', () => {
     try {
       const securityClient = new SecurityClient()
       await securityClient.init()
+
       const encoded = await securityClient.encode(req, true)
      
       const res = await fetch(`${import.meta.env.VITE_REQ}/auth/login`, {
@@ -40,6 +41,7 @@ export const UserRequisitions = defineStore('User requisitions', () => {
       return { success: false, errorText: 'Erro de conexão. Tente novamente.' }
     }
   }
+
 
 
   async function register(req: CreateUserDTO) {

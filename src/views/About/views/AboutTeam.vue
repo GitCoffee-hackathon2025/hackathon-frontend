@@ -3,29 +3,34 @@ interface Member {
   name: string
   github: string
   avatar: string
+  arroba: string
 }
 
 const members: Member[] = [
   {
-    name: 'João Silva',
-    github: 'https://github.com/octocat',
-    avatar: 'https://github.com/octocat.png'
+    name: 'Ian Matheus Veiga',
+    github: 'https://github.com/IanMV',
+    avatar: 'https://avatars.githubusercontent.com/u/162042603?v=4',
+    arroba: 'IanMV ',
   },
   {
-    name: 'Maria Souza',
-    github: 'https://github.com/torvalds',
-    avatar: 'https://github.com/torvalds.png'
+    name: 'Murilo Jamoski Luciane',
+    github: 'https://github.com/Murilojamoski',
+    avatar: 'https://avatars.githubusercontent.com/u/163297433?v=4',
+    arroba: 'Murilojamoski',
   },
   {
-    name: 'Carlos Lima',
-    github: 'https://github.com/gaearon',
-    avatar: 'https://github.com/gaearon.png'
+    name: 'Erick Pedrini de Borba',
+    github: 'https://github.com/Erick-Henrique-Pedrini',
+    avatar: 'https://avatars.githubusercontent.com/u/163296559?v=4',
+    arroba: 'Erick-Henrique-Pedrini ',
   },
   {
-    name: 'Ana Pereira',
-    github: 'https://github.com/sindresorhus',
-    avatar: 'https://github.com/sindresorhus.png'
-  }
+    name: 'William Chormiak',
+    github: 'https://github.com/Chormiak',
+    avatar: 'https://avatars.githubusercontent.com/u/180117840?v=4',
+    arroba: 'Chormiak',
+  },
 ]
 </script>
 
@@ -33,73 +38,109 @@ const members: Member[] = [
   <div class="team">
     <ul>
       <li v-for="(member, index) in members" :key="index">
-        <a :href="member.github" target="_blank" rel="noopener noreferrer">
-          <img :src="member.avatar" :alt="`Foto de ${member.name}`" />
-          <span>{{ member.name }}</span>
-        </a>
+        <img :src="member.avatar" :alt="`Foto de ${member.name}`" />
+        <span>{{ member.name }}</span>
+        <a :href="member.github" target="_blank" rel="noopener noreferrer"
+          ><svg
+            xmlns="http://www.w3.org/2000/svg"
+            width="36"
+            height="35"
+            viewBox="0 0 36 35"
+            fill="none"
+          >
+            <path
+              d="M18 0C15.6362 0 13.2956 0.463889 11.1117 1.36518C8.92784 2.26647 6.94353 3.58752 5.27208 5.25288C1.89642 8.61625 0 13.178 0 17.9345C0 25.8615 5.166 32.5869 12.312 34.9722C13.212 35.1157 13.5 34.5597 13.5 34.0755V31.0446C8.514 32.1206 7.452 28.6413 7.452 28.6413C6.624 26.561 5.454 26.005 5.454 26.005C3.816 24.893 5.58 24.9289 5.58 24.9289C7.38 25.0545 8.334 26.7762 8.334 26.7762C9.9 29.5022 12.546 28.6952 13.572 28.2647C13.734 27.099 14.202 26.3099 14.706 25.8615C10.71 25.4131 6.516 23.8708 6.516 17.0377C6.516 15.047 7.2 13.4509 8.37 12.1775C8.19 11.7291 7.56 9.86396 8.55 7.44281C8.55 7.44281 10.062 6.95857 13.5 9.27212C14.922 8.87756 16.47 8.68028 18 8.68028C19.53 8.68028 21.078 8.87756 22.5 9.27212C25.938 6.95857 27.45 7.44281 27.45 7.44281C28.44 9.86396 27.81 11.7291 27.63 12.1775C28.8 13.4509 29.484 15.047 29.484 17.0377C29.484 23.8887 25.272 25.3952 21.258 25.8436C21.906 26.3995 22.5 27.4935 22.5 29.1615V34.0755C22.5 34.5597 22.788 35.1336 23.706 34.9722C30.852 32.569 36 25.8615 36 17.9345C36 15.5793 35.5344 13.2472 34.6298 11.0712C33.7252 8.89534 32.3994 6.91825 30.7279 5.25288C29.0565 3.58752 27.0722 2.26647 24.8883 1.36518C22.7044 0.463889 20.3638 0 18 0Z"
+              fill="currentColor"
+            />
+          </svg>
+          @{{ member.arroba }}</a
+        >
       </li>
     </ul>
   </div>
 </template>
 
 <style scoped lang="scss">
-@use '@/assets/color.scss';
-@use '@/assets/input.scss';
-
 .team {
   width: 100%;
-  padding: 1rem;
+  overflow: auto; /* ou overflow: scroll; */
+    -ms-overflow-style: none; /* IE 10+ e Edge Legacy */
+    scrollbar-width: none; /* Firefox */
 
-  ul {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 1rem;
-    justify-items: center;
+  /* WebKit (Chrome, Safari, Opera) */
+  &::-webkit-scrollbar {
+    display: none;
   }
 
-  li {
+  ul {
     width: 100%;
-    max-width: 200px;
-    background-color: var(--color-gray-dark);
-    box-shadow: var(--shadow-default);
-    border-radius: 0.5rem;
-    overflow: hidden;
-    text-align: center;
-    transition: transform 0.2s ease;
+    display: flex;
+    flex-direction: column;
+    gap: 40px;
+    justify-items: center;
+    align-items: center;
 
-    &:hover {
-      transform: translateY(-3px);
-    }
-
-    a {
+    li {
+      width: 100%;
+      border-radius: 0.5rem;
       display: flex;
-      flex-direction: column;
       align-items: center;
-      padding: 1rem;
-      gap: 0.5rem;
-      text-decoration: none;
-      color: var(--color-white);
+      justify-content: center;
+      flex-direction: column;
+      gap: 20px;
 
+      a {
+        display: flex;
+        align-items: center;
+        text-decoration: none;
+        color: var(--color-white);
+        gap: 10px;
+        font-size: var(--text-md);
+
+        svg {
+          color: var(--color-white);
+        }
+      }
       img {
-        width: 80px;
-        height: 80px;
+        width: 60%;
         border-radius: 50%;
-        object-fit: cover;
-        box-shadow: var(--shadow-default);
       }
 
       span {
-        font-size: var(--text-sm);
-        font-weight: bold;
+        font-size: var(--text-md);
       }
     }
   }
 }
 
 /* Desktop (>=768px) */
-@media (min-width: 768px) {
-  .team ul {
-    grid-template-columns: repeat(4, 1fr);
+@media (min-width: 576px) {
+  .team {
+    ul {
+      li {
+        img {
+          width: 45%;
+          border-radius: 50%;
+        }
+      }
+    }
+  }
+}
+
+@media (min-width: 992px) {
+  .team {
+    height: calc(100% - calc(var(--component-height) - 20px) * 2);
+    ul {
+      flex-direction: row;
+      height: 100%;
+
+      li {
+        img {
+          width: 150px;
+          border-radius: 50%;
+        }
+      }
+    }
   }
 }
 </style>

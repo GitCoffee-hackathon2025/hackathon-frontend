@@ -252,15 +252,7 @@ const rediretLogin = computed(() => {
         </div>
       </Transition>
       <div class="scroll" ref="scrollRef" @scroll="updateScroll">
-        <div class="limit top" v-if="!rediretLogin">
-          <Transition name="slide-top" appear>
-            <div v-if="topLimitVisible" class="slide-top">
-              <svg xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid meet">
-                <path fill="currentColor" d="" />
-              </svg>
-            </div>
-          </Transition>
-        </div>
+        <div class="limit top" v-if="!rediretLogin"></div>
         <router-view v-if="!rediretLogin"></router-view>
         <div class="redirect" v-else>
           <router-link :to="{ name: 'auth.login' }">Entre com uma conta.</router-link>
@@ -280,8 +272,9 @@ const rediretLogin = computed(() => {
             </svg>
           </div>
         </div>
+        <div class="limit bottom" v-if="!rediretLogin"></div>
       </div>
-      <Transition name="slide-down" v-if="!rediretLogin" appear>
+      <Transition name="slide-down" v-if="!rediretLogin && screenWidth < 992" appear>
         <div v-if="bottomLimitVisible" class="slide-down">
           <svg
             xmlns="http://www.w3.org/2000/svg"
