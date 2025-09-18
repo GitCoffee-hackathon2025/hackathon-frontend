@@ -2,11 +2,19 @@
 import { NeighborhoodStore } from '@/store/NeighborhoodStore'
 import { storeToRefs } from 'pinia'
 
+// Adicione a emissão de evento aqui
+const emit = defineEmits(['view-occurrence-details'])
+
 const neighborhoodStore = NeighborhoodStore()
 const { selectedData, neighborhoodoccurrences, loading } = storeToRefs(neighborhoodStore)
 
 function fechar() {
   neighborhoodStore.clearNeighborhood()
+}
+
+// Nova função para emitir o evento
+function handleOccurrenceClick(occurrenceId: number) {
+  emit('view-occurrence-details', occurrenceId)
 }
 </script>
 
@@ -14,35 +22,22 @@ function fechar() {
   <div v-if="selectedData" class="details-container">
     <div class="details-content">
       <button class="close-button" @click="fechar">×</button>
-      <h2>occurrences do Bairro</h2>
+      <h2>Ocorrências do Bairro</h2>
 
-      <!-- Use campos genéricos ou ajuste conforme sua API -->
-      <p>
-        <strong
-          >Bairro:
-          {{
-            [selectedData.nome, selectedData.name, selectedData.nome_bairr, selectedData.id].find(
-              (neighborhoodName) => neighborhoodName !== '' && neighborhoodName != null,
-            ) ?? 'Bairro não informado'
-          }}
-        </strong>
-      </p>
+      <div v-if="loading" class="loading">Carregando ocorrências...</div>
 
-      <!-- Loading state -->
-      <div v-if="loading" class="loading">Carregando occurrences...</div>
-
-      <!-- Exibir occurrences do bairro -->
       <div v-else class="occurrences-container">
-        <h3>occurrences ({{ neighborhoodoccurrences.length }})</h3>
+        <h3>Ocorrências ({{ neighborhoodoccurrences.length }})</h3>
 
         <div v-if="neighborhoodoccurrences.length">
           <div
             v-for="occurrence in neighborhoodoccurrences"
             :key="occurrence.id"
             class="occurrence-item"
+            @click="handleOccurrenceClick(occurrence.id)"
           >
             <p class="occurrence-user">
-              <strong>Anonimo</strong> —
+              <strong>Anônimo</strong> —
               <span class="occurrence-type">{{ occurrence.type.name }}</span>
             </p>
             <p class="occurrence-content">
@@ -56,13 +51,11 @@ function fechar() {
             </p>
           </div>
         </div>
-
-        <div v-else class="no-data">Nenhum occurrence disponível para este bairro.</div>
+        <div v-else class="no-data">Nenhuma ocorrência disponível para este bairro.</div>
       </div>
     </div>
   </div>
 </template>
-
 <style scoped lang="scss">
 .details-container {
   position: fixed;

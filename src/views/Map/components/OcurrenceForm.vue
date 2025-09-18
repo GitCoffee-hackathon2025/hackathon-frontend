@@ -57,8 +57,8 @@ async function sendOcurrence() {
       // Fechar o formulário após envio bem-sucedido
       setTimeout(() => {
         emit('close')
-        router.push('/')
-      }, 1000)
+        window.location.reload()        
+      }, 1500)
     } else {
       message.value = result.errorText || 'Ocorreu um erro ao enviar.'
     }
