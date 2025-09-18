@@ -223,7 +223,7 @@ const routes = [
     children: [
       {
         path: 'team',
-        component: () => import('@/views/Config/views/ThemeConfig.vue'),
+        component: () => import('@/views/About/views/AboutTeam.vue'),
         meta: {
           titulo: 'Equipe',
           icon: `  <svg
@@ -237,7 +237,7 @@ const routes = [
       },
       {
         path: 'project',
-        component: () => import('@/views/Config/views/AccessibilityConfigs.vue'),
+        component: () => import('@/views/About/views/AboutProject.vue'),
         meta: {
           titulo: 'Projeto',
           icon: `  <svg

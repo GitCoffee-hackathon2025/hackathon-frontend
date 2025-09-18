@@ -11,7 +11,7 @@ export const UserRequisitions = defineStore('User requisitions', () => {
     try {
       const securityClient = new SecurityClient()
       await securityClient.init()
-      const res = await fetch(`${import.meta.env.VITE_REQ}/auth/login`, {
+      const res = await fetch(`${import.meta.env.VITE_REQ}/auth/register`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -49,11 +49,9 @@ export const UserRequisitions = defineStore('User requisitions', () => {
     }
   }
 
-  async function register(req: {
-    params: UpdateUserParams
-    body: { user: UpdateUserBody; type: UpdateType }
-  }) {
+  async function register(req) {
     try {
+
     } catch (err) {}
   }
 
