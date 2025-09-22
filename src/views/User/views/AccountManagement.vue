@@ -1,12 +1,15 @@
 <script setup lang="ts">
 import { nextTick, onMounted, ref } from 'vue'
 import { perfil, info, actions } from '@/views/User/assets/ItemAccountManagement'
-
+import { UserRequisitions } from '@/requisitions/User'
+import { UserStore } from '@/store/UserStore'
+const userReq = UserRequisitions()
+const userStore = UserStore()
 //Calcular o viewbox de cada svg
 onMounted(async () => {
   await nextTick()
   const svgs = document.querySelectorAll('svg')
-
+  await userReq.recover()
   window.addEventListener('resize', () => viewBoxSvg(svgs))
 
   viewBoxSvg(svgs)

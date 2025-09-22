@@ -1,1 +1,1 @@
-<template><div>Histórico</div></template>
+<template><div>Histórico </div></template>
