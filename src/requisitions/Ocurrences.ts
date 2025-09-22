@@ -210,6 +210,23 @@ import { UserRequisitions } from './User'
       occurrenceCoordinates.value = null
       occurrenceNeighborhood.value = null
     }
+const getOccurrences = async (id_user : number) => {
+  try {
+    const res = await fetch(`http://localhost:3000/occurrences?id_user=${id_user}`, {
+      method: 'GET',
+    });
+
+    if (!res.ok) {
+      throw new Error(`Erro na requisição: ${res.status}`);
+    }
+
+    const data = await res.json();
+    return data;
+  } catch (error) {
+    console.error("Erro ao buscar ocorrências:", error);
+    return null;
+  }
+};
 
     return {
       occurrenceContent,

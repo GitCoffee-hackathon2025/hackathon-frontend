@@ -1,4 +1,5 @@
 import { SecurityClient } from './../security/cryptoEngine/SecurityClient';
+import { jwtDecode, type JwtPayload } from 'jwt-decode';
 // store/UserRequisitions.ts
 import { defineStore } from 'pinia'
 import { UserStore } from '@/store/UserStore'
@@ -11,41 +12,45 @@ import type { CreateUserDTO, LoginUser } from '@/store/TypesStore'
 export const UserRequisitions = defineStore('User requisitions', () => {
 
 
-    async function recover(dataError?: { inputErro?: Uppercase<string>[] }) {
-      try {
-        // AuthClient.deleteRefreshTokenCookie();
-        if (dataError?.inputErro &&  !dataError?.inputErro?.includes('TOKEN')) throw new Error();
-        const securityClient = new SecurityClient();
-        await securityClient.init();
-        const token = await AuthClient.getRefreshTokenCookie();
+      async function recover(dataError?: { inputErro?: Uppercase<string>[] }) {
+        try {
+          // AuthClient.deleteRefreshTokenCookie();
+          if (dataError?.inputErro &&  !dataError?.inputErro?.includes('TOKEN')) throw new Error();
+          const securityClient = new SecurityClient();
+          await securityClient.init();
+          const token = await AuthClient.getRefreshTokenCookie();
 
-        const res = await fetch(`http://localhost:3000/auth/tokens`, {
-          method: 'PUT',
-          headers: {
-            'Content-Type': 'application/json',
-            'Authorization': `Bearer ${token}`
-          },
-          body: JSON.stringify(await securityClient.encode({}, true)),
-        });
+          const res = await fetch(`http://localhost:3000/auth/tokens`, {
+            method: 'PUT',
+            headers: {
+              'Content-Type': 'application/json',
+              'Authorization': `Bearer ${token}`
+            },
+            body: JSON.stringify(await securityClient.encode({}, true)),
+          });
 
 
-        const json = await res.json();
-        console.log('Resposta do servidor:', json);
-        if (!res.ok) return false;
+          const json = await res.json();
+          console.log('Resposta do servidor:', json);
+          if (!res.ok) return false;
 
-        const { tokens } = json as { tokens: { refresh: string, access: string } };
+          const { tokens } = json as { tokens: { refresh: string, access: string } };
+          const payload = jwtDecode<{ id: number }>(tokens.access);
+          const idUser = payload.id;
+          const user_store = UserStore()
+          user_store.idUser = idUser
+    console.log('ID do usuário:', idUser);
+          console.log('Refresh', tokens.refresh)
+          console.log('Access', tokens.access)
 
-        console.log('Refresh', tokens.refresh)
-        console.log('Access', tokens.access)
-
-        AuthClient.deleteRefreshTokenCookie();
-        await AuthClient.setAccessToken(tokens.access);
-        await AuthClient.setRefreshTokenCookie(tokens.refresh);
-        return true;
-      } catch (error) {
-        return false;
+          AuthClient.deleteRefreshTokenCookie();
+          await AuthClient.setAccessToken(tokens.access);
+          await AuthClient.setRefreshTokenCookie(tokens.refresh);
+          return true;
+        } catch (error) {
+          return false;
+        }
       }
-    }
 
     async function login(req: LoginUser) {
   try {
