@@ -42,7 +42,6 @@ export const TokenRequisitions = defineStore('Token requisitions', () => {
     }
   }
 
-
   async function toVerify(req: tokenSendOrVerify) {
     try {
       const securityClient = new SecurityClient()
