@@ -13,6 +13,9 @@ import concatArrayBuffer from '../utils/concatArrayBuffer';
 import KeysClient from './KeysClient';
 
 class CryptoClient {
+  // Armazenando ID do browser para maior performance e durabilidade durante o uso
+  private static browserId: { number: number; string: string; };
+
   public static async encodeData(
     data: Record<string, any>,
     { aes, rsa }: { aes: ArrayBuffer; rsa: JsonWebKey },
@@ -20,6 +23,9 @@ class CryptoClient {
   ): Promise<Omit<RequestBody, 'header'>> {
     // criando vetor de inicialização para ser usado na encriptação
     const iv = crypto.getRandomValues(new Uint8Array(12));
+
+    // Verificando se já obteve o ID do browser
+    if (!this.browserId) this.browserId = await browserFingerprint();
 
     const { ciphertext, tag } = await crypto.subtle
       .encrypt(
@@ -30,7 +36,7 @@ class CryptoClient {
             data,
             browser: auth
               ? {
-                  auth: await browserFingerprint(),
+                  auth: this.browserId,
                   connect: KeysClient.connected,
                 }
               : null,
