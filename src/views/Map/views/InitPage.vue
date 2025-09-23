@@ -101,10 +101,6 @@ const createOccurrenceIcon = (occurrenceTypeId: number) => {
   })
 }
 
-const getOccurrenceTypeName = (typeId: number): string => {
-  const type = OCCURRENCE_TYPES.find(t => t.id === typeId)
-  return type ? type.name : 'Desconhecido'
-}
 
 // Função modificada para permitir interação com outros marcadores
 const openOccurrenceDetails = (occurrenceId: number) => {
