@@ -7,7 +7,7 @@ export const UserStore = defineStore('User data', () => {
   const email = ref<string>('')
   const password = ref<string>('')
   const birthday = ref<Date | null>(null)
-
+  const idUser = ref<number>();
   // Estado de autenticação
   const emailToken = ref<number>()
   const isAuthenticated = ref<boolean>(false)
@@ -55,7 +55,8 @@ export const UserStore = defineStore('User data', () => {
     email,
     password,
     birthday,
-
+    idUser,
+    
     //Informações logado
     nameLogged,
     emailLogged,

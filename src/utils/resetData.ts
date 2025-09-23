@@ -5,7 +5,7 @@ const user = UserStore()
 export default {
   setup() {
     onUnmounted(() => {
-      user.clearUserData()
+      
     })
   },
 }

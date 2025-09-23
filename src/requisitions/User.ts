@@ -1,4 +1,5 @@
 import { SecurityClient } from './../security/cryptoEngine/SecurityClient';
+import { jwtDecode, type JwtPayload } from 'jwt-decode';
 // store/UserRequisitions.ts
 import { defineStore } from 'pinia'
 import { UserStore } from '@/store/UserStore'
@@ -7,45 +8,75 @@ import type { CreateUserDTO, LoginUser } from '@/store/TypesStore'
 
 
 
+export interface UserData {
+  id: number;
+  email: string;
+  name: string;
+  dateBirth?: string; // ajuste conforme retornado pelo backend
+}
+
+export interface RecoverResponse {
+  success: boolean;
+  tokens: {
+    refresh: string;
+    access: string;
+  };
+  user: UserData;
+}
 
 export const UserRequisitions = defineStore('User requisitions', () => {
 
-
-    async function recover(dataError?: { inputErro?: Uppercase<string>[] }) {
-      try {
-        // AuthClient.deleteRefreshTokenCookie();
-        if (dataError?.inputErro &&  !dataError?.inputErro?.includes('TOKEN')) throw new Error();
-        const securityClient = new SecurityClient();
-        await securityClient.init();
-        const token = await AuthClient.getRefreshTokenCookie();
-
-        const res = await fetch(`http://localhost:3000/auth/tokens`, {
-          method: 'PUT',
-          headers: {
-            'Content-Type': 'application/json',
-            'Authorization': `Bearer ${token}`
-          },
-          body: JSON.stringify(await securityClient.encode({}, true)),
-        });
-
-
-        const json = await res.json();
-        console.log('Resposta do servidor:', json);
-        if (!res.ok) return false;
-
-        const { tokens } = json as { tokens: { refresh: string, access: string } };
-
-        console.log('Refresh', tokens.refresh)
-        console.log('Access', tokens.access)
-
-        AuthClient.deleteRefreshTokenCookie();
-        await AuthClient.setAccessToken(tokens.access);
-        await AuthClient.setRefreshTokenCookie(tokens.refresh);
-        return true;
-      } catch (error) {
-        return false;
-      }
+  async function recover(dataError?: { inputErro?: Uppercase<string>[] }): Promise<boolean> {
+  try {
+    // AuthClient.deleteRefreshTokenCookie();
+    if (dataError?.inputErro && !dataError?.inputErro?.includes('TOKEN')) {
+      throw new Error('Input error not related to token');
     }
+    
+    const securityClient = new SecurityClient();
+    await securityClient.init();
+    const token = await AuthClient.getRefreshTokenCookie();
+
+    const res = await fetch(`http://localhost:3000/auth/tokens`, {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${token}`
+      },
+      body: JSON.stringify(await securityClient.encode({}, true)),
+    });
+
+    const json = await res.json();
+    console.log('Resposta do servidor:', json);
+    
+    if (!res.ok) return false;
+
+    const { tokens, user } = json as RecoverResponse;
+    
+    // Usar os dados do usuário que vieram diretamente do backend
+    const user_store = UserStore();
+    user_store.idUser = user.id;
+    user_store.name = user.name;
+    user_store.email = user.email// Armazenar todos os dados do usuário
+    user_store.birthday = user.dateBirth ? new Date(user.dateBirth) : null;
+    user_store.isLogged = true
+    console.log('ID do usuário:', user.id);
+    console.log('Dados completos do usuário:', user);
+    console.log('Id do user na store', user_store.idUser);
+    console.log('Refresh token:', tokens.refresh);
+    console.log('Access token:', tokens.access);
+    console.log(user_store.name, "Esse é o nome da lenda")
+    // Limpar e atualizar tokens
+    AuthClient.deleteRefreshTokenCookie();
+    await AuthClient.setAccessToken(tokens.access);
+    await AuthClient.setRefreshTokenCookie(tokens.refresh);
+    
+    return true;
+  } catch (error) {
+    console.error('Erro no recover:', error);
+    return false;
+  }
+}
 
     async function login(req: LoginUser) {
   try {

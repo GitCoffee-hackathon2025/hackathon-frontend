@@ -1,9 +1,13 @@
 <script setup lang="ts">
 import PanelView from '@/components/PanelView.vue'
-
+import {UserRequisitions} from '@/requisitions/User'
+const userReq = UserRequisitions()
 import type { Option } from '@/store/TypesStore'
-
+onMounted(async ()=> {
+  await userReq.recover()
+})
 import { ROUTES } from '@/router/routes'
+import { onMounted } from 'vue'
 
 const panelViewItems: Option[] = [
   {
