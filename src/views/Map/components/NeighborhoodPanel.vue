@@ -66,12 +66,12 @@ function handleOccurrenceClick(occurrenceId: number) {
   top: 50%;
   right: 30px;
   transform: translateY(-50%);
-  width: 340px;
-  max-width: 90vw;
+  width: 420px; // <-- aumentei a largura
+  max-width: 95vw; // pra não ultrapassar a viewport
   height: 90vh;
   background: var(--color-gray-dark);
-  border-radius: 8px;
-  box-shadow: 0 0 7px rgba(255, 255, 255, 0.2);
+  border-radius: 10px;
+  box-shadow: 0 0 10px rgba(255, 255, 255, 0.2);
   z-index: 1000;
   display: flex;
   flex-direction: column;
@@ -79,7 +79,7 @@ function handleOccurrenceClick(occurrenceId: number) {
 
   .details-content {
     flex: 1;
-    padding: 16px;
+    padding: 20px; // mais espaço interno
     position: relative;
     color: var(--color-white);
     overflow-y: scroll;
@@ -94,11 +94,11 @@ function handleOccurrenceClick(occurrenceId: number) {
 
   .close-button {
     position: absolute;
-    top: 8px;
-    right: 8px;
+    top: 10px;
+    right: 10px;
     background: none;
     border: none;
-    font-size: 1.4rem;
+    font-size: 1.6rem; // botão maior
     cursor: pointer;
     color: var(--color-white);
 
@@ -108,15 +108,15 @@ function handleOccurrenceClick(occurrenceId: number) {
   }
 
   h2 {
-    margin: 0 0 8px 0;
-    font-size: 1.3rem;
+    margin: 0 0 12px 0;
+    font-size: 1.5rem; // título mais destacado
   }
 
   h3 {
-    font-size: 1.1rem;
-    margin: 12px 0;
+    font-size: 1.2rem;
+    margin: 16px 0;
     border-bottom: 1px solid var(--color-gray-light);
-    padding-bottom: 4px;
+    padding-bottom: 6px;
   }
 
   .loading {
@@ -126,14 +126,14 @@ function handleOccurrenceClick(occurrenceId: number) {
   }
 
   .occurrences-container {
-    margin-top: 10px;
+    margin-top: 14px;
   }
 
   .occurrence-item {
     background: rgba(255, 255, 255, 0.05);
     border-radius: 6px;
-    padding: 10px;
-    margin-bottom: 12px;
+    padding: 12px;
+    margin-bottom: 14px;
     cursor: pointer; 
     transition: background 0.2s ease;
 
@@ -142,20 +142,20 @@ function handleOccurrenceClick(occurrenceId: number) {
     }
 
     .occurrence-user {
-      font-size: 0.9rem;
+      font-size: 0.95rem;
       margin-bottom: 6px;
       color: var(--cinza-claro);
     }
 
     .occurrence-type {
       font-style: italic;
-      font-size: 0.85rem;
+      font-size: 0.9rem;
       color: #bbb;
     }
 
     .occurrence-content {
-      font-size: 0.95rem;
-      line-height: 1.4;
+      font-size: 1rem;
+      line-height: 1.45;
       color: #f1f1f1;
       margin-bottom: 8px;
 
@@ -180,8 +180,8 @@ function handleOccurrenceClick(occurrenceId: number) {
 
   .no-data {
     text-align: center;
-    margin: 12px 0;
-    font-size: 0.9rem;
+    margin: 14px 0;
+    font-size: 1rem;
     color: #aaa;
   }
 }

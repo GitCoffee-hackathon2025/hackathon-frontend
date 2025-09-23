@@ -98,26 +98,52 @@ function getCategoryData() {
 }
 
 function updateChart() {
-  option.value = {
-    tooltip: { 
-      trigger: 'item',
-      formatter: (params: any) => {
-        return `${params.name}: ${params.value} (${params.percent}%)`
-      }
-    },
-    legend: { bottom: 0, textStyle: { color: '#fff' }, selectedMode: false },
-    series: [
-      {
-        type: 'pie',
-        radius: '60%',
-        data: getCategoryData(),
-        focus: 'series',
-        label: { show: false }, 
-        emphasis: {
-          itemStyle: { shadowBlur: 10, shadowOffsetX: 0, shadowColor: 'rgba(0,0,0,0.5)' }
+  const data = getCategoryData()
+  const total = data.reduce((sum, d) => sum + d.value, 0)
+
+  if (total === 0) {
+    option.value = {
+      tooltip: { show: false },
+      legend: { show: false },
+      series: [
+        {
+          type: 'pie',
+          radius: '60%',
+          data: [
+            {
+              value: 1,
+              name: 'Sem ocorrências',
+              itemStyle: { color: '#7f8c8d' }
+            }
+          ],
+          label: { show: true, formatter: 'Sem ocorrências', color: '#fff' }
         }
-      }
-    ]
+      ]
+    }
+  } else {
+    option.value = {
+      tooltip: { 
+        trigger: 'item',
+        formatter: (params: any) => {
+          return `${params.name}: ${params.value} (${params.percent}%)`
+        }
+      },
+      legend: { bottom: 0, textStyle: { color: '#fff' }, selectedMode: false },
+      series: [
+        {
+          type: 'pie',
+          radius: '60%',
+          data,
+          focus: 'series',
+          label: { show: false },
+          emphasis: {
+            scale: true,
+            scaleSize: 3,
+            itemStyle: { shadowBlur: 4, shadowColor: 'rgba(0,0,0,0.25)' }
+          }
+        }
+      ]
+    }
   }
 }
 

@@ -157,12 +157,12 @@ onMounted(() => {
   top: 50%;
   right: 30px;
   transform: translateY(-50%);
-  width: 340px;
-  max-width: 90vw;
+  width: 420px; // 🔥 aumentei largura no desktop
+  max-width: 95vw; // evita passar da tela
   height: 90vh;
   background: var(--color-gray-dark, #1e1e1e);
-  border-radius: 8px;
-  box-shadow: 0 0 7px rgba(255, 255, 255, 0.2);
+  border-radius: 10px; // leve arredondamento maior
+  box-shadow: 0 0 10px rgba(255, 255, 255, 0.2);
   z-index: 2000;
   display: flex;
   flex-direction: column;
@@ -172,10 +172,15 @@ onMounted(() => {
 .details-header {
   display: flex;
   align-items: center;
-  padding: 1rem;
+  padding: 1.2rem; // mais respiro
   background: transparent;
   color: var(--color-white, #fff);
   position: relative;
+
+  h2 {
+    margin: 0;
+    font-size: 1.4rem; // título um pouco maior
+  }
 }
 
 .back-button {
@@ -187,67 +192,62 @@ onMounted(() => {
   align-items: center;
   justify-content: center;
   color: var(--color-white, #fff);
-}
 
-.back-button svg {
-  width: 24px;
-  height: 24px;
-}
+  svg {
+    width: 26px; // ícone maior
+    height: 26px;
+  }
 
-.back-button:hover {
-  color: var(--color-gray-light, #ddd);
-}
-
-.details-header h2 {
-  margin: 0;
-  font-size: 1.3rem;
+  &:hover {
+    color: var(--color-gray-light, #ddd);
+  }
 }
 
 .details-content {
   flex: 1;
-  padding: 16px;
+  padding: 20px; // mais espaçamento interno
   position: relative;
   color: var(--color-white, #fff);
   overflow-y: auto;
 }
 
 .occurrence-type {
-  margin-bottom: 1.5rem;
+  margin-bottom: 1.8rem;
 }
 
 .type-badge {
-  padding: 0.5rem 1rem;
+  padding: 0.6rem 1.2rem;
   border-radius: 20px;
   color: white;
   font-weight: bold;
-  font-size: 0.9rem;
-  box-shadow: 0 0 5px rgba(0, 0, 0, 0.3);
+  font-size: 1rem;
+  box-shadow: 0 0 6px rgba(0, 0, 0, 0.3);
 }
 
 .occurrence-info .info-item {
-  margin-bottom: 1.2rem;
-}
+  margin-bottom: 1.4rem;
 
-.occurrence-info .info-item h3 {
-  margin: 0 0 0.4rem 0;
-  font-size: 1rem;
-  color: var(--color-gray-light, #ddd);
-}
+  h3 {
+    margin: 0 0 0.4rem 0;
+    font-size: 1.05rem;
+    color: var(--color-gray-light, #ddd);
+  }
 
-.occurrence-info .info-item p {
-  margin: 0;
-  font-size: 0.95rem;
-  line-height: 1.4;
-  color: #f1f1f1;
+  p {
+    margin: 0;
+    font-size: 1rem;
+    line-height: 1.45;
+    color: #f1f1f1;
 
-  white-space: pre-wrap;  /* respeita quebras de linha do texto */
-  word-wrap: break-word;  /* quebra palavras muito grandes */
-  overflow-wrap: break-word
+    white-space: pre-wrap;
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+  }
 }
 
 .view-location-btn {
-  margin-top: 0.5rem;
-  padding: 0.5rem 1rem;
+  margin-top: 0.6rem;
+  padding: 0.55rem 1.2rem;
   background: #3498db;
   color: white;
   border: none;
@@ -255,10 +255,10 @@ onMounted(() => {
   cursor: pointer;
   font-size: 0.9rem;
   transition: background 0.2s ease;
-}
 
-.view-location-btn:hover {
-  background: #2980b9;
+  &:hover {
+    background: #2980b9;
+  }
 }
 
 .loading-spinner {
@@ -267,7 +267,7 @@ onMounted(() => {
   justify-content: center;
   flex: 1;
   color: #aaa;
-  font-size: 0.95rem;
+  font-size: 1rem;
 }
 
 @keyframes slideIn {
@@ -302,4 +302,5 @@ onMounted(() => {
     }
   }
 }
+
 </style>
