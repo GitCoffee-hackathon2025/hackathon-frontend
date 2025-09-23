@@ -212,7 +212,7 @@ import { UserRequisitions } from './User'
     }
 const getOccurrences = async (id_user : number) => {
   try {
-    const res = await fetch(`http://localhost:3000/occurrences?id_user=${id_user}`, {
+    const res = await fetch(`http://localhost:3000/occurrences/user/${id_user}`, {
       method: 'GET',
     });
 

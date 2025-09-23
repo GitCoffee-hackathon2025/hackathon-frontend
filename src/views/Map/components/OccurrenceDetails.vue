@@ -11,8 +11,19 @@
 
     <div class="details-content" v-if="occurrence">
       <div class="occurrence-type">
-        <span class="type-badge" :style="{ backgroundColor: getTypeColor(occurrence.type.id) }">
+        <span
+          class="type-badge"
+          v-if="occurrence.type"
+          :style="{ backgroundColor: getTypeColor(occurrence.type.id) }"
+        >
           {{ getOccurrenceTypeName(occurrence.type.id) }}
+        </span>
+        <span
+          class="type-badge"
+          v-else
+          :style="{ backgroundColor: '#95a5a6' }"
+        >
+          Desconhecido
         </span>
       </div>
 
@@ -135,6 +146,7 @@ const fetchOccurrenceDetails = async () => {
     }
 
     const result = await response.json();
+ 
     // Atribui o objeto 'data' da resposta para a variável 'occurrence'
     occurrence.value = result.data;
   } catch (error) {
