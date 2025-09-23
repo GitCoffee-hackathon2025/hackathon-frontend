@@ -1,17 +1,19 @@
 <script setup lang="ts">
 import { nextTick, onMounted, ref } from 'vue'
-import { perfil, info, actions } from '@/views/User/assets/ItemAccountManagement'
+import { perfil, info } from '@/views/User/assets/ItemAccountManagement'
 import { UserRequisitions } from '@/requisitions/User'
 import { UserStore } from '@/store/UserStore'
+
 const userReq = UserRequisitions()
 const userStore = UserStore()
-//Calcular o viewbox de cada svg
+const openEditString = ref<string>()
+
+// Calcular o viewbox de cada svg
 onMounted(async () => {
   await nextTick()
   const svgs = document.querySelectorAll('svg')
   await userReq.recover()
   window.addEventListener('resize', () => viewBoxSvg(svgs))
-
   viewBoxSvg(svgs)
 
   function viewBoxSvg(svgs: never[] | NodeListOf<SVGSVGElement>) {
@@ -24,16 +26,13 @@ onMounted(async () => {
     })
   }
 })
-///////Não esquecer de apagar cada viewbox do site e usar essa função 👆
-
-const openEditString = ref<string>()
 
 function editInput(refKey: string) {
   openEditString.value = refKey
 }
 
 function openEdit(refKey: string) {
-  return !(openEditString.value == refKey) ? true : false
+  return !(openEditString.value == refKey)
 }
 
 function cancelarEditacao(refKey: string) {
@@ -42,12 +41,12 @@ function cancelarEditacao(refKey: string) {
 </script>
 
 <template>
-  <div class="account">
-    <div class="perfil">
+  <div class="account-container">
+    <div class="profile-section">
       <h2>Perfil</h2>
-      <div class="items">
-        <div class="item" v-for="(item, index) in perfil" :key="index">
-          <div :class="['field', { 'open-edit': !openEdit(item.refKey) }]">
+      <div class="items-list">
+        <div class="item-card" v-for="(item, index) in perfil" :key="index">
+          <div :class="['field-container', { 'edit-mode': !openEdit(item.refKey) }]">
             <svg
               xmlns="http://www.w3.org/2000/svg"
               preserveAspectRatio="xMidYMid meet"
@@ -60,7 +59,7 @@ function cancelarEditacao(refKey: string) {
               xmlns="http://www.w3.org/2000/svg"
               preserveAspectRatio="xMidYMid meet"
               fill="none"
-              class="show"
+              class="edit-icon"
               @click="editInput(item.refKey)"
             >
               <path
@@ -68,17 +67,15 @@ function cancelarEditacao(refKey: string) {
               />
             </svg>
           </div>
-          <div class="change-buttons" v-if="!openEdit(item.refKey)">
-            <button @click="cancelarEditacao(item.refKey)">Cancelar</button><button>Salvar</button>
-          </div>
         </div>
       </div>
     </div>
-    <div class="info">
+    
+    <div class="info-section">
       <h2>Informações</h2>
-      <div class="items">
-        <div class="item" v-for="(item, index) in info" :key="index">
-          <div :class="['field', { 'open-edit': !openEdit(item.refKey) }]">
+      <div class="items-list">
+        <div class="item-card" v-for="(item, index) in info" :key="index">
+          <div :class="['field-container', { 'edit-mode': !openEdit(item.refKey) }]">
             <svg
               xmlns="http://www.w3.org/2000/svg"
               preserveAspectRatio="xMidYMid meet"
@@ -91,29 +88,13 @@ function cancelarEditacao(refKey: string) {
               xmlns="http://www.w3.org/2000/svg"
               preserveAspectRatio="xMidYMid meet"
               fill="none"
-              class="show"
+              class="edit-icon"
               @click="editInput(item.refKey)"
             >
               <path
                 d="M23.0951 5.79467C22.6652 6.22014 22.2479 6.63309 22.2353 7.04605C22.1973 7.44649 22.6273 7.85945 23.0319 8.24738C23.6388 8.87307 24.2331 9.43619 24.2079 10.0494C24.1826 10.6625 23.5377 11.3007 22.8928 11.9264L17.6705 17.1072L15.8749 15.3302L21.249 10.0243L20.0351 8.82301L18.2395 10.5875L13.4977 5.89478L18.3533 1.10199C18.8465 0.613952 19.6684 0.613952 20.1362 1.10199L23.0951 4.03022C23.5883 4.49323 23.5883 5.30663 23.0951 5.79467ZM0.701172 18.5713L12.7896 6.59555L17.5314 11.2882L5.44297 23.2639H0.701172V18.5713Z"
               />
             </svg>
-          </div>
-        </div>
-      </div>
-    </div>
-    <div class="actions">
-      <h2>Ações</h2>
-      <div class="items">
-        <div class="item" v-for="(item, index) in actions" :key="index">
-          <div class="field">
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              preserveAspectRatio="xMidYMid meet"
-              fill="none"
-              v-html="item.icon"
-            ></svg>
-            <input type="text" v-model="item.userInfo" :disabled="true" />
           </div>
         </div>
       </div>
@@ -122,174 +103,131 @@ function cancelarEditacao(refKey: string) {
 </template>
 
 <style scoped lang="scss">
-div.account {
+.account-container {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 40px;
+  font-family: 'Arial', sans-serif;
+}
+
+.profile-section, .info-section {
   width: 100%;
   display: flex;
   flex-direction: column;
-  align-items: flex-start;
-  justify-content: flex-start;
-  gap: 40px;
-  div {
-    width: 100%;
-    display: flex;
-    flex-direction: column;
-    align-items: flex-start;
-    justify-content: flex-start;
-    gap: 20px;
+  gap: 20px;
+}
 
-    h2 {
-      font-size: var(--text-lg);
-      font-weight: normal;
-    }
+h2 {
+  color: #333;
+  font-size: 24px;
+  font-weight: 600;
+  margin-bottom: 10px;
+}
 
-    div.items {
-      width: 100%;
+.items-list {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
 
-      display: flex;
-      flex-direction: column;
-      align-items: flex-start;
-      justify-content: flex-start;
-      gap: 10px;
+.item-card {
+  background: #fff;
+  border-radius: 8px;
+  padding: 20px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  border-left: 4px solid #007bff;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
 
-      div.item {
-        display: flex;
-        flex-direction: column;
-        align-items: flex-end;
-        justify-content: space-between;
-        gap: 5px;
+.item-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15);
+}
 
-        div.change-buttons {
-          width: 50%;
-          height: var(--component-height);
-          display: flex;
-          flex-direction: row;
-          align-items: center;
-          justify-content: space-between;
-          button {
-            cursor: pointer;
-            width: 45%;
-            height: 100%;
-            border: none;
-            border-radius: 8px;
+.field-container {
+  position: relative;
+  display: flex;
+  align-items: center;
+  width: 100%;
+}
 
-            &:first-child {
-              background-color: var(--color-red);
-            }
-            &:last-child {
-              background-color: var(--color-green);
-            }
-          }
-        }
-        .field {
-          width: 100%;
-          border-radius: 8px;
+.field-container svg:first-child {
+  width: 20px;
+  height: 20px;
+  margin-right: 12px;
+  fill: #666;
+}
 
-          svg {
-            fill: var(--color-white);
-            position: absolute;
-            top: 50%;
-            transform: translateY(-50%);
-            left: 1rem;
-            width: var(--icon-size);
-            height: var(--icon-size);
+.field-container input {
+  flex: 1;
+  border: none;
+  outline: none;
+  font-size: 16px;
+  padding: 8px 0;
+  background: transparent;
+  color: #333;
+}
 
-            &.show {
-              left: auto;
-              right: 1rem;
-              cursor: pointer;
-            }
-          }
+.field-container input:disabled {
+  color: #666;
+  background: transparent;
+}
 
-          input,
-          select {
-            color: var(--color-white);
-            box-sizing: border-box;
-            background-color: var(--color-input);
+.edit-icon {
+  width: 18px;
+  height: 18px;
+  cursor: pointer;
+  fill: #007bff;
+  margin-left: 10px;
+  transition: fill 0.2s ease;
+}
 
-            &::placeholder {
-              color: var(--color-white);
-            }
-          }
-          &.open-edit {
-            input,
-            select {
-              color: var(--color-gray-dark);
-              box-sizing: border-box;
-              background-color: var(--color-white);
+.edit-icon:hover {
+  fill: #0056b3;
+}
 
-              &::placeholder {
-                color: var(--color-gray-dark);
-              }
-            }
+.edit-mode input {
+  background-color: #f8f9fa;
+  padding: 8px 12px;
+  border-radius: 4px;
+  border: 1px solid #ddd;
+}
 
-            svg {
-              fill: var(--color-gray-dark);
-            }
-          }
-        }
-      }
-    }
+/* Responsividade */
+@media (max-width: 768px) {
+  .account-container {
+    padding: 15px;
+    gap: 30px;
   }
-
-  div.actions {
-    div {
-      div.item {
-        display: flex;
-        flex-direction: column;
-        align-items: flex-end;
-        justify-content: space-between;
-        &:first-child {
-          div.field {
-            input {
-              background-color: var(--color-green);
-            }
-          }
-        }
-        &:nth-child(2) {
-          div.field {
-            input {
-              background-color: var(--color-red);
-            }
-          }
-        }
-        div.field {
-          input {
-            padding-right: 0;
-          }
-        }
-      }
-    }
+  
+  .item-card {
+    padding: 15px;
+  }
+  
+  h2 {
+    font-size: 20px;
   }
 }
 
-@media (min-width: 992px) {
-  div.account {
-    div {
-      div.items {
-        width: auto;
-        display: flex;
-        flex-direction: column;
-        align-items: flex-start;
-        justify-content: flex-start;
-
-        div.item {
-          display: flex;
-          flex-direction: column;
-          align-items: left;
-          justify-content: left;
-          .field {
-            max-width: 300px;
-            svg {
-              &.show {
-              }
-              input,
-              select {
-              }
-            }
-          }
-        }
-      }
-    }
+@media (max-width: 480px) {
+  .field-container {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 10px;
+  }
+  
+  .field-container svg:first-child {
+    margin-right: 0;
+  }
+  
+  .edit-icon {
+    position: absolute;
+    right: 0;
+    top: 50%;
+    transform: translateY(-50%);
   }
 }
 </style>
