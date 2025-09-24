@@ -200,43 +200,46 @@ export const UserRequisitions = defineStore('User requisitions', () => {
 
 
   async function register(req: CreateUserDTO) {
+  try {
+    const securityClient = new SecurityClient()
+    await securityClient.init()
+    console.log('SecurityClient initialized')
+    
+    const encoded = await securityClient.encode(req)
+    console.log('Encoded object:', encoded)
+    
+    const res = await fetch(`http://localhost:3000/auth/register`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(encoded),
+    })
+
+    // ✅ Ler a resposta UMA VEZ apenas
+    const text = await res.text()
+    console.log('📜 Resposta crua do servidor:', text)
+
+    let json
     try {
-      const securityClient = new SecurityClient()
-      await securityClient.init()
-      console.log('SecurityClient initialized')
-      console.log('Register request:', req)
-      const encoded = await securityClient.encode(req)
-      console.log('Encoded object:', encoded)
-      const res = await fetch(`http://localhost:3000/auth/register`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(encoded),
-      })
-      const text = await res.text()
-console.log('📜 Resposta crua do servidor:', text)
-
-let json
-try {
-  json = JSON.parse(text)
-} catch {
-  throw new Error('⚠️ Resposta não é JSON válido')
-}
-console.log('📥 Resposta JSON do servidor:', json)
-
-      if (!res.ok) {
-
-        const errorData = await res.json()
-        return { success: false, errorText: errorData.message || errorData.error }
-      }
-
-
-      return { success: true }
-    } catch (err) {
-      console.error('Erro no registro:', err)
-      return { success: false, errorText: 'Erro de conexão. Tente novamente.' }
+      json = JSON.parse(text)
+    } catch {
+      throw new Error('⚠️ Resposta não é JSON válido')
     }
-  }
+    console.log('📥 Resposta JSON do servidor:', json)
 
+    if (!res.ok) {
+      // ✅ Já temos o json parseado, usar ele!
+      return { 
+        success: false, 
+        errorText: json.message || json.error || 'Erro desconhecido'
+      }
+    }
+
+    return { success: true }
+  } catch (err) {
+    console.error('Erro no registro:', err)
+    return { success: false, errorText: 'Erro de conexão. Tente novamente.' }
+  }
+}
 
   return { login, register, recover }
 })
