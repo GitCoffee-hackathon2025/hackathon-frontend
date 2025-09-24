@@ -23,7 +23,8 @@ const occurrenceTypes = [
   { id: 10, name: 'Desaparecimento' },
   { id: 11, name: 'Problema de infraestrutura' },
   { id: 12, name: 'Animal solto' },
-  { id: 13, name: 'Outro' }
+  { id: 13, name: 'Tráfico de drogas' },
+  { id: 14, name: 'Outro' }
 ]
 
 // Focar no marcador quando o componente for montado

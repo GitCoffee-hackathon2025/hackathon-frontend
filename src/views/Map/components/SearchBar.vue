@@ -114,7 +114,7 @@ const selectSugestion = (sug: any) => {
   top: 25px;
   left: 50%;
   transform: translateX(-50%);
-  z-index: 1000000;
+  z-index: 10;
   width: var(--component-width);
   height: var(--component-height);
   display: flex;

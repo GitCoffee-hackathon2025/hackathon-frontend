@@ -88,8 +88,7 @@ const createBaseOccurrenceIcon = (occurrenceTypeId: number) => {
   const colors: Record<number, string> = {
     1: '#e74c3c', 2: '#c0392b', 3: '#e74c3c', 7: '#c0392b', 9: '#c0392b',
     4: '#f39c12', 5: '#f1c40f', 6: '#e67e22', 8: '#e67e22',
-    10: '#3498db', 11: '#2980b9', 12: '#27ae60',
-    13: '#95a5a6'
+    10: '#3498db', 11: '#2980b9', 12: '#27ae60',13 : '#791F87', 14: '#95a5a6'
   }
   const color = colors[occurrenceTypeId] || '#95a5a6'
 
