@@ -8,6 +8,7 @@ const email = computed({
   get: () => user.email,
   set: (value: string) => {
     user.email = value
+    console.log(user)
   },
 })
 

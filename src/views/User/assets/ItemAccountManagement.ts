@@ -3,11 +3,8 @@ import { UserRequisitions } from '@/requisitions/User'
 import { onMounted } from 'vue'
 const userReq = UserRequisitions()
 const user = UserStore()
-onMounted(async() => {
-  console.log("fui carregado")
-  await userReq.recover()
-  console.log(user.name)
-})
+await userReq.recover()
+
 
 
 type Item = {

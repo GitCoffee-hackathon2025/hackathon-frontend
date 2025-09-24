@@ -236,6 +236,7 @@ const getOccurrences = async (id_user : number) => {
       occurrenceLocal,
       occurrenceCoordinates,
       occurrenceNeighborhood,
+      getOccurrences,
       setOccurrenceCoordinates,
       sendOccurrence,
       fetchOccurrencesCoordinates,
