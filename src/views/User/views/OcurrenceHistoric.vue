@@ -2,7 +2,7 @@
 import { UserStore } from '@/store/UserStore';
 import { UserRequisitions } from '@/requisitions/User';
 import { ocurrenceRequisitions } from '@/requisitions/Ocurrences';
-
+import { findNeighborhoodByCoordinates } from '@/utils/geocoding';
 export default {
   data() {
     return {
@@ -11,50 +11,58 @@ export default {
       error: null
     }
   },
-  async mounted() {
-    try {
-      const userStore = UserStore();
-      const userReq = UserRequisitions();
-      const occurrenceReq = ocurrenceRequisitions();
+ async mounted() {
+  try {
+    const userStore = UserStore();
+    const userReq = UserRequisitions();
+    const occurrenceReq = ocurrenceRequisitions();
+    
+    await userReq.recover();
+    const response = await occurrenceReq.getOccurrences(userStore.idUser);
+    
+    console.log('Resposta da API:', response);
+    
+    if (response && response.success && response.data) {
+      const occurrences = Array.isArray(response.data) ? response.data : [response.data];
       
-      // Recupera dados do usuário
-      await userReq.recover();
-      
-      // Busca ocorrências do usuário
-      const response = await occurrenceReq.getOccurrences(userStore.idUser);
-      
-      console.log('Resposta da API:', response); // Para debug
-      
-      if (response && response.success && response.data) {
-        // Agora response.data deve ser um array
-        if (Array.isArray(response.data)) {
-          this.historico = response.data.map(occurrence => ({
+      // Processar ocorrências e buscar bairros
+      this.historico = await Promise.all(
+        occurrences.map(async (occurrence) => {
+          let bairro = null;
+          
+          // Buscar bairro se tiver coordenadas
+          if (occurrence.coordenadas) {
+            try {
+              const coords = this.parseCoordenadas(occurrence.coordenadas);
+              if (coords && coords.lat && coords.lng) {
+                bairro = await findNeighborhoodByCoordinates(coords.lat, coords.lng);
+              }
+            } catch (error) {
+              console.error('Erro ao buscar bairro:', error);
+            }
+          }
+          
+          return {
             descricao: occurrence.content_occurrence || 'Sem descrição',
             data: this.formatarData(occurrence.date_occurrence || occurrence.created_at),
-            tipo: occurrence.type.name || 'Sem tipo',
-            coordenadas: occurrence.coordenadas ? this.parseCoordenadas(occurrence.coordenadas) : null
-          }));
-        } else {
-          // Fallback: se ainda for objeto único, cria array
-          this.historico = [{
-            descricao: response.data.content_occurrence || 'Sem descrição',
-            data: this.formatarData(response.data.date_occurrence || response.data.created_at),
-            tipo: response.data.type.name || 'Sem tipo',
-            coordenadas: response.data.coordenadas ? this.parseCoordenadas(response.data.coordenadas) : null
-          }];
-        }
-      } else {
-        this.historico = [];
-      }
-      
-    } catch (error) {
-      console.error('Erro ao carregar ocorrências:', error);
-      this.error = 'Erro ao carregar histórico';
+            tipo: occurrence.type?.name || 'Sem tipo',
+            coordenadas: occurrence.coordenadas ? this.parseCoordenadas(occurrence.coordenadas) : null,
+            bairro: bairro?.name || 'Bairro não encontrado' // ✅ Bairro pré-calculado
+          };
+        })
+      );
+    } else {
       this.historico = [];
-    } finally {
-      this.loading = false;
     }
-  },
+    
+  } catch (error) {
+    console.error('Erro ao carregar ocorrências:', error);
+    this.error = 'Erro ao carregar histórico';
+    this.historico = [];
+  } finally {
+    this.loading = false;
+  }
+},
   methods: {
     formatarData(dataString) {
       if (!dataString) return 'Data não informada';
@@ -102,7 +110,7 @@ export default {
           <span class="tipo">{{ item.tipo }}</span>
         </div>
         <div v-if="item.coordenadas" class="coordenadas">
-          📍 Lat: {{ item.coordenadas.lat }}, Lng: {{ item.coordenadas.lng }}
+          📍 Bairro: {{item.bairro }}
         </div>
       </div>
     </div>
