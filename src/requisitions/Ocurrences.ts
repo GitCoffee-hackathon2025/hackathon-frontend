@@ -19,7 +19,8 @@ import { UserRequisitions } from './User'
     { id: 10, name: 'Desaparecimento' },
     { id: 11, name: 'Problema de infraestrutura' },
     { id: 12, name: 'Animal solto' },
-    { id: 13, name: 'Outro' }
+    { id: 13, name: 'Tráfico de drogas' },
+    { id: 14, name: 'Outro' }
   ]
 
   export const ocurrenceRequisitions = defineStore('occurrence', () => {
@@ -235,6 +236,7 @@ const getOccurrences = async (id_user : number) => {
       occurrenceLocal,
       occurrenceCoordinates,
       occurrenceNeighborhood,
+      getOccurrences,
       setOccurrenceCoordinates,
       sendOccurrence,
       fetchOccurrencesCoordinates,

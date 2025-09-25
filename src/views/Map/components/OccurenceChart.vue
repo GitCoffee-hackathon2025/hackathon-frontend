@@ -21,7 +21,7 @@ const props = defineProps<{
 
 // tipos
 const occurrenceTypes = [
-  { id: 1, name: 'Acidente de trânsito' },
+   { id: 1, name: 'Acidente de trânsito' },
   { id: 2, name: 'Assalto' },
   { id: 3, name: 'Roubo' },
   { id: 4, name: 'Furto' },
@@ -33,7 +33,8 @@ const occurrenceTypes = [
   { id: 10, name: 'Desaparecimento' },
   { id: 11, name: 'Problema de infraestrutura' },
   { id: 12, name: 'Animal solto' },
-  { id: 13, name: 'Outro' }
+  { id: 13, name: 'Tráfico de drogas' },
+  { id: 14, name: 'Outro' }
 ]
 
 // função de cores
@@ -51,7 +52,8 @@ const createOccurrenceIcon = (occurrenceTypeId: number) => {
     10: '#3498db', 
     11: '#2980b9', 
     12: '#27ae60',
-    13: '#95a5a6'
+    13 : '#791F87',
+    14: '#95a5a6'
   }
   return colors[occurrenceTypeId] || '#7f8c8d'
 }
@@ -59,9 +61,9 @@ const createOccurrenceIcon = (occurrenceTypeId: number) => {
 // categorias manuais (pra poder agrupar)
 const categories = [
   { id: 'violencia', name: 'Violência', types: [2,3,4,9] },
-  { id: 'problemas_urbanos', name: 'Problemas Urbanos', types: [11] },
+  { id: 'problemas_urbanos', name: 'Problemas Urbanos', types: [11,13] },
   { id: 'acidentes', name: 'Acidentes', types: [1,7,8,10] },
-  { id: 'outros', name: 'Outros', types: [5,6,12,13] }
+  { id: 'outros', name: 'Outros', types: [5,6,12,14] }
 ]
 
 // estado
