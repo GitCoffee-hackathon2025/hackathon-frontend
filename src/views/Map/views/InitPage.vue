@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { NeighborhoodStore } from '@/store/NeighborhoodStore'
-import { ocurrenceRequisitions } from '@/requisitions/Ocurrences'
+import { ocurrenceRequisitions, OCCURRENCE_TYPES } from '@/requisitions/Ocurrences'
 import { onMounted, nextTick, watch, onUnmounted, onBeforeMount, ref, computed } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import L from 'leaflet'
@@ -11,7 +11,10 @@ import { findNeighborhoodByCoordinates } from '@/utils/geocoding'
 import ReportButton from '@/views/Map/components/ReportButton.vue'
 import LocationModal from '../components/LocationModal.vue'
 import OcurrenceForm from '@/views/Map/components/OcurrenceForm.vue'
-import SearchBar  from '@/views/Map/components/SearchBar.vue'
+import SearchBar from '@/views/Map/components/SearchBar.vue'
+
+import { CoordinatesMap } from "@/store/CoordinatesMap";
+const coordinates = CoordinatesMap()
 
 import { UserRequisitions } from '@/requisitions/User'
 const user = UserRequisitions()
@@ -19,8 +22,6 @@ const user = UserRequisitions()
 import OccurrenceDetails from '@/views/Map/components/OccurrenceDetails.vue'
 
 import { AnimStore } from '@/store/AnimStore'
-import { CoordinatesMap } from '@/store/CoordinatesMap'
-const coordinatesMap = CoordinatesMap()
 const anims = AnimStore()
 
 declare global {
@@ -45,8 +46,8 @@ const selectedOccurrenceId = ref<number | null>(null)
 
 // Interface para armazenar dados dos marcadores
 interface OccurrenceMarkerData {
-  marker: L.Marker;
-  occurrenceTypeId: number;
+  marker: L.Marker
+  occurrenceTypeId: number
 }
 
 const occurrenceMarkers = ref<OccurrenceMarkerData[]>([])
@@ -74,15 +75,15 @@ const createCustomIcon = () => {
   return L.divIcon({
     className: 'pulsating-marker',
     html: `
-      <div class="pulse-container">
-        <div class="pulse-ring"></div>
-        <div class="pulse-ring"></div>
-        <div class="pulse-ring"></div>
-        <div class="marker-center">
-          <div class="marker-dot"></div>
-        </div>
-      </div>
-    `,
+ <div class="pulse-container">
+ <div class="pulse-ring"></div>
+ <div class="pulse-ring"></div>
+ <div class="pulse-ring"></div>
+ <div class="marker-center">
+ <div class="marker-dot"></div>
+ </div>
+ </div>
+ `,
     iconSize: [30, 30],
     iconAnchor: [15, 15],
   })
@@ -91,10 +92,20 @@ const createCustomIcon = () => {
 // **NOVA FUNÇÃO:** Cria um ícone base com tamanho fixo para ser redimensionado via CSS.
 const createBaseOccurrenceIcon = (occurrenceTypeId: number) => {
   const colors: Record<number, string> = {
-    1: '#e74c3c', 2: '#c0392b', 3: '#e74c3c', 7: '#c0392b', 9: '#c0392b',
-    4: '#f39c12', 5: '#f1c40f', 6: '#e67e22', 8: '#e67e22',
-    10: '#3498db', 11: '#2980b9', 12: '#27ae60',
-    13: '#95a5a6'
+    1: '#e74c3c',
+    2: '#c0392b',
+    3: '#e74c3c',
+    7: '#c0392b',
+    9: '#c0392b',
+    4: '#f39c12',
+    5: '#f1c40f',
+    6: '#e67e22',
+    8: '#e67e22',
+    10: '#3498db',
+    11: '#2980b9',
+    12: '#27ae60',
+    13: '#791F87',
+    14: '#95a5a6',
   }
   const color = colors[occurrenceTypeId] || '#95a5a6'
 
@@ -105,27 +116,55 @@ const createBaseOccurrenceIcon = (occurrenceTypeId: number) => {
   return L.divIcon({
     className: 'occurrence-marker-scalable',
     html: `
-      <div style="
-        background-color: ${color};
-        width: ${baseSize}px;
-        height: ${baseSize}px;
-        border-radius: 50%;
-        border: 3px solid white;
-        box-shadow: 0 2px 8px rgba(0,0,0,0.3);
-      "></div>
-    `,
-    iconSize: [20, 20],
-    iconAnchor: [10, 10],
+ <div style="
+ background-color: ${color};
+ width: ${baseSize}px;
+ height: ${baseSize}px;
+ border-radius: 50%;
+ border: ${baseBorder}px solid white;
+ box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+ "></div>
+ `,
+    iconSize: [baseSize, baseSize],
+    iconAnchor: [baseSize / 2, baseSize / 2],
   })
 }
 
+// **NOVA FUNÇÃO:** Calcula o fator de escala para o zoom.
+const getScaleFactor = (zoomLevel: number) => {
+  if (zoomLevel <= 13) return 0.4
+  if (zoomLevel <= 15) return 0.7
+  if (zoomLevel <= 17) return 0.9
+  return 1.0
+}
+
+// **FUNÇÃO MELHORADA:** Atualiza o tamanho dos marcadores usando `transform: scale()`.
+const updateMarkersSize = () => {
+  if (!map) return
+  const newZoom = map.getZoom()
+
+  if (currentZoom.value === newZoom) {
+    return // Evita processar se o zoom não mudou
+  }
+  currentZoom.value = newZoom
+
+  const scale = getScaleFactor(newZoom)
+
+  occurrenceMarkers.value.forEach((markerData) => {
+    // Obtém o elemento HTML do ícone e aplica o redimensionamento.
+    const iconElement = markerData.marker.getElement()?.querySelector('div')
+    if (iconElement) {
+      iconElement.style.transform = `scale(${scale})`
+      iconElement.style.transition = 'transform 0.3s ease' // Garante a transição suave
+    }
+  })
+}
 
 // Função modificada para permitir interação com outros marcadores
 const openOccurrenceDetails = (occurrenceId: number) => {
-  selectedOccurrenceId.value = occurrenceId;
-  showOccurrenceDetails.value = true;
+  selectedOccurrenceId.value = occurrenceId
+  showOccurrenceDetails.value = true
 
-  // Mantenha o mapa interativo mesmo com o painel aberto
   if (map) {
     map.getContainer().style.cursor = ''
     map.dragging.enable()
@@ -137,161 +176,160 @@ const openOccurrenceDetails = (occurrenceId: number) => {
     isMapInteractive.value = true
   }
 
-  // Opcional: Fechar o painel do bairro quando o detalhe é aberto
-  neighborhoodStore.clearNeighborhood();
-};
-
+  neighborhoodStore.clearNeighborhood()
+}
 
 const loadOccurrencesOnMap = async () => {
-  if (!map) return;
+  if (!map) return
 
-  map.off('zoomend', updateMarkersSize);
+  map.off('zoomend', updateMarkersSize)
 
-  occurrenceMarkers.value.forEach(marker => {
-    map?.removeLayer(marker)
+  occurrenceMarkers.value.forEach((markerData) => {
+    map?.removeLayer(markerData.marker)
   })
   occurrenceMarkers.value = []
 
-  const occurrencesData = await ocurrenceReq.fetchOccurrencesCoordinates();
+  const occurrencesData = await ocurrenceReq.fetchOccurrencesCoordinates()
 
   if (occurrencesData && occurrencesData.success && occurrencesData.data) {
     occurrencesData.data.forEach((occurrence: any) => {
       try {
-        const coords = JSON.parse(occurrence.coordenadas);
+        const coords = JSON.parse(occurrence.coordenadas)
         // Usa o NOVO ícone base
         const marker = L.marker([coords.lat, coords.lng], {
-          icon: createBaseOccurrenceIcon(occurrence.id_type_occurrence)
-        }).addTo(map!);
+          icon: createBaseOccurrenceIcon(occurrence.id_type_occurrence),
+        }) // REMOVIDO: .addTo(map!)
 
         marker.on('click', () => {
-          openOccurrenceDetails(occurrence.id_occurrence);
-        });
+          openOccurrenceDetails(occurrence.id_occurrence)
+        })
 
         occurrenceMarkers.value.push({
           marker: marker,
-          occurrenceTypeId: occurrence.id_type_occurrence
-        });
+          occurrenceTypeId: occurrence.id_type_occurrence,
+        })
       } catch (error) {
-        console.error('Erro ao processar ocorrência:', error, occurrence);
+        console.error('Erro ao processar ocorrência:', error, occurrence)
       }
-    });
+    })
 
-    console.log(`Carregadas ${occurrenceMarkers.value.length} ocorrências no mapa`);
+    console.log(`Carregadas ${occurrenceMarkers.value.length} ocorrências no mapa`)
 
-    map.on('zoomend', updateMarkersSize);
-    updateMarkersSize();
-    filterMarkers(); // Chama o filtro para exibir os marcadores corretos inicialmente
+    map.on('zoomend', updateMarkersSize)
+    updateMarkersSize()
+    filterMarkers() // Chama o filtro para exibir os marcadores corretos inicialmente
   }
-};
+}
 
 // **CORRIGIDO:** Agora, a função `filterMarkers` também chama `updateMarkersSize`
 // para garantir que os novos marcadores visíveis tenham o tamanho correto.
 const filterMarkers = () => {
-  if (!map) return;
+  if (!map) return
 
-  occurrenceMarkers.value.forEach(markerData => {
-    const isVisible = activeFilters.value.length === 0 || activeFilters.value.includes(markerData.occurrenceTypeId);
+  occurrenceMarkers.value.forEach((markerData) => {
+    const isVisible =
+      activeFilters.value.length === 0 || activeFilters.value.includes(markerData.occurrenceTypeId)
     if (isVisible) {
-      markerData.marker.addTo(map);
+      markerData.marker.addTo(map)
     } else {
-      map.removeLayer(markerData.marker);
+      map.removeLayer(markerData.marker)
     }
-  });
+  })
 
   // CHAMADA ADICIONADA: Redimensiona os marcadores após o filtro.
-  updateMarkersSize();
-};
+  updateMarkersSize()
+}
 
 const focusOnLocation = (coords: { lat: number; lng: number }) => {
   if (map) {
     map.flyTo([coords.lat, coords.lng], 16, {
       duration: 1,
-      easeLinearity: 0.25
+      easeLinearity: 0.25,
     })
     showOccurrenceDetails.value = false
   }
-};
+}
 
 const focusOnSelectedLocation = () => {
   if (selectionMarker && map) {
-    const latlng = selectionMarker.getLatLng();
+    const latlng = selectionMarker.getLatLng()
     map.flyTo(latlng, 16, {
       duration: 1,
-      easeLinearity: 0.25
+      easeLinearity: 0.25,
     })
   }
-};
+}
 
 const enableLocationSelection = () => {
-  if (!map) return;
+  if (!map) return
 
-  map.getContainer().style.cursor = 'default';
+  map.getContainer().style.cursor = 'default'
 
   map.eachLayer((layer) => {
     if (layer instanceof L.GeoJSON) {
       layer.on('mouseover', () => {
         if (clickHandler && !showFormSidebar.value) {
-          map!.getContainer().style.cursor = 'crosshair';
+          map!.getContainer().style.cursor = 'crosshair'
         }
-      });
+      })
       layer.on('mouseout', () => {
         if (clickHandler && !showFormSidebar.value) {
-          map!.getContainer().style.cursor = 'default';
+          map!.getContainer().style.cursor = 'default'
         }
-      });
+      })
     }
-  });
+  })
 
   clickHandler = async (e: L.LeafletMouseEvent) => {
-    if (showFormSidebar.value) return;
+    if (showFormSidebar.value) return
 
-    const { lat, lng } = e.latlng;
-    const neighborhoodName = await findNeighborhoodByCoordinates(lat, lng);
+    const { lat, lng } = e.latlng
+    const neighborhoodName = await findNeighborhoodByCoordinates(lat, lng)
 
     if (!neighborhoodName) {
       L.popup()
         .setLatLng(e.latlng)
         .setContent('Selecione um local dentro dos bairros disponíveis.')
-        .openOn(map!);
-      return;
+        .openOn(map!)
+      return
     }
 
-    await ocurrenceReq.setOccurrenceCoordinates({ lat, lng });
+    await ocurrenceReq.setOccurrenceCoordinates({ lat, lng })
 
     if (selectionMarker) {
-      map?.removeLayer(selectionMarker);
+      map?.removeLayer(selectionMarker)
     }
 
     selectionMarker = L.marker([lat, lng], {
       icon: createCustomIcon(),
-    }).addTo(map!);
+    }).addTo(map!)
 
-    showLocationButtons.value = true;
-  };
+    showLocationButtons.value = true
+  }
 
-  map.on('click', clickHandler);
-};
+  map.on('click', clickHandler)
+}
 
 const disableLocationSelection = () => {
-  if (!map) return;
+  if (!map) return
 
-  map.getContainer().style.cursor = '';
+  map.getContainer().style.cursor = ''
 
   if (clickHandler) {
-    map.off('click', clickHandler);
-    clickHandler = null;
+    map.off('click', clickHandler)
+    clickHandler = null
   }
 
   map.eachLayer((layer) => {
     if (layer instanceof L.GeoJSON) {
-      layer.off('mouseover');
-      layer.off('mouseout');
+      layer.off('mouseover')
+      layer.off('mouseout')
     }
-  });
+  })
 
   if (selectionMarker) {
-    map.removeLayer(selectionMarker);
-    selectionMarker = null;
+    map.removeLayer(selectionMarker)
+    selectionMarker = null
   }
 
   showLocationButtons.value = false
@@ -303,92 +341,92 @@ const continueToForm = () => {
   focusOnSelectedLocation()
 
   if (map) {
-    map.getContainer().style.cursor = 'default';
-    map.dragging.disable();
-    map.touchZoom.disable();
-    map.doubleClickZoom.disable();
-    map.scrollWheelZoom.disable();
-    map.boxZoom.disable();
-    map.keyboard.disable();
-    isMapInteractive.value = false;
+    map.getContainer().style.cursor = 'default'
+    map.dragging.disable()
+    map.touchZoom.disable()
+    map.doubleClickZoom.disable()
+    map.scrollWheelZoom.disable()
+    map.boxZoom.disable()
+    map.keyboard.disable()
+    isMapInteractive.value = false
   }
-};
+}
 
 const backToSelection = () => {
   if (selectionMarker && map) {
-    map.removeLayer(selectionMarker);
-    selectionMarker = null;
+    map.removeLayer(selectionMarker)
+    selectionMarker = null
   }
-  showLocationButtons.value = false;
-};
+  showLocationButtons.value = false
+}
 
 const closeForm = () => {
   showFormSidebar.value = false
 
   if (map) {
-    map.dragging.enable();
-    map.touchZoom.enable();
-    map.doubleClickZoom.enable();
-    map.scrollWheelZoom.enable();
-    map.boxZoom.enable();
-    map.keyboard.enable();
-    isMapInteractive.value = true;
+    map.dragging.enable()
+    map.touchZoom.enable()
+    map.doubleClickZoom.enable()
+    map.scrollWheelZoom.enable()
+    map.boxZoom.enable()
+    map.keyboard.enable()
+    isMapInteractive.value = true
   }
 
   if (selectionMarker) {
-    showLocationButtons.value = true;
+    showLocationButtons.value = true
   }
-};
+}
 
 const closeOccurrenceDetails = () => {
-  showOccurrenceDetails.value = false;
-  selectedOccurrenceId.value = null;
-};
+  showOccurrenceDetails.value = false
+  selectedOccurrenceId.value = null
+}
 
 const backToHome = () => {
-  router.push('/');
-};
+  router.push('/')
+}
 
 const handleViewDetails = (occurrenceId: number) => {
-  selectedOccurrenceId.value = occurrenceId;
-  showOccurrenceDetails.value = true;
-  neighborhoodStore.clearNeighborhood();
-};
+  selectedOccurrenceId.value = occurrenceId
+  showOccurrenceDetails.value = true
+  neighborhoodStore.clearNeighborhood()
+}
 
 watch(
   () => route.path,
   (newPath) => {
     if (newPath.includes('report-occurrence')) {
-      showLocationModal.value = true;
+      showLocationModal.value = true
     } else {
-      disableLocationSelection();
-      closeForm();
-      closeOccurrenceDetails();
+      disableLocationSelection()
+      closeForm()
+      closeOccurrenceDetails()
     }
   },
-);
+)
 
 const confirmModal = () => {
-  showLocationModal.value = false;
-  enableLocationSelection();
-};
+  showLocationModal.value = false
+  enableLocationSelection()
+}
 
 const cancelModal = () => {
-  showLocationModal.value = false;
-  router.push('/');
-};
+  showLocationModal.value = false
+  router.push('/')
+}
 
 // NOVO: Adiciona a função para lidar com a atualização dos filtros
 const handleFilterUpdate = (filters: number[]) => {
-  activeFilters.value = filters;
-  filterMarkers(); // Chama a função de filtro para atualizar o mapa
-};
+  activeFilters.value = filters
+  filterMarkers() // Chama a função de filtro para atualizar o mapa
+}
 
 onBeforeMount(() => {
-  anims.isLoading = true;
-});
+  anims.isLoading = true
+})
 
-onMounted(async() => {
+onMounted(async () => {
   await user.recover()
   anims.isLoading = true
   map = L.map('map', {
@@ -397,12 +435,12 @@ onMounted(async() => {
     minZoom: 12,
     maxZoom: 20,
     zoomControl: false,
-  }).setView([-26.3045, -48.8487], 12)
+  }).setView([-26.3045, -48.8487], coordinates.center)
 
-  window.map = map;
-  currentZoom.value = 12;
+  window.map = map
+  currentZoom.value = 12
 
-  neighborhoodStore.setMap(markRaw(map));
+  neighborhoodStore.setMap(markRaw(map))
 
   L.tileLayer(
     'https://tile.jawg.io/jawg-dark/{z}/{x}/{y}{r}.png?access-token=HlsnsLtJMqieYXmvcLv4imuKCeL2kbOnsAhQZKOI7rH5lqBaXSdme8VeUr9gDuGe',
@@ -412,7 +450,7 @@ onMounted(async() => {
       minZoom: 0,
       maxZoom: 22,
     },
-  ).addTo(map);
+  ).addTo(map)
 
   fetch('/geojson/JoinvilleNeighborhoods.geojson')
     .then((res) => res.json())
@@ -428,56 +466,61 @@ onMounted(async() => {
         onEachFeature: (feature, layer) => {
           layer.on('mouseover', function () {
             if (clickHandler && !showFormSidebar.value) {
-              map!.getContainer().style.cursor = 'crosshair';
+              map!.getContainer().style.cursor = 'crosshair'
             }
             this.setStyle({
               fillOpacity: 0.05,
               weight: 1,
               opacity: 1,
-            });
-          });
+            })
+          })
 
           layer.on('mouseout', function () {
             if (clickHandler && !showFormSidebar.value) {
-              map!.getContainer().style.cursor = 'default';
+              map!.getContainer().style.cursor = 'default'
             }
             this.setStyle({
               fillOpacity: 0.02,
               weight: 1,
               color: '#f2f2f2',
               opacity: 0.1,
-            });
-          });
+            })
+          })
 
           layer.on('click', async (e) => {
-            if (clickHandler || showFormSidebar.value) return;
+            if (clickHandler || showFormSidebar.value) return
 
             map?.flyToBounds(e.target.getBounds(), {
               padding: [50, 50],
               maxZoom: 17,
               duration: 0.4,
               easeLinearity: 0.25,
-            });
+            })
 
-            await nextTick();
-            neighborhoodStore.selectNeighborhood(feature.properties || {});
-            const bairroId = feature.properties?.id_bairro;
-            neighborhoodStore.getDataNeighborhood(bairroId);
-          });
+            await nextTick()
+            neighborhoodStore.selectNeighborhood(feature.properties || {})
+            const bairroId = feature.properties?.id_bairro
+            neighborhoodStore.getDataNeighborhood(bairroId)
+          })
         },
-      }).addTo(map!);
-      anims.isLoading = false;
-      loadOccurrencesOnMap();
+      }).addTo(map!)
+
+      loadOccurrencesOnMap()
     })
-    .catch((err) => console.error('Erro ao carregar GeoJSON:', err));
+    .catch((err) => console.error('Erro ao carregar GeoJSON:', err))
 
   if (route.path.includes('report-occurrence')) {
-    enableLocationSelection();
+    enableLocationSelection()
   }
+ anims.isLoading = false
+
 })
 
 onUnmounted(() => {
   disableLocationSelection()
+  if (map) {
+    map.off('zoomend', updateMarkersSize)
+  }
   window.map = null
 })
 </script>
@@ -517,7 +560,7 @@ onUnmounted(() => {
     <OccurrenceDetails
       v-if="showOccurrenceDetails"
       :occurrenceId="selectedOccurrenceId"
-      :key="selectedOccurrenceId ?? 0"
+      :key="selectedOccurrenceId"
       @close="closeOccurrenceDetails"
       @focusLocation="focusOnLocation"
     />
@@ -525,7 +568,6 @@ onUnmounted(() => {
 
   <SearchBar @filter-updated="handleFilterUpdate" />
 </template>
-
 
 <style scoped lang="scss">
 .map-container {
@@ -565,7 +607,7 @@ onUnmounted(() => {
       background-color: #3498db;
       border: 3px solid white;
       border-radius: 50%;
-     box-shadow : var(--shadow-default);
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
       z-index: 10;
       position: relative;
     }
@@ -584,16 +626,18 @@ onUnmounted(() => {
     }
   }
 
-  :deep(.occurrence-marker) {
-    .leaflet-popup-content {
-      margin: 10px;
-    }
-
-    .leaflet-popup-content-wrapper {
-      border-radius: 8px;
-      background: white;
+  // **NOVO SELETOR:** Removemos o "dynamic-marker" e focamos na classe principal.
+  :deep(.occurrence-marker-scalable) {
+    // Adicione a transição no elemento interno para maior suavidade
+    & > div {
+      transition: transform 0.3s ease;
+      // Garante a aceleração por hardware para evitar o jiggle
+      transform: translateZ(0);
     }
   }
+
+  // Não é mais necessário, pois o redimensionamento é feito via JavaScript
+  // :deep(.occurrence-marker.dynamic-marker) { ... }
 
   @keyframes pulse {
     0% {
@@ -629,7 +673,7 @@ onUnmounted(() => {
   &:hover {
     background: #636e72;
     transform: translateY(-2px);
-    box-shadow:  var(--shadow-default);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
   }
 }
 
@@ -674,7 +718,7 @@ onUnmounted(() => {
 .btn-continue:hover,
 .btn-back:hover {
   transform: translateY(-2px);
- box-shadow :  var(--shadow-default);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
 }
 
 .btn-continue:hover {

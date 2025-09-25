@@ -18,5 +18,3 @@ app.mount('#app')
 import { useCvdStore } from '@/store/DaltonismStore'
 const cvd = useCvdStore()
 cvd.restoreFromStorage()
-
-cvd.setMode('none')

@@ -38,3 +38,12 @@
     </filter>
   </svg>
 </template>
+
+<style scoped lang="scss">
+svg{
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 100000000000000000000;
+}
+</style>

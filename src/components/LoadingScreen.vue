@@ -32,8 +32,7 @@ $spin-duration: 1s;
 
   backdrop-filter: blur(6px);
   -webkit-backdrop-filter: blur(6px);
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
+
 }
 
 /* container central */

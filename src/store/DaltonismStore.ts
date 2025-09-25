@@ -5,12 +5,12 @@ type Mode = 'none' | 'deuteranopia' | 'protanopia' | 'tritanopia'
 
 export const useCvdStore = defineStore('cvd', {
   state: () => ({
-    mode: 'none' as Mode,
+      mode: (localStorage.getItem('cvdMode') as Mode) || 'none',
   }),
 
   actions: {
     setMode(mode: Mode) {
-      this.mode = 'tritanopia'
+       this.mode = mode 
       const appEl = document.getElementById('app') as HTMLElement | null
       const target = appEl ?? document.documentElement
 

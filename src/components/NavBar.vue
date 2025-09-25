@@ -232,7 +232,7 @@ header {
 
     border-radius: $border-radius;
     overflow: hidden;
-    z-index: 10000000000000000000000000000000000000000000000000000000000;
+    z-index: 10;
 
     font-size: var(--text-sm);
 

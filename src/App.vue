@@ -14,15 +14,12 @@ const HIDE_NAV = [
   ROUTES.auth.recover,
   ROUTES.misc.notFound,
 ] as const
-
-// em src/App.vue (topo do script setup)
-import ColorBlindFilter from './components/ColorBlindFilter.vue' // se App.vue está em src/
-import { useCvdStore } from '@/store/DaltonismStore' // se usa alias @
+ // se App.vue está em src/
 
 </script>
 
 <template>
-   <ColorBlindFilter />
+
   <NavBar v-if="!HIDE_NAV.includes(route.name as any)" />
   <router-view />
   <Loading v-if="anim.isLoading" />

@@ -16,20 +16,20 @@ export default {
     const userStore = UserStore();
     const userReq = UserRequisitions();
     const occurrenceReq = ocurrenceRequisitions();
-    
+
     await userReq.recover();
     const response = await occurrenceReq.getOccurrences(userStore.idUser);
-    
+
     console.log('Resposta da API:', response);
-    
+
     if (response && response.success && response.data) {
       const occurrences = Array.isArray(response.data) ? response.data : [response.data];
-      
+
       // Processar ocorrências e buscar bairros
       this.historico = await Promise.all(
         occurrences.map(async (occurrence) => {
           let bairro = null;
-          
+
           // Buscar bairro se tiver coordenadas
           if (occurrence.coordenadas) {
             try {
@@ -41,7 +41,7 @@ export default {
               console.error('Erro ao buscar bairro:', error);
             }
           }
-          
+
           return {
             descricao: occurrence.content_occurrence || 'Sem descrição',
             data: this.formatarData(occurrence.date_occurrence || occurrence.created_at),
@@ -54,7 +54,7 @@ export default {
     } else {
       this.historico = [];
     }
-    
+
   } catch (error) {
     console.error('Erro ao carregar ocorrências:', error);
     this.error = 'Erro ao carregar histórico';
@@ -66,7 +66,7 @@ export default {
   methods: {
     formatarData(dataString) {
       if (!dataString) return 'Data não informada';
-      
+
       try {
         const data = new Date(dataString);
         return data.toLocaleDateString('pt-BR');
@@ -74,7 +74,7 @@ export default {
         return dataString;
       }
     },
-    
+
     parseCoordenadas(coordenadasString) {
       try {
         return JSON.parse(coordenadasString);
@@ -89,19 +89,19 @@ export default {
 <template>
   <div class="historico">
     <h3>Histórico de Ocorrências</h3>
-    
+
     <div v-if="loading" class="loading">Carregando ocorrências...</div>
-    
+
     <div v-else-if="error" class="error">{{ error }}</div>
-    
+
     <div v-else-if="historico.length === 0" class="empty">
       Nenhuma ocorrência encontrada
     </div>
-    
+
     <div v-else class="lista-ocorrencias">
-      <div 
-        v-for="(item, index) in historico" 
-        :key="index" 
+      <div
+        v-for="(item, index) in historico"
+        :key="index"
         class="ocorrencia"
       >
         <div class="conteudo">{{ item.descricao }}</div>
@@ -131,7 +131,7 @@ h3{
 .loading, .error, .empty {
   text-align: center;
   padding: 40px;
-  color: #666;
+  color: var(--color-white);
   font-style: italic;
 }
 
@@ -140,21 +140,21 @@ h3{
 }
 
 .empty {
-  color: #999;
+  color: var(--color-white);
 }
 
 .lista-ocorrencias {
   display: flex;
   flex-direction: column;
   gap: 15px;
-  
+
 }
 
 .ocorrencia {
   border: 1px solid #e0e0e0;
   padding: 20px;
   border-radius: 8px;
-  background: #fff;
+  background: #34495e;
   box-shadow: 0 2px 4px rgba(0,0,0,0.1);
   transition: transform 0.2s ease;
 }
@@ -169,7 +169,7 @@ h3{
   margin-bottom: 12px;
   line-height: 1.4;
   font-size: 16px;
-  color: #333;
+  color: var(--color-white);
 }
 
 .info {
@@ -177,13 +177,13 @@ h3{
   justify-content: space-between;
   align-items: center;
   font-size: 14px;
-  color: #666;
+  color: var(--color-white);
   margin-bottom: 8px;
 }
 
 .coordenadas {
   font-size: 12px;
-  color: #888;
+  color: var(--color-gray-dark);
   background: #f8f9fa;
   padding: 8px 12px;
   border-radius: 4px;
@@ -205,17 +205,17 @@ h3{
   .historico {
     padding: 15px;
   }
-  
+
   .info {
     flex-direction: column;
     align-items: flex-start;
     gap: 8px;
   }
-  
+
   .tipo {
     align-self: flex-start;
   }
-  
+
   .ocorrencia {
     padding: 15px;
   }

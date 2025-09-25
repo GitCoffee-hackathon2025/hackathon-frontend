@@ -63,7 +63,7 @@ const searchNeighborhood = () => {
   if (found) {
     neighborhoodStore.selectNeighborhood(found.properties)
     sugestions.value = []
-    
+
     if (neighborhoodStore.mapInstance) {
       const bounds = L.geoJSON(found).getBounds()
       neighborhoodStore.mapInstance.flyToBounds(bounds, {
@@ -73,7 +73,7 @@ const searchNeighborhood = () => {
         easeLinearity: 0.25,
       })
     }
-    
+
     const bairroId = found.properties?.id_bairro;
     neighborhoodStore.getDataNeighborhood(bairroId);
 
@@ -173,7 +173,7 @@ const isFilterActive = (id: number) => {
   top: 25px;
   left: 50%;
   transform: translateX(-50%);
-  z-index: 10;
+  z-index: 9;
   width: var(--component-width);
   height: var(--component-height);
   display: flex;

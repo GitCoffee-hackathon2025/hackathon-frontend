@@ -70,7 +70,7 @@ function cancelarEditacao(refKey: string) {
         </div>
       </div>
     </div>
-    
+
     <div class="info-section">
       <h2>Informações</h2>
       <div class="items-list">
@@ -121,7 +121,7 @@ function cancelarEditacao(refKey: string) {
 }
 
 h2 {
-  color: #333;
+  color: var(--color-white);
   font-size: 24px;
   font-weight: 600;
   margin-bottom: 10px;
@@ -134,7 +134,7 @@ h2 {
 }
 
 .item-card {
-  background: #fff;
+  background: #34495e;
   border-radius: 8px;
   padding: 20px;
   box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
@@ -158,7 +158,7 @@ h2 {
   width: 20px;
   height: 20px;
   margin-right: 12px;
-  fill: #666;
+  fill: var(--color-white);
 }
 
 .field-container input {
@@ -168,11 +168,11 @@ h2 {
   font-size: 16px;
   padding: 8px 0;
   background: transparent;
-  color: #333;
+  color: var(--color-white);
 }
 
 .field-container input:disabled {
-  color: #666;
+  color: var(--color-white);
   background: transparent;
 }
 
@@ -193,7 +193,7 @@ h2 {
   background-color: #f8f9fa;
   padding: 8px 12px;
   border-radius: 4px;
-  border: 1px solid #ddd;
+  border: 1px solid var(--color-white);
 }
 
 /* Responsividade */
@@ -202,11 +202,11 @@ h2 {
     padding: 15px;
     gap: 30px;
   }
-  
+
   .item-card {
     padding: 15px;
   }
-  
+
   h2 {
     font-size: 20px;
   }
@@ -218,11 +218,11 @@ h2 {
     align-items: flex-start;
     gap: 10px;
   }
-  
+
   .field-container svg:first-child {
     margin-right: 0;
   }
-  
+
   .edit-icon {
     position: absolute;
     right: 0;
