@@ -146,7 +146,7 @@ const fetchOccurrenceDetails = async () => {
     }
 
     const result = await response.json();
- 
+
     // Atribui o objeto 'data' da resposta para a variável 'occurrence'
     occurrence.value = result.data;
   } catch (error) {
@@ -169,12 +169,12 @@ onMounted(() => {
   top: 50%;
   right: 30px;
   transform: translateY(-50%);
-  width: 420px; // 🔥 aumentei largura no desktop
-  max-width: 95vw; // evita passar da tela
+  width: 420px;
+  max-width: 95vw;
   height: 90vh;
-  background: var(--color-gray-dark, #1e1e1e);
-  border-radius: 10px; // leve arredondamento maior
-  box-shadow: 0 0 10px rgba(255, 255, 255, 0.2);
+  background: rgba(29, 30, 28, 0.9);
+  border-radius: 10px;
+  box-shadow:  var(--shadow-default);
   z-index: 2000;
   display: flex;
   flex-direction: column;
@@ -184,14 +184,14 @@ onMounted(() => {
 .details-header {
   display: flex;
   align-items: center;
-  padding: 1.2rem; // mais respiro
+  padding: 1.2rem;
   background: transparent;
   color: var(--color-white, #fff);
   position: relative;
 
   h2 {
     margin: 0;
-    font-size: 1.4rem; // título um pouco maior
+    font-size: 1.4rem;
   }
 }
 
@@ -206,7 +206,7 @@ onMounted(() => {
   color: var(--color-white, #fff);
 
   svg {
-    width: 26px; // ícone maior
+    width: 26px;
     height: 26px;
   }
 
@@ -217,7 +217,7 @@ onMounted(() => {
 
 .details-content {
   flex: 1;
-  padding: 20px; // mais espaçamento interno
+  padding: 20px;
   position: relative;
   color: var(--color-white, #fff);
   overflow-y: auto;
@@ -233,7 +233,7 @@ onMounted(() => {
   color: white;
   font-weight: bold;
   font-size: 1rem;
-  box-shadow: 0 0 6px rgba(0, 0, 0, 0.3);
+  box-shadow:  var(--shadow-default);
 }
 
 .occurrence-info .info-item {

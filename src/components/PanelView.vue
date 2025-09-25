@@ -12,6 +12,8 @@ import {
 } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 
+import BackgroundMap from './BackgroundMap.vue'
+
 const router = useRouter()
 const routeInfo = useRoute()
 
@@ -156,6 +158,7 @@ const rediretLogin = computed(() => {
 </script>
 
 <template>
+  <BackgroundMap />
   <div class="panel">
     <!-- Caso for um disposotivo móvel e estiver na página principal de qualquer que seja a rota, as opções ficam ocultas-->
     <nav v-if="currentRoute == props.route || screenWidth >= 992">
@@ -305,7 +308,7 @@ div.panel {
   ); //Cálculo que leva em conta a altura da barra de navegação, px de fora funcionando como um "gap" para que o painel e a barra de navegação não fiquem coladas. Os px que somam com a altura são os top do painel e o bottom da barra de nanvegação
 
   width: var(--component-width);
-  background-color: var(--color-gray-dark);
+  background: rgba(29, 30, 28, 0.9);
   padding: 20px;
   box-sizing: border-box;
   display: flex;
@@ -314,7 +317,7 @@ div.panel {
   justify-content: space-between;
   gap: 5%;
   border-radius: 8px;
-  box-shadow: 0 0 7px 0 rgba(255, 255, 255, 0.25);
+  box-shadow:  var(--shadow-default);
   position: absolute;
 
   nav {
@@ -547,17 +550,17 @@ div.panel {
 
         width: 100%;
         position: sticky;
-
         z-index: 5; //Acima do mapa da barra de pesquisa e botão de denúncia, e abaixo da barra de navegação
 
         //Px negativo pra evitar bug de pixel
         &.top {
           top: -1px;
-          background: linear-gradient(to top, rgba(29, 30, 28, 0), rgb(29, 30, 28));
+          background: linear-gradient(to top, rgba(29, 30, 28, 0), rgba(31, 32, 30, 1));
+
         }
         &.bottom {
           bottom: -1px;
-          background: linear-gradient(to bottom, rgba(29, 30, 28, 0), rgb(29, 30, 28));
+          background: linear-gradient(to bottom, rgba(29, 30, 28, 0), rgba(31, 32, 30, 1));
         }
       }
     }

@@ -210,6 +210,7 @@ $size-map: var(--size-map);
 $size-info: var(--size-information);
 $size-config: var(--size-settings);
 
+$color-gray-dark: #1d1e1c;
 /* --- Estilos (preservando as CSS custom properties já usadas no teu componente) --- */
 header {
   nav {
@@ -223,7 +224,7 @@ header {
     padding: 0 $nav-padding-horizontal;
     box-sizing: border-box;
 
-    background: var(--color-gray-dark);
+    background: rgba(mix($color-gray-dark,#1d1e1c, 100%), 0.9);
     box-shadow: $box-shadow;
 
     display: flex;

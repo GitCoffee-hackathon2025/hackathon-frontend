@@ -34,13 +34,14 @@ div.not-found {
   }
   div.link {
     display: flex;
-    flex-direction: row;
+    flex-direction: column;
     align-items: center;
     justify-content: center;
     gap: 6px;
     a {
       font-size: var(--text-lg);
       color: var(--color-white);
+      white-space: wrap;
     }
 
     p {

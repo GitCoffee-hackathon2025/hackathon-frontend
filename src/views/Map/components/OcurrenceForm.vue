@@ -44,18 +44,18 @@ async function sendOcurrence() {
       date: ocurrenceReq.occurrenceDate,
       content: ocurrenceReq.occurrenceContent,
       coordinates: ocurrenceReq.occurrenceCoordinates,
-      
+
       neighborhood: ocurrenceReq.occurrenceNeighborhood
     })
     const result = await ocurrenceReq.sendOccurrence()
-    
+
     if (result.success) {
       message.value = 'Relatório enviado com sucesso!'
-      
+
       // Fechar o formulário após envio bem-sucedido
       setTimeout(() => {
         emit('close')
-        window.location.reload()        
+        window.location.reload()
       }, 1500)
     } else {
       message.value = result.errorText || 'Ocorreu um erro ao enviar.'
@@ -76,17 +76,18 @@ function handleClose() {
       <h2>Criar Ocorrência</h2>
       <button class="close-btn" @click="handleClose">×</button>
     </div>
-    
+
     <div class="sidebar-content">
       <!-- Localização (pré-preenchida com o bairro) -->
       <div class="form-group">
         <label>Bairro:</label>
         <input
-  type="text" 
-  v-model="ocurrenceReq.occurrenceLocal" 
+  type="text"
+  v-model="ocurrenceReq.occurrenceLocal"
   class="form-input"
   :placeholder="ocurrenceReq.occurrenceNeighborhood?.toString() || 'Local não identificado'"
   readonly
+  disabled
 >
       </div>
 
@@ -105,18 +106,18 @@ function handleClose() {
       <!-- Data -->
       <div class="form-group">
         <label>Data do ocorrido:</label>
-        <input 
-          type="date" 
-          v-model="ocurrenceReq.occurrenceDate" 
-          class="form-input" 
+        <input
+          type="date"
+          v-model="ocurrenceReq.occurrenceDate"
+          class="form-input"
         />
       </div>
 
       <!-- Descrição -->
       <div class="form-group">
         <label>Descrição:</label>
-        <textarea 
-          v-model="ocurrenceReq.occurrenceContent" 
+        <textarea
+          v-model="ocurrenceReq.occurrenceContent"
           class="form-textarea"
           placeholder="Descreva detalhadamente o que aconteceu..."
         ></textarea>
@@ -126,15 +127,15 @@ function handleClose() {
       <div class="form-group" v-if="ocurrenceReq.occurrenceCoordinates">
         <label>Coordenadas:</label>
         <div class="coordinates-display">
-          Lat: {{ ocurrenceReq.occurrenceCoordinates.lat.toFixed(6) }}, 
+          Lat: {{ ocurrenceReq.occurrenceCoordinates.lat.toFixed(6) }},
           Lng: {{ ocurrenceReq.occurrenceCoordinates.lng.toFixed(6) }}
         </div>
       </div>
 
       <!-- Mensagem de status -->
-      <div v-if="message" class="message" :class="{ 
-        error: message.includes('erro') || message.includes('Erro'), 
-        success: message.includes('sucesso') 
+      <div v-if="message" class="message" :class="{
+        error: message.includes('erro') || message.includes('Erro'),
+        success: message.includes('sucesso')
       }">
         {{ message }}
       </div>
@@ -158,7 +159,7 @@ function handleClose() {
   background: rgb(26, 25, 25);
   color: white;
   z-index: 1000;
-  box-shadow: -2px 0 10px rgba(0, 0, 0, 0.5);
+ box-shadow :  var(--shadow-default);
   animation: slideInRight 0.3s ease-out;
   overflow-y: auto;
   display: flex;
@@ -259,7 +260,7 @@ select {
 .form-textarea:focus {
   outline: none;
   border-color: #3498db;
-  box-shadow: 0 0 5px rgba(52, 152, 219, 0.5);
+ box-shadow :  var(--shadow-default);
 }
 
 .form-textarea {
@@ -327,11 +328,11 @@ select {
   .form-sidebar {
     width: 100%;
   }
-  
+
   .sidebar-content {
     padding: 15px;
   }
-  
+
   .form-input,
   .form-textarea {
     padding: 12px;

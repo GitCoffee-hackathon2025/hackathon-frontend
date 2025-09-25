@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { NeighborhoodStore } from '@/store/NeighborhoodStore'
-import { ocurrenceRequisitions, OCCURRENCE_TYPES } from '@/requisitions/Ocurrences'
+import { ocurrenceRequisitions } from '@/requisitions/Ocurrences'
 import { onMounted, nextTick, watch, onUnmounted, onBeforeMount, ref, computed } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import L from 'leaflet'
@@ -18,11 +18,13 @@ const user = UserRequisitions()
 import OccurrenceDetails from '@/views/Map/components/OccurrenceDetails.vue'
 
 import { AnimStore } from '@/store/AnimStore'
+import { CoordinatesMap } from '@/store/CoordinatesMap'
+const coordinatesMap = CoordinatesMap()
 const anims = AnimStore()
 
 declare global {
   interface Window {
-    map: L.Map | null;
+    map: L.Map | null
   }
 }
 
@@ -46,10 +48,12 @@ const occurrenceMarkers = ref<L.Marker[]>([])
 const isMapInteractive = ref(true)
 
 const shouldShowReportButton = computed(() => {
-  return !route.path.includes('report-occurrence') &&
+  return (
+    !route.path.includes('report-occurrence') &&
     !showFormSidebar.value &&
     !neighborhoodStore.selectedData &&
     !showOccurrenceDetails.value
+  )
 })
 
 const bounds: L.LatLngBoundsExpression = [
@@ -77,10 +81,19 @@ const createCustomIcon = () => {
 
 const createOccurrenceIcon = (occurrenceTypeId: number) => {
   const colors: Record<number, string> = {
-    1: '#e74c3c', 2: '#c0392b', 3: '#e74c3c', 7: '#c0392b', 9: '#c0392b',
-    4: '#f39c12', 5: '#f1c40f', 6: '#e67e22', 8: '#e67e22',
-    10: '#3498db', 11: '#2980b9', 12: '#27ae60',
-    13: '#95a5a6'
+    1: '#e74c3c',
+    2: '#c0392b',
+    3: '#e74c3c',
+    7: '#c0392b',
+    9: '#c0392b',
+    4: '#f39c12',
+    5: '#f1c40f',
+    6: '#e67e22',
+    8: '#e67e22',
+    10: '#3498db',
+    11: '#2980b9',
+    12: '#27ae60',
+    13: '#95a5a6',
   }
   const color = colors[occurrenceTypeId] || '#95a5a6'
 
@@ -93,7 +106,7 @@ const createOccurrenceIcon = (occurrenceTypeId: number) => {
         height: 20px;
         border-radius: 50%;
         border: 3px solid white;
-        box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+        : 0 2px 8px rgba(0,0,0,0.3);
       "></div>
     `,
     iconSize: [20, 20],
@@ -101,33 +114,31 @@ const createOccurrenceIcon = (occurrenceTypeId: number) => {
   })
 }
 
-
 // Função modificada para permitir interação com outros marcadores
 const openOccurrenceDetails = (occurrenceId: number) => {
-  selectedOccurrenceId.value = occurrenceId;
-  showOccurrenceDetails.value = true;
-  
+  selectedOccurrenceId.value = occurrenceId
+  showOccurrenceDetails.value = true
+
   // Mantenha o mapa interativo mesmo com o painel aberto
   if (map) {
-    map.getContainer().style.cursor = '';
-    map.dragging.enable();
-    map.touchZoom.enable();
-    map.doubleClickZoom.enable();
-    map.scrollWheelZoom.enable();
-    map.boxZoom.enable();
-    map.keyboard.enable();
-    isMapInteractive.value = true;
+    map.getContainer().style.cursor = ''
+    map.dragging.enable()
+    map.touchZoom.enable()
+    map.doubleClickZoom.enable()
+    map.scrollWheelZoom.enable()
+    map.boxZoom.enable()
+    map.keyboard.enable()
+    isMapInteractive.value = true
   }
-  
-  // Opcional: Fechar o painel do bairro quando o detalhe é aberto
-  neighborhoodStore.clearNeighborhood();
-};
 
+  // Opcional: Fechar o painel do bairro quando o detalhe é aberto
+  neighborhoodStore.clearNeighborhood()
+}
 
 const loadOccurrencesOnMap = async () => {
   if (!map) return
 
-  occurrenceMarkers.value.forEach(marker => {
+  occurrenceMarkers.value.forEach((marker) => {
     map?.removeLayer(marker)
   })
   occurrenceMarkers.value = []
@@ -139,7 +150,7 @@ const loadOccurrencesOnMap = async () => {
       try {
         const coords = JSON.parse(occurrence.coordenadas)
         const marker = L.marker([coords.lat, coords.lng], {
-          icon: createOccurrenceIcon(occurrence.id_type_occurrence)
+          icon: createOccurrenceIcon(occurrence.id_type_occurrence),
         }).addTo(map!)
 
         marker.on('click', () => {
@@ -165,7 +176,7 @@ const focusOnLocation = (coords: { lat: number; lng: number }) => {
   if (map) {
     map.flyTo([coords.lat, coords.lng], 16, {
       duration: 1,
-      easeLinearity: 0.25
+      easeLinearity: 0.25,
     })
     showOccurrenceDetails.value = false
   }
@@ -176,7 +187,7 @@ const focusOnSelectedLocation = () => {
     const latlng = selectionMarker.getLatLng()
     map.flyTo(latlng, 16, {
       duration: 1,
-      easeLinearity: 0.25
+      easeLinearity: 0.25,
     })
   }
 }
@@ -252,7 +263,7 @@ const disableLocationSelection = () => {
     map.removeLayer(selectionMarker)
     selectionMarker = null
   }
-  
+
   showLocationButtons.value = false
 }
 
@@ -260,7 +271,7 @@ const continueToForm = () => {
   showFormSidebar.value = true
   showLocationButtons.value = false
   focusOnSelectedLocation()
-  
+
   if (map) {
     map.getContainer().style.cursor = 'default'
     map.dragging.disable()
@@ -283,7 +294,7 @@ const backToSelection = () => {
 
 const closeForm = () => {
   showFormSidebar.value = false
-  
+
   if (map) {
     map.dragging.enable()
     map.touchZoom.enable()
@@ -293,7 +304,7 @@ const closeForm = () => {
     map.keyboard.enable()
     isMapInteractive.value = true
   }
-  
+
   if (selectionMarker) {
     showLocationButtons.value = true
   }
@@ -342,7 +353,7 @@ onBeforeMount(() => {
   anims.isLoading = true
 })
 
-onMounted(async() => {
+onMounted(async () => {
   await user.recover()
   anims.isLoading = true
   map = L.map('map', {
@@ -351,7 +362,10 @@ onMounted(async() => {
     minZoom: 12,
     maxZoom: 20,
     zoomControl: false,
-  }).setView([-26.3045, -48.8487], 12)
+  }).setView(
+    [coordinatesMap.coordinates.lat, coordinatesMap.coordinates.lng],
+    coordinatesMap.center,
+  )
 
   window.map = map
 
@@ -427,56 +441,74 @@ onMounted(async() => {
   if (route.path.includes('report-occurrence')) {
     enableLocationSelection()
   }
+
+  if (map) {
+    if (map) updateCenterAndZoom(map)
+
+    const debouncedUpdate = debounce(() => {
+      if (map) updateCenterAndZoom(map)
+    }, 150)
+
+    map.on('moveend', debouncedUpdate)
+    map.on('zoomend', debouncedUpdate)
+  }
 })
+const updateCenterAndZoom = (mapInstance: L.Map) => {
+  const c = mapInstance.getCenter()
+  coordinatesMap.coordinates = { lat: Number(c.lat.toFixed(6)), lng: Number(c.lng.toFixed(6)) }
+  coordinatesMap.center = mapInstance.getZoom()
+}
 
 onUnmounted(() => {
   disableLocationSelection()
   window.map = null
 })
+
+function debounce(fn: () => void, delay: number) {
+  let timeout: ReturnType<typeof setTimeout> | null = null
+  return function () {
+    if (timeout) clearTimeout(timeout)
+    timeout = setTimeout(fn, delay)
+  }
+}
 </script>
 
 <template>
   <main>
     <ReportButton v-if="shouldShowReportButton" />
-    
+
     <button
-      v-if="route.path.includes('report-occurrence') && !showLocationButtons && !showFormSidebar && !showOccurrenceDetails"
+      v-if="
+        route.path.includes('report-occurrence') &&
+        !showLocationButtons &&
+        !showFormSidebar &&
+        !showOccurrenceDetails
+      "
       class="back-button"
       @click="backToHome"
     >
       Voltar
     </button>
-    
+
     <div class="map-container">
       <div id="map"></div>
-      
+
       <NeighborhoodPanel @view-occurrence-details="handleViewDetails" />
-      
+
       <div v-if="showLocationButtons" class="location-buttons">
-        <button class="btn-continue" @click="continueToForm">
-          Continuar
-        </button>
-        <button class="btn-back" @click="backToSelection">
-          Voltar
-        </button>
+        <button class="btn-continue" @click="continueToForm">Continuar</button>
+        <button class="btn-back" @click="backToSelection">Voltar</button>
       </div>
     </div>
 
-    <OcurrenceForm
-      v-if="showFormSidebar"
-      @close="closeForm"
-    />
+    <OcurrenceForm v-if="showFormSidebar" @close="closeForm" />
 
-    <LocationModal
-      :show="showLocationModal"
-      @confirm="confirmModal"
-      @cancel="cancelModal"
-    />
-    
+    <LocationModal :show="showLocationModal" @confirm="confirmModal" @cancel="cancelModal" />
+
     <OccurrenceDetails
       v-if="showOccurrenceDetails"
       :occurrenceId="selectedOccurrenceId"
-      :key="selectedOccurrenceId"
+      :key="selectedOccurrenceId ?? 0"
       @close="closeOccurrenceDetails"
       @focusLocation="focusOnLocation"
     />
@@ -521,7 +553,7 @@ onUnmounted(() => {
       background-color: #3498db;
       border: 3px solid white;
       border-radius: 50%;
-      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+     box-shadow : var(--shadow-default);
       z-index: 10;
       position: relative;
     }
@@ -544,7 +576,7 @@ onUnmounted(() => {
     .leaflet-popup-content {
       margin: 10px;
     }
-    
+
     .leaflet-popup-content-wrapper {
       border-radius: 8px;
       background: white;
@@ -585,7 +617,7 @@ onUnmounted(() => {
   &:hover {
     background: #636e72;
     transform: translateY(-2px);
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+    box-shadow:  var(--shadow-default);
   }
 }
 
@@ -630,7 +662,7 @@ onUnmounted(() => {
 .btn-continue:hover,
 .btn-back:hover {
   transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+ box-shadow :  var(--shadow-default);
 }
 
 .btn-continue:hover {

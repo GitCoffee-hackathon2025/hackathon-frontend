@@ -38,7 +38,7 @@ const goToSelectLocation = () => {
       z-index: 5;
       bottom: 100px;
       right: 15px;
-      background-color: var(--color-red);
+      background-color: rgba(132, 15, 15, 0.9);
       border: none;
       cursor: pointer;
       display: flex;
@@ -73,7 +73,6 @@ const goToSelectLocation = () => {
 
     }
 
-    /* Tablet */
     @media (min-width: 768px) {
       .ocurrence-button {
         bottom: 100px;
@@ -82,7 +81,6 @@ const goToSelectLocation = () => {
 
     }
 
-    /* Desktop */
     @media (min-width: 992px) {
       .ocurrence-button {
         bottom: 40px;
@@ -99,11 +97,10 @@ const goToSelectLocation = () => {
 
       .ocurrence-button:hover {
         transform: scale(1.05);
-        box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3);
+       box-shadow :  var(--shadow-default);
       }
     }
 
-    /* Telas muito grandes */
     @media (min-width: 1200px) {
       .ocurrence-button {
         right: 50px;

@@ -13,7 +13,6 @@ function fechar() {
   neighborhoodStore.clearNeighborhood()
 }
 
-// Nova função para emitir o evento
 function handleOccurrenceClick(occurrenceId: number) {
   emit('view-occurrence-details', occurrenceId)
 }
@@ -66,12 +65,12 @@ function handleOccurrenceClick(occurrenceId: number) {
   top: 50%;
   right: 30px;
   transform: translateY(-50%);
-  width: 420px; // <-- aumentei a largura
-  max-width: 95vw; // pra não ultrapassar a viewport
+  width: 420px;
+  max-width: 95vw;
   height: 90vh;
-  background: var(--color-gray-dark);
+   background: rgba(29, 30, 28, 0.9);
   border-radius: 10px;
-  box-shadow: 0 0 10px rgba(255, 255, 255, 0.2);
+ box-shadow :  var(--shadow-default);
   z-index: 1000;
   display: flex;
   flex-direction: column;
@@ -79,12 +78,12 @@ function handleOccurrenceClick(occurrenceId: number) {
 
   .details-content {
     flex: 1;
-    padding: 20px; // mais espaço interno
+    padding: 20px;
     position: relative;
     color: var(--color-white);
     overflow-y: scroll;
-    scrollbar-width: none; 
-    -ms-overflow-style: none; 
+    scrollbar-width: none;
+    -ms-overflow-style: none;
   }
 
   .details-content::-webkit-scrollbar {
@@ -98,7 +97,7 @@ function handleOccurrenceClick(occurrenceId: number) {
     right: 10px;
     background: none;
     border: none;
-    font-size: 1.6rem; // botão maior
+    font-size: 1.6rem;
     cursor: pointer;
     color: var(--color-white);
 
@@ -109,7 +108,7 @@ function handleOccurrenceClick(occurrenceId: number) {
 
   h2 {
     margin: 0 0 12px 0;
-    font-size: 1.5rem; // título mais destacado
+    font-size: 1.5rem;
   }
 
   h3 {
@@ -134,7 +133,7 @@ function handleOccurrenceClick(occurrenceId: number) {
     border-radius: 6px;
     padding: 12px;
     margin-bottom: 14px;
-    cursor: pointer; 
+    cursor: pointer;
     transition: background 0.2s ease;
 
     &:hover {
@@ -160,7 +159,8 @@ function handleOccurrenceClick(occurrenceId: number) {
       margin-bottom: 8px;
 
       display: -webkit-box;
-      -webkit-line-clamp: 3;  
+      -webkit-line-clamp: 3;
+      line-clamp: 3;
       -webkit-box-orient: vertical;
       overflow: hidden;
       text-overflow: ellipsis;

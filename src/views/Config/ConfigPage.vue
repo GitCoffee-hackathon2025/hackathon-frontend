@@ -6,7 +6,7 @@ import type { Option } from '@/store/TypesStore'
 import { ROUTES } from '@/router/routes'
 
 const panelViewItems: Option[] = [
-  {
+  /*{
     icon: `
   <path d="M19.3301 7.54506L23.1251 4.63504L18.3401 4.50004L16.7501 0L15.16 4.50004L10.375 4.63504L14.17 7.54506L12.805 12.1351L16.7501 9.42007L20.6951 12.1351L19.3301 7.54506Z" fill="currentColor"/>
   <path d="M25.915 16.875L28.3751 15L25.285 14.925L24.25 12L23.215 14.925L20.125 15L22.585 16.875L21.7 19.8451L24.25 18.09L26.8001 19.8451L25.915 16.875Z" fill="currentColor"/>
@@ -16,7 +16,7 @@ const panelViewItems: Option[] = [
     text: 'Tema',
     link: ROUTES.config.theme,
     icon2: `<g fill="currentColor" clip-path="url(#SVGXv8lpc2Y)"><path d="M12 0a1 1 0 0 1 1 1v2a1 1 0 1 1-2 0V1a1 1 0 0 1 1-1M0 12a1 1 0 0 1 1-1h2a1 1 0 1 1 0 2H1a1 1 0 0 1-1-1m21-1a1 1 0 1 0 0 2h2a1 1 0 1 0 0-2zm-8 10a1 1 0 1 0-2 0v2a1 1 0 1 0 2 0zm-6.657-3.343a1 1 0 0 1 0 1.414L4.93 20.485a1 1 0 1 1-1.414-1.414l1.414-1.414a1 1 0 0 1 1.414 0M20.485 3.515a1 1 0 0 1 0 1.414l-1.414 1.414a1 1 0 1 1-1.414-1.414l1.414-1.414a1 1 0 0 1 1.414 0m-16.97 0a1 1 0 0 1 1.414 0l1.414 1.414A1 1 0 1 1 4.93 6.343L3.515 4.93a1 1 0 0 1 0-1.414m14.142 14.141a1 1 0 0 1 1.414 0l1.414 1.414a1 1 0 1 1-1.414 1.414l-1.414-1.414a1 1 0 0 1 0-1.414M5 12a7 7 0 1 1 14 0a7 7 0 0 1-14 0"/></g><defs><clipPath id="SVGXv8lpc2Y"><path fill="currentColor" d="M0 0h24v24H0z"/></clipPath></defs></g>`,
-  },
+  },*/
 
   {
     icon: `
@@ -35,7 +35,7 @@ const panelViewItems: Option[] = [
     <PanelView
       :options="panelViewItems"
       :route="ROUTES.config.init"
-      :default-route="ROUTES.config.theme"
+      :default-route="ROUTES.config.accessibility"
     />
   </main>
 </template>

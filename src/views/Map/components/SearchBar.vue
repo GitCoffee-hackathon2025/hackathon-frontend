@@ -321,7 +321,7 @@ const selectSugestion = (sug: any) => {
   width: 60%;
   background: var(--color-white);
   border-radius: 12px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+ box-shadow : var(--shadow-default);
   list-style: none;
   padding: 4px 0;
   margin: 0;

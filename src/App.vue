@@ -14,9 +14,15 @@ const HIDE_NAV = [
   ROUTES.auth.recover,
   ROUTES.misc.notFound,
 ] as const
+
+// em src/App.vue (topo do script setup)
+import ColorBlindFilter from './components/ColorBlindFilter.vue' // se App.vue está em src/
+import { useCvdStore } from '@/store/DaltonismStore' // se usa alias @
+
 </script>
 
 <template>
+   <ColorBlindFilter />
   <NavBar v-if="!HIDE_NAV.includes(route.name as any)" />
   <router-view />
   <Loading v-if="anim.isLoading" />
@@ -27,4 +33,21 @@ const HIDE_NAV = [
 main {
   width: 100%;
 }
+#app.cvd-deuteranopia, .cvd-deuteranopia {
+  -webkit-filter: url(#deuteranopia);
+  filter: url(#deuteranopia);
+}
+#app.cvd-protanopia, .cvd-protanopia {
+  -webkit-filter: url(#protanopia);
+  filter: url(#protanopia);
+}
+#app.cvd-tritanopia, .cvd-tritanopia {
+  -webkit-filter: url(#tritanopia);
+  filter: url(#tritanopia);
+}
+#app.cvd-none, .cvd-none {
+  -webkit-filter: none;
+  filter: none;
+}
+
 </style>

@@ -12,7 +12,7 @@ const emit = defineEmits<{
 </script>
 
 <template>
-  <div v-if="show" class="modal-overlay">
+  <div v-if="props.show" class="modal-overlay">
     <div class="modal-content">
       <p>Para fazer uma ocorrência <br> primeiro selecione a localização no mapa.</p>
       <div class="buttons">
@@ -49,8 +49,8 @@ const emit = defineEmits<{
   color: white;
   animation: fadeInUp 0.6s ease-in-out;
   box-sizing: border-box;
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
-  
+  box-shadow:  var(--shadow-default);
+
   /* Garantir que o conteúdo não ultrapasse os limites */
   overflow: hidden;
   display: flex;
@@ -67,10 +67,10 @@ const emit = defineEmits<{
   hyphens: auto;
   text-align: center;
   white-space: wrap;
-  
+
   max-width: 100%;
-  
-  
+
+
   text-align: justify;
   text-justify: inter-word;
 }
@@ -105,7 +105,7 @@ const emit = defineEmits<{
 .buttons button:first-child:hover {
   background: #219653;
   transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(39, 174, 96, 0.3);
+  box-shadow:  var(--shadow-default);
 }
 
 .buttons button:last-child {
@@ -116,7 +116,7 @@ const emit = defineEmits<{
 .buttons button:last-child:hover {
   background: #636e72;
   transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(127, 140, 141, 0.3);
+  box-shadow:  var(--shadow-default);
 }
 
 .buttons button:active {
@@ -139,21 +139,21 @@ const emit = defineEmits<{
   .modal-overlay {
     padding: 16px;
   }
-  
+
   .modal-content {
     padding: 20px;
     max-width: 100%;
   }
-  
+
   .modal-content p {
     font-size: 1rem;
     line-height: 1.4;
   }
-  
+
   .buttons {
     gap: 10px;
   }
-  
+
   .buttons button {
     padding: 10px 20px;
     min-width: 90px;
@@ -166,12 +166,12 @@ const emit = defineEmits<{
   .modal-content p {
     font-size: 0.95rem;
   }
-  
+
   .buttons {
     flex-direction: column;
     align-items: center;
   }
-  
+
   .buttons button {
     max-width: 100%;
     width: 100%;

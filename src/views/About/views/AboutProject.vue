@@ -5,8 +5,8 @@ type Tech = {
   id: string
   name: string
   url: string
-  logo?: string          // trecho SVG interno (inner SVG paths) — será convertido em data URI
-  logoUri?: string       // URL externo (raw SVG) ou data URI já pronta — tem prioridade quando presente
+  logo?: string
+  logoUri?: string
 }
 
 
@@ -45,9 +45,6 @@ const techs: Tech[] = [
   },
 ]
 
-/**
- * Gera cor determinística a partir de uma string (nome).
- */
 function hashToColor(s: string) {
   let h = 0
   for (let i = 0; i < s.length; i++) {
@@ -58,9 +55,6 @@ function hashToColor(s: string) {
   return `hsl(${hue} 62% 45%)`
 }
 
-/**
- * Gera um data URI SVG contendo as iniciais do nome -> evita chamadas externas.
- */
 function svgDataUri(name: string) {
   const label =
     name
@@ -79,10 +73,6 @@ function svgDataUri(name: string) {
   return `data:image/svg+xml;utf8,${encodeURIComponent(svg)}`
 }
 
-/**
- * Se um trecho SVG (t.logo) estiver presente, converte para data URI (para usar em <img src=...>).
- * Caso contrário, prioriza t.logoUri se fornecido (URL externo) e por fim usa svgDataUri fallback.
- */
 function svgInnerToDataUri(innerSvg: string, viewBox = '0 0 30 30') {
   const svg = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="${viewBox}">${innerSvg}</svg>`
   return `data:image/svg+xml;utf8,${encodeURIComponent(svg)}`
@@ -113,7 +103,6 @@ const items = computed(() =>
           class="thumb"
           :aria-label="`Abrir site oficial de ${t.name}`"
         >
-          <!-- usamos <img> porque é interoperável, permite cache e facilita trocas entre data-uri / raw URL -->
           <img :src="t.logoUri" :alt="`Logotipo de ${t.name}`" class="logo" />
         </a>
 
@@ -147,14 +136,14 @@ const items = computed(() =>
   padding: 0.75rem;
   border-radius: 12px;
   background: linear-gradient(180deg, var(--color-white));
-  box-shadow: 0 1px 4px rgba(2, 6, 23, 0.04);
+  box-shadow:  var(--shadow-default);
   transition:
     transform 0.12s ease,
-    box-shadow 0.12s ease;
+     0.12s ease;
 
   &:hover {
     transform: translateY(-4px);
-    box-shadow: 0 8px 24px rgba(2, 6, 23, 0.08);
+    box-shadow:  var(--shadow-default);
   }
 
   .thumb {
@@ -175,7 +164,6 @@ const items = computed(() =>
     border-radius: 8px;
     object-fit: contain;
     display: block;
-    /* pequena margem para não encostar nas bordas do thumb */
     margin: 4px;
     background: transparent;
   }

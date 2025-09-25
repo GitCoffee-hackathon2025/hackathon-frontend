@@ -115,7 +115,7 @@ onMounted(() => {
       <AlertText :text="errorText" />
       <OperationSuccess message="Cadastro realizado com sucesso!" v-if="registerSteps.current == 5" />
       <div class="form-actions">
-        <button v-if="registerSteps.current != 1" @click="backStep" type="button">
+        <button v-if="registerSteps.current != 5 && registerSteps.current != 1" @click="backStep" type="button">
           Voltar
         </button>
         <button
