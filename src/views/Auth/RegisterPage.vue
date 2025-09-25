@@ -1,6 +1,6 @@
 <script setup lang="ts">
 // Vue / reatividade / router
-import { reactive, ref, onMounted } from 'vue'
+import { reactive, ref } from 'vue'
 import { useRouter } from 'vue-router'
 
 // Componentes
@@ -28,7 +28,6 @@ import { UserRequisitions } from '@/requisitions/User'
 import { RegisterProgress } from '@/views/Auth/utils/ProceedRegister'
 
 // resetData: chamar dentro do ciclo de vida (não no topo do módulo)
-import resetData from '@/utils/resetData'
 import type { Steps } from '@/store/TypesStore'
 
 // --- Estado reativo local (assegure que os tipos TypesStore concordem)
@@ -79,11 +78,6 @@ const backStep = () => {
   errorText.value = register.errorText
 }
 
-// resetData: garantir execução em mount e limpar ao desmontar
-onMounted(() => {
-  // se resetData.setup() altera estado global, execute aqui
-  if (typeof resetData.setup === 'function') resetData.setup()
-})
 </script>
 
 <template>

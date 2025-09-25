@@ -1,6 +1,6 @@
   <script setup lang="ts">
   // Vue / reatividade / router
-  import { reactive, ref, onMounted } from 'vue'
+  import { reactive, ref } from 'vue'
   import { useRouter } from 'vue-router'
 
   // Componentes
@@ -24,8 +24,6 @@
   // Classe
   import { RecoverProgress } from '@/views/Auth/utils/ProceedRecover'
 
-  // resetData
-  import resetData from '@/utils/resetData'
   import type { Steps } from '@/store/TypesStore'
 
   // --- Estado reativo local
@@ -82,9 +80,6 @@
     password: user.password
   })
 
-  onMounted(() => {
-    if (typeof resetData.setup === 'function') resetData.setup()
-  })
   </script>
 
   <template>
@@ -100,12 +95,12 @@
           message="Senha recuperada com sucesso!"
           v-if="recoverPasswordSteps.current == 4"
         />
-        
+
         <!-- Os componentes usam v-model que atualiza o userStore diretamente -->
         <EmailInput class="recover-password" v-if="recoverPasswordSteps.current == 1" />
         <CodeInput v-if="recoverPasswordSteps.current == 2" :error="errors.digits" />
         <PasswordInput v-if="recoverPasswordSteps.current == 3" class="recover" />
-        
+
         <AlertText :text="errorText" :position="'recover-password'" />
         <div class="form-actions">
           <router-link

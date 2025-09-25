@@ -179,7 +179,6 @@ const navItemArray: navItem[] | Array<navItem> = [
 </template>
 
 <style scoped lang="scss">
-/* --- Variáveis SCSS para valores repetidos / estáticos --- */
 $bottom-mobile: 25px;
 $left-desktop: 30px;
 $nav-padding-horizontal: 12px;
@@ -233,7 +232,7 @@ header {
 
     border-radius: $border-radius;
     overflow: hidden;
-    z-index: 6;
+    z-index: 10000000000000000000000000000000000000000000000000000000000;
 
     font-size: var(--text-sm);
 

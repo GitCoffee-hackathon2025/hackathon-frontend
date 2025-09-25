@@ -51,6 +51,7 @@ interface OccurrenceMarkerData {
 
 const occurrenceMarkers = ref<OccurrenceMarkerData[]>([])
 const currentZoom = ref(12) // Zoom inicial
+const activeFilters = ref<number[]>([]) // NOVO: Para armazenar os filtros ativos
 
 // Variável para controlar a interatividade do mapa
 const isMapInteractive = ref(true)
@@ -159,8 +160,8 @@ const loadOccurrencesOnMap = async () => {
         const coords = JSON.parse(occurrence.coordenadas);
         // Usa o NOVO ícone base
         const marker = L.marker([coords.lat, coords.lng], {
-          icon: createOccurrenceIcon(occurrence.id_type_occurrence)
-        }).addTo(map!)
+          icon: createBaseOccurrenceIcon(occurrence.id_type_occurrence)
+        }).addTo(map!);
 
         marker.on('click', () => {
           openOccurrenceDetails(occurrence.id_occurrence);
@@ -178,16 +179,27 @@ const loadOccurrencesOnMap = async () => {
     console.log(`Carregadas ${occurrenceMarkers.value.length} ocorrências no mapa`);
 
     map.on('zoomend', updateMarkersSize);
-
-    if (occurrenceMarkers.value.length > 0) {
-      const markers = occurrenceMarkers.value.map(data => data.marker);
-      const group = new L.featureGroup(markers);
-      map.fitBounds(group.getBounds().pad(0.1));
-    }
-
-    // Chama a função de atualização inicial para garantir o tamanho correto
     updateMarkersSize();
+    filterMarkers(); // Chama o filtro para exibir os marcadores corretos inicialmente
   }
+};
+
+// **CORRIGIDO:** Agora, a função `filterMarkers` também chama `updateMarkersSize`
+// para garantir que os novos marcadores visíveis tenham o tamanho correto.
+const filterMarkers = () => {
+  if (!map) return;
+
+  occurrenceMarkers.value.forEach(markerData => {
+    const isVisible = activeFilters.value.length === 0 || activeFilters.value.includes(markerData.occurrenceTypeId);
+    if (isVisible) {
+      markerData.marker.addTo(map);
+    } else {
+      map.removeLayer(markerData.marker);
+    }
+  });
+
+  // CHAMADA ADICIONADA: Redimensiona os marcadores após o filtro.
+  updateMarkersSize();
 };
 
 const focusOnLocation = (coords: { lat: number; lng: number }) => {
@@ -366,6 +378,12 @@ const cancelModal = () => {
   router.push('/');
 };
 
+// NOVO: Adiciona a função para lidar com a atualização dos filtros
+const handleFilterUpdate = (filters: number[]) => {
+  activeFilters.value = filters;
+  filterMarkers(); // Chama a função de filtro para atualizar o mapa
+};
+
 onBeforeMount(() => {
   anims.isLoading = true;
 });
@@ -505,7 +523,7 @@ onUnmounted(() => {
     />
   </main>
 
-  <SearchBar />
+  <SearchBar @filter-updated="handleFilterUpdate" />
 </template>
 
 
