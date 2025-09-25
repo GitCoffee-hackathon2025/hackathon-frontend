@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, onMounted } from 'vue'
+import { ref, onMounted, defineEmits } from 'vue'
 import { NeighborhoodStore } from '@/store/NeighborhoodStore'
 import L from 'leaflet'
 
@@ -7,6 +7,30 @@ const search = ref('')
 const neighborhoods = ref<any[]>([])
 const sugestions = ref<any[]>([])
 const neighborhoodStore = NeighborhoodStore()
+
+// NOVO: Adiciona a lógica do filtro
+const showFilterMenu = ref(false)
+const selectedFilters = ref<number[]>([])
+
+// NOVO: Define os tipos de ocorrência e o emit
+const occurrenceTypes = [
+  { id: 1, name: 'Acidente de trânsito' },
+  { id: 2, name: 'Assalto' },
+  { id: 3, name: 'Roubo' },
+  { id: 4, name: 'Furto' },
+  { id: 5, name: 'Perturbação da paz' },
+  { id: 6, name: 'Vandalismo' },
+  { id: 7, name: 'Incêndio' },
+  { id: 8, name: 'Acidente doméstico' },
+  { id: 9, name: 'Assédio' },
+  { id: 10, name: 'Desaparecimento' },
+  { id: 11, name: 'Problema de infraestrutura' },
+  { id: 12, name: 'Animal solto' },
+  { id: 13, name: 'Tráfico de drogas' },
+  { id: 14, name: 'Outro' }
+]
+
+const emit = defineEmits(['filter-updated'])
 
 onMounted(async () => {
   try {
@@ -64,6 +88,28 @@ const selectSugestion = (sug: any) => {
   search.value = sug.properties.nome_bairr
   searchNeighborhood()
 }
+
+// NOVO: Alterna a visibilidade do menu de filtro
+const toggleFilterMenu = () => {
+  showFilterMenu.value = !showFilterMenu.value
+}
+
+// NOVO: Manipula a seleção do filtro e fecha o menu
+const handleFilterSelection = (id: number) => {
+  const index = selectedFilters.value.indexOf(id)
+  if (index === -1) {
+    selectedFilters.value.push(id)
+  } else {
+    selectedFilters.value.splice(index, 1)
+  }
+  emit('filter-updated', selectedFilters.value)
+  showFilterMenu.value = false // Fecha o menu após a seleção
+}
+
+// NOVO: Verifica se um filtro está ativo
+const isFilterActive = (id: number) => {
+  return selectedFilters.value.includes(id)
+}
 </script>
 
 <template>
@@ -97,6 +143,11 @@ const selectSugestion = (sug: any) => {
           @input="filterSugestions"
           @keyup.enter="searchNeighborhood"
         />
+        <button class="filter-button" @click.stop="toggleFilterMenu">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
+            <path d="M10 18h4v-2h-4v2zM3 6v2h18V6H3zm3 7h12v-2H6v2z" />
+          </svg>
+        </button>
       </div>
 
       <ul v-if="sugestions.length" class="suggestions-list">
@@ -104,6 +155,14 @@ const selectSugestion = (sug: any) => {
           {{ sug.properties.nome_bairr }}
         </li>
       </ul>
+
+      <div v-if="showFilterMenu" class="filter-menu" @click.stop>
+        <ul>
+          <li v-for="type in occurrenceTypes" :key="type.id" @click="handleFilterSelection(type.id)" :class="{ active: isFilterActive(type.id) }">
+            {{ type.name }}
+          </li>
+        </ul>
+      </div>
     </div>
   </div>
 </template>
@@ -119,13 +178,13 @@ const selectSugestion = (sug: any) => {
   height: var(--component-height);
   display: flex;
   align-items: center;
-  justify-content: center; // Centraliza a barra de pesquisa
-  gap: 10px; // Pode remover ou manter, dependendo do design
+  justify-content: center;
+  gap: 10px;
 }
 
 .search-and-suggestions-wrapper {
   position: relative;
-  width: 100%; // Ajustado para ocupar a largura total
+  width: 100%;
 }
 
 .search-bar {
@@ -171,6 +230,24 @@ const selectSugestion = (sug: any) => {
   }
 }
 
+// NOVO: Estilo para o botão de filtro
+.filter-button {
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 12px 12px 12px 6px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-right: 5px;
+
+  svg {
+    width: var(--icon-size);
+    height: var(--icon-size);
+    fill: var(--color-gray-dark);
+  }
+}
+
 .suggestions-list {
   position: absolute;
   top: calc(var(--component-height) + 10px);
@@ -199,12 +276,51 @@ const selectSugestion = (sug: any) => {
   }
 }
 
+// NOVO: Estilo para o menu de filtro
+.filter-menu {
+  position: absolute;
+  top: calc(var(--component-height) + 10px);
+  right: 0;
+  width: 250px;
+  background: var(--color-white);
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  padding: 8px 0;
+  z-index: 1000001;
+
+  ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    max-height: 300px;
+    overflow-y: auto;
+  }
+
+  li {
+    padding: 10px 16px;
+    cursor: pointer;
+    font-size: var(--text-md);
+    color: var(--color-gray-dark);
+    transition: background 0.2s ease;
+
+    &:hover {
+      background: rgba(0, 0, 0, 0.05);
+    }
+
+    &.active {
+      background: #e0f0ff; // Cor de fundo para item selecionado
+      color: #0066cc; // Cor do texto para item selecionado
+      font-weight: bold;
+    }
+  }
+}
+
 @media (min-width: 992px) {
   .container-search {
     top: 3vh;
     left: calc(30px + 70px + 5vw);
     transform: none;
-    justify-content: flex-start; // Alinha à esquerda na versão desktop
+    justify-content: flex-start;
   }
 
   .search-and-suggestions-wrapper {
